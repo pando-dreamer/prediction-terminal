@@ -107,6 +107,32 @@ This prediction market platform consists of:
 - **Positions**: Track user holdings and P&L
 - **Settlement**: Resolve markets and distribute payouts
 
+## DFlow Integration
+
+The platform is integrating with [DFlow](https://pond.dflow.net/concepts/prediction/prediction-markets) to provide real on-chain prediction markets:
+
+- **Market Discovery**: Browse real prediction markets via DFlow Metadata API
+- **Live Trading**: Execute trades on outcome tokens through DFlow Trade API
+- **Position Tracking**: Monitor holdings across DFlow markets
+- **Settlement**: Redeem winning tokens when markets resolve
+
+**Current Status**: In development using agile methodology (see `documents/agile/`)
+
+## Agile Development
+
+This project follows agile development practices:
+
+- **Sprint Duration**: 2 weeks
+- **Story Points**: Fibonacci scale (1, 2, 3, 5, 8, 13, 21)
+- **Definition of Done**: Code + Tests + Format (`pnpm format`) + Build (`pnpm build`) + Docs
+
+**Quick Links**:
+
+- [Agile Process & Rules](documents/agile/README.md)
+- [Sprint Planning](documents/agile/templates/sprint-planning.md)
+- [Product Backlog](documents/agile/backlog/product-backlog.md)
+- [Current Sprint](documents/agile/sprints/sprint-1-plan.md)
+
 ## Environment Variables
 
 Environment variables are read in this priority order:
