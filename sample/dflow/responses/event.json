@@ -1,0 +1,33 @@
+{
+  "ticker": "KXNCAAF-26",
+  "seriesTicker": "KXNCAAF",
+  "strikeDate": null,
+  "strikePeriod": null,
+  "title": "College Football Championship: Miami vs Indiana",
+  "subtitle": "On Jan 19, 2026",
+  "imageUrl": "https://kalshi-public-docs.s3.amazonaws.com/series-images-webp/KXNCAAF.webp",
+  "competition": "NCAAFB",
+  "competitionScope": "Championship",
+  "settlementSources": [
+    {
+      "name": "Fox Sports",
+      "url": "https://www.foxsports.com/"
+    },
+    {
+      "name": "ESPN",
+      "url": "https://www.espn.com/"
+    },
+    {
+      "name": "The Wall Street Journal",
+      "url": "https://www.wsj.com/"
+    },
+    {
+      "name": "AP",
+      "url": "https://apnews.com/"
+    }
+  ],
+  "volume": 142086661,
+  "volume24h": 7165465,
+  "liquidity": 0,
+  "openInterest": 85726157
+}

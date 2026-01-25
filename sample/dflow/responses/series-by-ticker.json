@@ -1,0 +1,22 @@
+{
+  "ticker": "KXTOPALBUMRECORDSWAG",
+  "frequency": "one_off",
+  "title": "Album record Justin Bieber ",
+  "category": "Entertainment",
+  "tags": [
+    "Music",
+    "Music charts"
+  ],
+  "settlementSources": [
+    {
+      "name": "Billboard",
+      "url": "https://www.billboard.com/charts/billboard-200/"
+    }
+  ],
+  "contractUrl": "https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifications/TOPALBUMRECORD.pdf",
+  "contractTermsUrl": "https://kalshi-public-docs.s3.amazonaws.com/contract_terms/TOPALBUMRECORD.pdf",
+  "productMetadata": {},
+  "feeType": "quadratic",
+  "feeMultiplier": 1,
+  "additionalProhibitions": []
+}

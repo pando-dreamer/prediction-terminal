@@ -1,0 +1,90 @@
+{
+  "timestamp": "2026-01-25T19:05:10.192Z",
+  "summary": {
+    "total": 16,
+    "successful": 16,
+    "failed": 0
+  },
+  "results": [
+    {
+      "file": "category.ts",
+      "success": true,
+      "output": "[dotenv@17.2.3] injecting env (2) from .env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com\nTags by Categories: {\n  tagsByCategories: {\n    'Climate and Weather': [\n      'Daily temperature',\n      'Snow and rain',\n      'Climate change',\n      'High temp',\n      'Natural disasters',\n      'Hurricanes'\n    ],\n    Companies: [ 'KPIs', 'Product launches', 'Elon Musk', 'CEOs', 'Layoffs' ],\n    Crypto: [\n      'BTC',      '15 min',\n      'Hourly',   'ETH',\n      'SOL',      'Pre-Market',\n      ..."
+    },
+    {
+      "file": "markets.ts",
+      "success": true,
+      "output": "[dotenv@17.2.3] injecting env (2) from .env -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops\n📊 Testing GET /api/v1/markets...\nMarkets Response: {\n  \"markets\": [\n    {\n      \"ticker\": \"PRES-2024-KH\",\n      \"eventTicker\": \"PRES-2024\",\n      \"marketType\": \"binary\",\n      \"title\": \"Will Kamala Harris or another Democrat win the Presidency?\",\n      \"subtitle\": \"\",\n      \"yesSubTitle\": \"Kamala Harris\",\n      \"noSubTitle\": \"Kamala Harris\",\n      \"openTime\": 1728044100,\n      \"clos..."
+    },
+    {
+      "file": "markets-batch.ts",
+      "success": true,
+      "output": "[dotenv@17.2.3] injecting env (2) from .env -- tip: ⚙️  enable debug logging with { debug: true }\n📦 Testing POST /api/v1/markets/batch...\nTesting batch request with tickers: PRES-2024-KH, PRES-2024-DJT, KXBOXING-25DEC19JPAUAJOS-JPAU\nMarkets Batch Response: {\n  \"markets\": [\n    {\n      \"ticker\": \"KXBOXING-25DEC19JPAUAJOS-JPAU\",\n      \"eventTicker\": \"KXBOXING-25DEC19JPAUAJOS\",\n      \"marketType\": \"binary\",\n      \"title\": \"Jake Paul vs. Anthony Joshua Winner\",\n      \"subtitle\": \"\",\n      \"yesSubTi..."
+    },
+    {
+      "file": "events.ts",
+      "success": true,
+      "output": "[dotenv@17.2.3] injecting env (2) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild\n📅 Testing GET /api/v1/events...\nEvents Response: {\n  \"events\": [\n    {\n      \"ticker\": \"KXNCAAF-26\",\n      \"seriesTicker\": \"KXNCAAF\",\n      \"strikeDate\": null,\n      \"strikePeriod\": null,\n      \"title\": \"College Football Championship: Miami vs Indiana\",\n      \"subtitle\": \"On Jan 19, 2026\",\n      \"imageUrl\": \"https://kalshi-public-docs.s3.amazonaws.com/series-images-webp/KXNCAAF.w..."
+    },
+    {
+      "file": "series.ts",
+      "success": true,
+      "output": "[dotenv@17.2.3] injecting env (2) from .env -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops\n📚 Testing GET /api/v1/series...\nSeries Response: {\n  \"series\": [\n    {\n      \"ticker\": \"CONTROLH\",\n      \"frequency\": \"custom\",\n      \"title\": \"House winner\",\n      \"category\": \"Politics\",\n      \"tags\": [\n        \"US Elections\"\n      ],\n      \"settlementSources\": [\n        {\n          \"name\": \"Library of Congress\",\n          \"url\": \"https://www.congress.gov/\"\n        }\n      ..."
+    },
+    {
+      "file": "series-by-ticker.ts",
+      "success": true,
+      "output": "[dotenv@17.2.3] injecting env (2) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild\n🎯 Testing GET /api/v1/series/{ticker}...\nUsing sample series ticker: KXTOPALBUMRECORDSWAG\nSeries Details Response: {\n  \"ticker\": \"KXTOPALBUMRECORDSWAG\",\n  \"frequency\": \"one_off\",\n  \"title\": \"Album record Justin Bieber \",\n  \"category\": \"Entertainment\",\n  \"tags\": [\n    \"Music\",\n    \"Music charts\"\n  ],\n  \"settlementSources\": [\n    {\n      \"name\": \"Billboard\",\n      \"url\": \"https://w..."
+    },
+    {
+      "file": "orderbook-by-ticker.ts",
+      "success": true,
+      "output": "[dotenv@17.2.3] injecting env (2) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }\n📊 Testing GET /api/v1/orderbook/{ticker}...\nUsing sample market ticker: KXFEDDECISION-26JAN-C25\nOrderbook Response: {\n  \"no_bids\": {\n    \"0.0100\": 9000,\n    \"0.0200\": 16412,\n    \"0.1100\": 500,\n    \"0.2500\": 34,\n    \"0.3000\": 10,\n    \"0.3100\": 25,\n    \"0.3500\": 50,\n    \"0.4000\": 17,\n    \"0.4500\": 15,\n    \"0.5000\": 10311,\n    \"0.5400\": 368,\n    \"0.5500\": 43,\n    \"0.5700\": 15,\n   ..."
+    },
+    {
+      "file": "trades.ts",
+      "success": true,
+      "output": "[dotenv@17.2.3] injecting env (2) from .env -- tip: 🗂️ backup and recover secrets: https://dotenvx.com/ops\n📈 Testing GET /api/v1/trades...\nTrades Response: {\n  \"trades\": [\n    {\n      \"tradeId\": \"83fda629-4d6b-7513-17b9-f7582d3b3dcc\",\n      \"ticker\": \"KXNFLANYTD-26JAN25NEDEN-NEHHENRY85\",\n      \"price\": 32,\n      \"count\": 29,\n      \"yesPrice\": 3200,\n      \"noPrice\": 6800,\n      \"yesPriceDollars\": \"0.3200\",\n      \"noPriceDollars\": \"0.6800\",\n      \"takerSide\": \"yes\",\n      \"createdTime\": 17693678..."
+    },
+    {
+      "file": "filter-outcome-mints.ts",
+      "success": true,
+      "output": "[dotenv@17.2.3] injecting env (2) from .env -- tip: 📡 add observability to secrets: https://dotenvx.com/ops\n🔍 Testing POST /api/v1/filter_outcome_mints...\nTesting filter with 3 addresses\nFilter Outcome Mints Response: {\n  \"outcomeMints\": []\n}\n✅ Found 0 outcome mints out of 3 addresses\n📁 Saved response to responses/filter-outcome-mints.json\n"
+    },
+    {
+      "file": "event.ts",
+      "success": true,
+      "output": "[dotenv@17.2.3] injecting env (2) from .env -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops\n🎪 Testing GET /api/v1/events/{ticker}...\nUsing sample event ticker: KXNCAAF-26\nEvent Details Response: {\n  \"ticker\": \"KXNCAAF-26\",\n  \"seriesTicker\": \"KXNCAAF\",\n  \"strikeDate\": null,\n  \"strikePeriod\": null,\n  \"title\": \"College Football Championship: Miami vs Indiana\",\n  \"subtitle\": \"On Jan 19, 2026\",\n  \"imageUrl\": \"https://kalshi-public-docs.s3.amazonaws.com/series-images-webp/KXNCAA..."
+    },
+    {
+      "file": "market-by-mint.ts",
+      "success": true,
+      "output": "[dotenv@17.2.3] injecting env (2) from .env -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops\n🎯 Testing GET /api/v1/market-by-mint...\nUsing sample mint: ZUB5tvLrnch7Fz8khGuz2JezhQe3rSFLP5CMFeVipzy\nMarket by Mint Response: {\n  \"ticker\": \"PRES-2024-KH\",\n  \"eventTicker\": \"PRES-2024\",\n  \"marketType\": \"binary\",\n  \"title\": \"Will Kamala Harris or another Democrat win the Presidency?\",\n  \"subtitle\": \"\",\n  \"yesSubTitle\": \"Kamala Harris\",\n  \"noSubTitle\": \"Kamala Harris\",\n  \"openTime\": 17..."
+    },
+    {
+      "file": "market.ts",
+      "success": true,
+      "output": "[dotenv@17.2.3] injecting env (2) from .env -- tip: ⚙️  override existing env vars with { override: true }\n🎯 Testing GET /api/v1/market...\nUsing sample ticker: PRES-2024-KH\nMarket Details Response: {\n  \"ticker\": \"PRES-2024-KH\",\n  \"eventTicker\": \"PRES-2024\",\n  \"marketType\": \"binary\",\n  \"title\": \"Will Kamala Harris or another Democrat win the Presidency?\",\n  \"subtitle\": \"\",\n  \"yesSubTitle\": \"Kamala Harris\",\n  \"noSubTitle\": \"Kamala Harris\",\n  \"openTime\": 1728044100,\n  \"closeTime\": 1737392628,\n  \"e..."
+    },
+    {
+      "file": "orderbook-by-mint.ts",
+      "success": true,
+      "output": "[dotenv@17.2.3] injecting env (2) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit\n📊 Testing GET /api/v1/orderbook-by-mint...\nFetched markets for mint extraction: {\n  \"markets\": [\n    {\n      \"ticker\": \"KXBOXING-25DEC19JPAUAJOS-JPAU\",\n      \"eventTicker\": \"KXBOXING-25DEC19JPAUAJOS\",\n      \"marketType\": \"binary\",\n      \"title\": \"Jake Paul vs. Anthony Joshua Winner\",\n      \"subtitle\": \"\",\n      \"yesSubTitle\": \"Jake Paul\",\n      \"noSubTitle\": \"Jake Paul\",\n      \"..."
+    },
+    {
+      "file": "trades-by-mint.ts",
+      "success": true,
+      "output": "[dotenv@17.2.3] injecting env (2) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild\n📈 Testing GET /api/v1/trades-by-mint...\nUsing sample mint: 8JEuancqUNagRejGMG5VxgK5XdghP1wegoS7Neik3oE2\nTrades by Mint Response: {\n  \"trades\": [\n    {\n      \"tradeId\": \"cf87b94e-4b63-7cbd-ef40-32aea79e79df\",\n      \"ticker\": \"KXBOXING-25DEC19JPAUAJOS-JPAU\",\n      \"price\": 1,\n      \"count\": 1000,\n      \"yesPrice\": 100,\n      \"noPrice\": 9900,\n      \"yesPriceDollars\": \"0.0100\",\n     ..."
+    },
+    {
+      "file": "filters-by-sports.ts",
+      "success": true,
+      "output": "[dotenv@17.2.3] injecting env (2) from .env -- tip: ⚙️  suppress all logs with { quiet: true }\n🏈 Testing GET /api/v1/filters-by-sports...\nSports Filters Response: {\n  \"filtersBySports\": {\n    \"All sports\": {\n      \"competitions\": {},\n      \"scopes\": [\n        \"Games\",\n        \"Futures\",\n        \"1st Half Total\",\n        \"1st Quarter Spread\",\n        \"1st Quarter Total\",\n        \"1st Quarter Winner\",\n        \"Awards\",\n        \"Championship\",\n        \"Conference\",\n        \"Divisions\",\n        \"Dr..."
+    },
+    {
+      "file": "search.ts",
+      "success": true,
+      "output": "[dotenv@17.2.3] injecting env (2) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit\n🔍 Testing GET /api/v1/search...\nSearch Results for \"Trump\": {\n  \"events\": [\n    {\n      \"ticker\": \"KXFEDCHAIRNOM-29\",\n      \"seriesTicker\": \"KXFEDCHAIRNOM\",\n      \"strikeDate\": null,\n      \"strikePeriod\": null,\n      \"title\": \"Who will Trump nominate as Fed Chair?\",\n      \"subtitle\": \"During Trump's term\",\n      \"imageUrl\": \"https://kalshi-public-docs.s3.amazonaws.com/series-ima..."
+    }
+  ]
+}
