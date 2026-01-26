@@ -1,4 +1,25 @@
-import { Field, ObjectType, Float, Int } from '@nestjs/graphql';
+import {
+  Field,
+  ObjectType,
+  Float,
+  Int,
+  registerEnumType,
+} from '@nestjs/graphql';
+
+// GraphQL enums
+export enum DFlowEventSortGraphQL {
+  VOLUME = 'volume',
+  VOLUME_24H = 'volume24h',
+  LIQUIDITY = 'liquidity',
+  OPEN_INTEREST = 'openInterest',
+  START_DATE = 'startDate',
+}
+
+// Register enums with GraphQL
+registerEnumType(DFlowEventSortGraphQL, {
+  name: 'DFlowEventSort',
+  description: 'Available sort options for DFlow events',
+});
 
 @ObjectType()
 export class DFlowSettlementSource {

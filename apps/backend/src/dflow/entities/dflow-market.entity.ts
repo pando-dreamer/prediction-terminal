@@ -1,8 +1,11 @@
 import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
 
 export enum DFlowMarketStatus {
+  INITIALIZED = 'initialized',
   ACTIVE = 'active',
+  INACTIVE = 'inactive',
   CLOSED = 'closed',
+  DETERMINED = 'determined',
   FINALIZED = 'finalized',
   CANCELLED = 'cancelled',
 }

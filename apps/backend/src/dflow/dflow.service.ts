@@ -11,6 +11,8 @@ import {
   DFlowEventsResponse,
   DFlowEventFilter,
   DFlowSearchResponse,
+  DFlowEventSort,
+  DFlowMarketStatus,
 } from './interfaces/dflow-event.interface';
 
 interface CacheItem<T> {
@@ -31,7 +33,7 @@ export class DFlowService {
   constructor(private configService: ConfigService) {
     this.apiUrl =
       this.configService.get<string>('DFLOW_PREDICTION_ENDPOINT') ||
-      'https://prediction-markets-api.dflow.net';
+      'https://a.prediction-markets-api.dflow.net';
     this.apiKey = this.configService.get<string>('DFLOW_API_KEY') || '';
 
     if (!this.apiKey) {
@@ -325,11 +327,12 @@ export class DFlowService {
     if (filters.limit) params.append('limit', filters.limit.toString());
     if (filters.offset) params.append('offset', filters.offset.toString());
     if (filters.sort) params.append('sort', filters.sort);
-    if (filters.order) params.append('order', filters.order);
+    if (filters.status && filters.status.length > 0) {
+      filters.status.forEach(status => params.append('status', status));
+    }
     if (filters.withNestedMarkets) {
       params.append('withNestedMarkets', filters.withNestedMarkets.toString());
     }
-    if (filters.search) params.append('search', filters.search);
 
     const endpoint = `/api/v1/events${params.toString() ? `?${params.toString()}` : ''}`;
 
@@ -365,8 +368,8 @@ export class DFlowService {
   async getActiveEvents(limit: number = 20): Promise<DFlowEvent[]> {
     return this.getEvents({
       limit,
-      sort: 'volume',
-      order: 'desc',
+      sort: DFlowEventSort.VOLUME_24H,
+      status: [DFlowMarketStatus.ACTIVE],
       withNestedMarkets: true,
     });
   }

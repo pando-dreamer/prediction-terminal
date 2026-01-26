@@ -48,6 +48,15 @@ type DFlowEventMarket {
   yesSubTitle: String!
 }
 
+"""Available sort options for DFlow events"""
+enum DFlowEventSort {
+  LIQUIDITY
+  OPEN_INTEREST
+  START_DATE
+  VOLUME
+  VOLUME_24H
+}
+
 type DFlowMarketGraphQL {
   accountsJson: String
   canCloseEarly: Boolean!
@@ -83,7 +92,10 @@ enum DFlowMarketStatus {
   ACTIVE
   CANCELLED
   CLOSED
+  DETERMINED
   FINALIZED
+  INACTIVE
+  INITIALIZED
 }
 
 enum DFlowMarketType {
@@ -148,7 +160,7 @@ type Query {
   activeDFlowMarkets(limit: Float): [DFlowMarketGraphQL!]!
   activeMarkets: [Market!]!
   dflowEvent(ticker: ID!): DFlowEvent
-  dflowEvents(limit: Float, search: String, withNestedMarkets: Boolean): [DFlowEvent!]!
+  dflowEvents(limit: Float, offset: Float, search: String, sort: DFlowEventSort, status: DFlowMarketStatus, withNestedMarkets: Boolean): [DFlowEvent!]!
   dflowMarket(ticker: ID!): DFlowMarketGraphQL
   dflowMarkets(category: String, limit: Float, search: String): [DFlowMarketGraphQL!]!
   market(id: ID!): Market!

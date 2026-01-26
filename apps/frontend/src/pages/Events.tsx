@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { Link } from 'react-router-dom';
 import {
@@ -11,17 +11,24 @@ import {
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
+import { DFlowEventSort, DFlowMarketStatus } from '../lib/dflow-types';
 
-// Events query with nested markets
+// Events query with pagination and filtering support
 const GET_DFLOW_EVENTS = gql`
   query GetDFlowEvents(
     $limit: Float
+    $offset: Float
     $search: String
+    $sort: DFlowEventSort
+    $status: DFlowMarketStatus
     $withNestedMarkets: Boolean
   ) {
     dflowEvents(
       limit: $limit
+      offset: $offset
       search: $search
+      sort: $sort
+      status: $status
       withNestedMarkets: $withNestedMarkets
     ) {
       ticker
@@ -49,17 +56,19 @@ const GET_DFLOW_EVENTS = gql`
   }
 `;
 
-// Search query using the proper search API
+// Search query using the proper search API with pagination
 const SEARCH_DFLOW = gql`
   query SearchDFlow(
     $query: String!
     $limit: Float
+    $offset: Float
     $withNestedMarkets: Boolean
     $withNestedAccounts: Boolean
   ) {
     searchDFlow(
       query: $query
       limit: $limit
+      offset: $offset
       withNestedMarkets: $withNestedMarkets
       withNestedAccounts: $withNestedAccounts
     ) {
@@ -107,110 +116,145 @@ const useDebounce = <T,>(value: T, delay: number): T => {
 
 export function Events() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [allEvents, setAllEvents] = useState<any[]>([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms debounce
+  const loadingRef = useRef<HTMLDivElement>(null);
+
+  // Constants for pagination
+  const EVENTS_PER_PAGE = 20;
 
   // Use search query if there's a search term, otherwise get all events
   const shouldSearch = debouncedSearchTerm.trim().length > 0;
 
+  // Initial events query
   const {
     loading: eventsLoading,
     error: eventsError,
     data: eventsData,
+    fetchMore: fetchMoreEvents,
   } = useQuery(GET_DFLOW_EVENTS, {
     variables: {
-      limit: 20,
+      limit: EVENTS_PER_PAGE,
+      offset: 0,
+      sort: DFlowEventSort.VOLUME_24H,
+      status: DFlowMarketStatus.ACTIVE,
       withNestedMarkets: true,
     },
     skip: shouldSearch,
     errorPolicy: 'ignore',
+    onCompleted: data => {
+      if (data?.dflowEvents) {
+        setAllEvents(data.dflowEvents);
+        setHasMore(data.dflowEvents.length === EVENTS_PER_PAGE);
+      }
+    },
   });
 
+  // Search query
   const {
     loading: searchLoading,
     error: searchError,
     data: searchData,
+    fetchMore: fetchMoreSearch,
   } = useQuery(SEARCH_DFLOW, {
     variables: {
       query: debouncedSearchTerm,
-      limit: 20,
+      limit: EVENTS_PER_PAGE,
+      offset: 0,
       withNestedMarkets: true,
       withNestedAccounts: true,
     },
     skip: !shouldSearch,
     errorPolicy: 'ignore',
+    onCompleted: data => {
+      if (data?.searchDFlow) {
+        setAllEvents(data.searchDFlow);
+        setHasMore(data.searchDFlow.length === EVENTS_PER_PAGE);
+      }
+    },
   });
 
-  // Determine current loading and error states first
-  const currentLoading = shouldSearch ? searchLoading : eventsLoading;
+  // Load more events
+  const loadMore = useCallback(async () => {
+    if (loadingMore || !hasMore) return;
+
+    setLoadingMore(true);
+
+    try {
+      const currentOffset = allEvents.length;
+
+      if (shouldSearch) {
+        const { data } = await fetchMoreSearch({
+          variables: {
+            offset: currentOffset,
+          },
+        });
+
+        if (data?.searchDFlow) {
+          const newEvents = data.searchDFlow;
+          setAllEvents(prev => [...prev, ...newEvents]);
+          setHasMore(newEvents.length === EVENTS_PER_PAGE);
+        }
+      } else {
+        const { data } = await fetchMoreEvents({
+          variables: {
+            offset: currentOffset,
+          },
+        });
+
+        if (data?.dflowEvents) {
+          const newEvents = data.dflowEvents;
+          setAllEvents(prev => [...prev, ...newEvents]);
+          setHasMore(newEvents.length === EVENTS_PER_PAGE);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading more events:', error);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [
+    allEvents.length,
+    shouldSearch,
+    fetchMoreEvents,
+    fetchMoreSearch,
+    loadingMore,
+    hasMore,
+  ]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && !loadingMore && hasMore) {
+          loadMore();
+        }
+      },
+      { threshold: 1 }
+    );
+
+    if (loadingRef.current) {
+      observer.observe(loadingRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [loadMore, loadingMore, hasMore]);
+
+  // Reset events when search changes
+  useEffect(() => {
+    setAllEvents([]);
+    setHasMore(true);
+  }, [debouncedSearchTerm]);
+
+  // Determine current loading and error states
+  const currentLoading =
+    (shouldSearch ? searchLoading : eventsLoading) && allEvents.length === 0;
   const currentError = shouldSearch ? searchError : eventsError;
 
-  // Memoize the current events data
-  const currentEvents = useMemo(() => {
-    if (shouldSearch) {
-      return searchData?.searchDFlow || [];
-    }
-    const events = eventsData?.dflowEvents || [];
-
-    // Fallback mock data for testing layout if no real data is available
-    if (events.length === 0 && !currentLoading && !currentError) {
-      return [
-        {
-          ticker: 'TEST-1',
-          title: 'Pro Football Championship: Seattle vs New England',
-          subtitle: 'On Feb 8, 2026',
-          competition: 'NFL',
-          volume: 146200000,
-          volume24h: 10900000,
-          openInterest: 101400000,
-          imageUrl: null,
-          markets: [
-            {
-              ticker: 'TEST-MARKET-1',
-              title: 'Will Arizona win the 2026 Pro Football Championship?',
-              yesSubTitle: 'Arizona',
-              noSubTitle: 'Arizona',
-              status: 'finalized',
-              yesPrice: 0.45,
-              isActive: false,
-            },
-            {
-              ticker: 'TEST-MARKET-2',
-              title: 'Will Baltimore win the 2026 Pro Football Championship?',
-              yesSubTitle: 'Baltimore',
-              noSubTitle: 'Baltimore',
-              status: 'finalized',
-              yesPrice: 0.52,
-              isActive: false,
-            },
-          ],
-        },
-        {
-          ticker: 'TEST-2',
-          title: 'College Football Championship: Miami vs Indiana',
-          subtitle: 'On Jan 19, 2026',
-          competition: 'NCAAFB',
-          volume: 142100000,
-          volume24h: 7200000,
-          openInterest: 85700000,
-          imageUrl: null,
-          markets: [
-            {
-              ticker: 'TEST-MARKET-3',
-              title:
-                'Will Stanford win the College Football Playoff National Championship?',
-              yesSubTitle: 'Stanford',
-              noSubTitle: 'Stanford',
-              status: 'finalized',
-              yesPrice: 0.32,
-              isActive: false,
-            },
-          ],
-        },
-      ];
-    }
-
-    return events;
-  }, [shouldSearch, searchData, eventsData, currentLoading, currentError]);
+  // Get current events from state
+  const currentEvents = allEvents;
 
   const formatVolume = (volume: number) => {
     if (volume >= 1000000) {
@@ -285,44 +329,76 @@ export function Events() {
           {event.markets && event.markets.length > 0 && (
             <div className="space-y-2">
               <h4 className="text-sm font-medium text-muted-foreground">
-                Top Markets:
+                Top Active Markets:
               </h4>
-              {event.markets.slice(0, 3).map((market: any) => (
-                <div
-                  key={market.ticker}
-                  className="flex justify-between items-start p-2 bg-muted/30 rounded-md gap-2"
-                >
-                  <div className="flex-1 min-w-0">
-                    <p
-                      className="text-sm font-medium line-clamp-2 leading-tight"
-                      title={market.title}
-                    >
-                      {market.title}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1 truncate">
-                      YES: {market.yesSubTitle} | NO: {market.noSubTitle}
-                    </p>
-                  </div>
-                  <div className="text-right ml-2 flex-shrink-0">
-                    {market.yesPrice && (
-                      <p className="text-sm font-medium text-green-600">
-                        ${market.yesPrice.toFixed(2)}
-                      </p>
-                    )}
-                    <Badge
-                      variant={market.isActive ? 'default' : 'secondary'}
-                      className="text-xs mt-1"
-                    >
-                      {market.status}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
-              {event.markets.length > 3 && (
-                <p className="text-xs text-muted-foreground text-center">
-                  +{event.markets.length - 3} more markets
-                </p>
-              )}
+              {(() => {
+                // Filter only active markets and sort by volume (highest first)
+                const activeMarkets = event.markets
+                  .filter(
+                    (market: any) =>
+                      market.isActive && market.status === 'active'
+                  )
+                  .sort((a: any, b: any) => (b.volume || 0) - (a.volume || 0))
+                  .slice(0, 3);
+
+                return activeMarkets.length > 0 ? (
+                  <>
+                    {activeMarkets.map((market: any) => (
+                      <div
+                        key={market.ticker}
+                        className="flex justify-between items-start p-2 bg-muted/30 rounded-md gap-2"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p
+                            className="text-sm font-medium line-clamp-2 leading-tight"
+                            title={market.title}
+                          >
+                            {market.title}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1 truncate">
+                            YES: {market.yesSubTitle} | NO: {market.noSubTitle}
+                          </p>
+                          {market.volume && (
+                            <p className="text-xs text-blue-600 mt-1">
+                              Vol: {formatVolume(market.volume)}
+                            </p>
+                          )}
+                        </div>
+                        <div className="text-right ml-2 flex-shrink-0">
+                          {market.yesPrice && (
+                            <p className="text-sm font-medium text-green-600">
+                              ${market.yesPrice.toFixed(2)}
+                            </p>
+                          )}
+                          <Badge
+                            variant={market.isActive ? 'default' : 'secondary'}
+                            className="text-xs mt-1"
+                          >
+                            {market.status}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                    {(() => {
+                      const totalActiveMarkets = event.markets.filter(
+                        (market: any) =>
+                          market.isActive && market.status === 'active'
+                      ).length;
+                      return (
+                        totalActiveMarkets > 3 && (
+                          <p className="text-xs text-muted-foreground text-center">
+                            +{totalActiveMarkets - 3} more active markets
+                          </p>
+                        )
+                      );
+                    })()}
+                  </>
+                ) : (
+                  <p className="text-xs text-muted-foreground text-center py-2">
+                    No active markets available
+                  </p>
+                );
+              })()}
             </div>
           )}
 
@@ -338,20 +414,17 @@ export function Events() {
 
   if (currentLoading) return <div>Loading events...</div>;
 
-  // Debug logging
-  console.log('Events Debug:', {
-    shouldSearch,
-    debouncedSearchTerm,
-    currentEvents: currentEvents?.length,
-    eventsData,
-    searchData,
-    currentError,
-  });
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Prediction Events</h1>
+        <div>
+          <h1 className="text-3xl font-bold">Prediction Events</h1>
+          {!shouldSearch && (
+            <p className="text-muted-foreground mt-1">
+              Active events sorted by 24h volume
+            </p>
+          )}
+        </div>
         <Button>Create Market</Button>
       </div>
 
@@ -392,14 +465,35 @@ export function Events() {
 
       {/* Events grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Debug: Show event count */}
-        {currentEvents.length > 0 && (
-          <div className="col-span-full text-sm text-blue-600 bg-blue-50 p-2 rounded">
-            Rendering {currentEvents.length} events
-          </div>
-        )}
         {currentEvents.map(renderEventCard)}
       </div>
+
+      {/* Infinite scroll loading indicator */}
+      {hasMore && !currentLoading && currentEvents.length > 0 && (
+        <div ref={loadingRef} className="text-center py-8">
+          {loadingMore ? (
+            <div className="flex items-center justify-center gap-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+              <span className="text-muted-foreground">
+                Loading more events...
+              </span>
+            </div>
+          ) : (
+            <div className="text-muted-foreground text-sm">
+              {currentEvents.length} events loaded • Scroll for more
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Status indicators */}
+      {currentEvents.length > 0 && !hasMore && (
+        <div className="text-center py-4">
+          <p className="text-muted-foreground text-sm">
+            All {currentEvents.length} events loaded ✨
+          </p>
+        </div>
+      )}
 
       {/* Empty state */}
       {currentEvents.length === 0 && !currentLoading && !currentError && (
@@ -409,9 +503,6 @@ export function Events() {
               ? `No events found for "${debouncedSearchTerm}"`
               : 'No active events found.'}
           </p>
-          {!shouldSearch && (
-            <Button className="mt-4">Create the first event</Button>
-          )}
         </div>
       )}
     </div>

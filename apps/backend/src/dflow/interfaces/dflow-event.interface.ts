@@ -1,3 +1,17 @@
+// Import the market status from the market entity to avoid duplication
+import { DFlowMarketStatus } from '../entities/dflow-market.entity';
+
+export enum DFlowEventSort {
+  VOLUME = 'volume',
+  VOLUME_24H = 'volume24h',
+  LIQUIDITY = 'liquidity',
+  OPEN_INTEREST = 'openInterest',
+  START_DATE = 'startDate',
+}
+
+// Re-export DFlowMarketStatus for convenience
+export { DFlowMarketStatus };
+
 export interface DFlowEvent {
   ticker: string;
   seriesTicker: string;
@@ -44,9 +58,8 @@ export interface DFlowEventsResponse {
 export interface DFlowEventFilter {
   limit?: number;
   offset?: number;
-  sort?: string;
-  order?: 'asc' | 'desc';
-  status?: string[];
+  sort?: DFlowEventSort;
+  status?: DFlowMarketStatus[];
   search?: string;
   category?: string;
   withNestedMarkets?: boolean;

@@ -1,9 +1,19 @@
 import { Resolver, Query, Args, ID } from '@nestjs/graphql';
 import { DFlowService } from './dflow.service';
-import { DFlowMarketGraphQL } from './entities/dflow-market.entity';
-import { DFlowEvent } from './entities/dflow-event.entity';
+import {
+  DFlowMarketGraphQL,
+  DFlowMarketStatus,
+} from './entities/dflow-market.entity';
+import {
+  DFlowEvent,
+  DFlowEventSortGraphQL,
+} from './entities/dflow-event.entity';
 import { DFlowMarket } from './interfaces/dflow-market.interface';
-import { DFlowEvent as IDFlowEvent } from './interfaces/dflow-event.interface';
+import {
+  DFlowEvent as IDFlowEvent,
+  DFlowEventSort,
+  DFlowMarketStatus as IMarketStatus,
+} from './interfaces/dflow-event.interface';
 
 @Resolver(() => DFlowMarketGraphQL)
 export class DFlowResolver {
@@ -56,17 +66,24 @@ export class DFlowResolver {
   @Query(() => [DFlowEvent], { name: 'dflowEvents' })
   async findAllDFlowEvents(
     @Args('limit', { type: () => Number, nullable: true }) limit?: number,
+    @Args('offset', { type: () => Number, nullable: true }) offset?: number,
     @Args('search', { type: () => String, nullable: true }) search?: string,
+    @Args('sort', { type: () => DFlowEventSortGraphQL, nullable: true })
+    sort?: DFlowEventSortGraphQL,
+    @Args('status', { type: () => DFlowMarketStatus, nullable: true })
+    status?: DFlowMarketStatus,
     @Args('withNestedMarkets', { type: () => Boolean, nullable: true })
     withNestedMarkets?: boolean
   ): Promise<DFlowEvent[]> {
     const events = await this.dflowService.getEvents({
       limit: limit || 20,
+      offset: offset || 0,
       search,
+      status: status ? [status] : undefined,
+      sort: (sort as unknown as DFlowEventSort) || DFlowEventSort.VOLUME_24H,
       withNestedMarkets: withNestedMarkets ?? true,
-      sort: 'volume',
-      order: 'desc',
     });
+
     return events.map(event => this.transformEventToGraphQL(event));
   }
 
