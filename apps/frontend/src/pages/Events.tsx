@@ -290,17 +290,20 @@ export function Events() {
               {event.markets.slice(0, 3).map((market: any) => (
                 <div
                   key={market.ticker}
-                  className="flex justify-between items-center p-2 bg-muted/30 rounded-md"
+                  className="flex justify-between items-start p-2 bg-muted/30 rounded-md gap-2"
                 >
-                  <div className="flex-1">
-                    <p className="text-sm font-medium truncate">
+                  <div className="flex-1 min-w-0">
+                    <p
+                      className="text-sm font-medium line-clamp-2 leading-tight"
+                      title={market.title}
+                    >
                       {market.title}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-muted-foreground mt-1 truncate">
                       YES: {market.yesSubTitle} | NO: {market.noSubTitle}
                     </p>
                   </div>
-                  <div className="text-right ml-2">
+                  <div className="text-right ml-2 flex-shrink-0">
                     {market.yesPrice && (
                       <p className="text-sm font-medium text-green-600">
                         ${market.yesPrice.toFixed(2)}
@@ -308,7 +311,7 @@ export function Events() {
                     )}
                     <Badge
                       variant={market.isActive ? 'default' : 'secondary'}
-                      className="text-xs"
+                      className="text-xs mt-1"
                     >
                       {market.status}
                     </Badge>
