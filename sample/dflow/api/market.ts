@@ -10,7 +10,7 @@ const main = async () => {
   try {
     // First get a market ticker from markets list
     const marketsResponse = await fetch(
-      `${process.env.DFLOW_PREDITION_ENDPOINT}/api/v1/markets?limit=5`,
+      `${process.env.DFLOW_PREDITION_ENDPOINT}/api/v1/markets?limit=5&status=active`,
       {
         method: 'GET',
         headers: {
