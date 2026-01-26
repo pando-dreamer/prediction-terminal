@@ -1,0 +1,127 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateMarketInput {
+  category: MarketCategory!
+  currentPrice: Float
+  description: String!
+  expiryDate: DateTime!
+  title: String!
+}
+
+type DFlowMarketGraphQL {
+  accountsJson: String
+  canCloseEarly: Boolean!
+  category: String
+  closeTime: Float!
+  earlyCloseCondition: String
+  eventTicker: String!
+  expirationTime: Float!
+  isActive: Boolean!
+  marketType: DFlowMarketType!
+  noAsk: Float
+  noBid: Float
+  noPrice: Float
+  noSubTitle: String!
+  openInterest: Float!
+  openTime: Float!
+  result: String
+  rulesPrimary: String!
+  rulesSecondary: String
+  status: DFlowMarketStatus!
+  subtitle: String
+  ticker: ID!
+  timeUntilClose: Float!
+  title: String!
+  volume: Float!
+  yesAsk: Float
+  yesBid: Float
+  yesPrice: Float
+  yesSubTitle: String!
+}
+
+enum DFlowMarketStatus {
+  ACTIVE
+  CANCELLED
+  CLOSED
+  FINALIZED
+}
+
+enum DFlowMarketType {
+  BINARY
+  CATEGORICAL
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type Market {
+  category: MarketCategory!
+  createdAt: DateTime!
+  currentPrice: Float!
+  description: String!
+  expiryDate: DateTime!
+  id: ID!
+  outcome: Boolean
+  resolvedAt: DateTime
+  status: MarketStatus!
+  title: String!
+  totalLiquidity: Float!
+  totalVolume: Float!
+  updatedAt: DateTime!
+}
+
+enum MarketCategory {
+  CRYPTO
+  ENTERTAINMENT
+  OTHER
+  POLITICS
+  SPORTS
+}
+
+enum MarketStatus {
+  ACTIVE
+  CLOSED
+  RESOLVED
+}
+
+type Mutation {
+  createMarket(createMarketInput: CreateMarketInput!): Market!
+  login(loginInput: LoginInput!): User!
+  register(registerInput: RegisterInput!): User!
+  resolveMarket(id: ID!, outcome: Boolean!): Market!
+}
+
+type Query {
+  activeDFlowMarkets(limit: Float): [DFlowMarketGraphQL!]!
+  activeMarkets: [Market!]!
+  dflowMarket(ticker: ID!): DFlowMarketGraphQL
+  dflowMarkets(category: String, limit: Float, search: String): [DFlowMarketGraphQL!]!
+  market(id: ID!): Market!
+  markets: [Market!]!
+  searchDFlowMarkets(limit: Float, query: String!): [DFlowMarketGraphQL!]!
+  user(id: ID!): User!
+}
+
+input RegisterInput {
+  email: String!
+  password: String!
+  username: String!
+}
+
+type User {
+  balance: Float!
+  createdAt: DateTime!
+  email: String!
+  id: ID!
+  updatedAt: DateTime!
+  username: String!
+}
