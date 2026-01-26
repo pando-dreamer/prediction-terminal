@@ -3,10 +3,7 @@
   "frequency": "one_off",
   "title": "Album record Justin Bieber ",
   "category": "Entertainment",
-  "tags": [
-    "Music",
-    "Music charts"
-  ],
+  "tags": ["Music", "Music charts"],
   "settlementSources": [
     {
       "name": "Billboard",

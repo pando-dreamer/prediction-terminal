@@ -8,13 +8,7 @@
       "Natural disasters",
       "Hurricanes"
     ],
-    "Companies": [
-      "KPIs",
-      "Product launches",
-      "Elon Musk",
-      "CEOs",
-      "Layoffs"
-    ],
+    "Companies": ["KPIs", "Product launches", "Elon Musk", "CEOs", "Layoffs"],
     "Crypto": [
       "BTC",
       "15 min",
@@ -34,9 +28,7 @@
       "Housing",
       "Mortgages"
     ],
-    "Elections": [
-      "International elections"
-    ],
+    "Elections": ["International elections"],
     "Entertainment": [
       "Awards",
       "Music",
@@ -68,11 +60,7 @@
       "Local",
       "Recurring"
     ],
-    "Science and Technology": [
-      "AI",
-      "Space",
-      "Energy"
-    ],
+    "Science and Technology": ["AI", "Space", "Energy"],
     "Social": null,
     "Sports": [
       "Soccer",

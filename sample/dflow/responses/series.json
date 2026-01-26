@@ -5,9 +5,7 @@
       "frequency": "custom",
       "title": "House winner",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -36,9 +34,7 @@
       "frequency": "custom",
       "title": "North Carolina Democratic Senate nominee",
       "category": "Politics",
-      "tags": [
-        "Primaries"
-      ],
+      "tags": ["Primaries"],
       "settlementSources": [
         {
           "name": "Democratic Party",
@@ -61,9 +57,7 @@
       "frequency": "custom",
       "title": "Michigan Governor",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "US State Governments",
@@ -98,9 +92,7 @@
       "frequency": "custom",
       "title": "New York Governor Republican nominee",
       "category": "Politics",
-      "tags": [
-        "Primaries"
-      ],
+      "tags": ["Primaries"],
       "settlementSources": [
         {
           "name": "Republican Party",
@@ -134,9 +126,7 @@
       "frequency": "one_off",
       "title": "Senate NY",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -170,10 +160,7 @@
       "frequency": "custom",
       "title": "Supreme Court makeup",
       "category": "Politics",
-      "tags": [
-        "SCOTUS & courts",
-        "Trump"
-      ],
+      "tags": ["SCOTUS & courts", "Trump"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -192,9 +179,7 @@
       "frequency": "annual",
       "title": "Trump vetoes",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -217,10 +202,7 @@
       "frequency": "weekly",
       "title": "Epstein documents",
       "category": "Politics",
-      "tags": [
-        "Recurring",
-        "Trump"
-      ],
+      "tags": ["Recurring", "Trump"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -243,9 +225,7 @@
       "frequency": "one_off",
       "title": "Trump out as President?",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -316,9 +296,7 @@
       "frequency": "annual",
       "title": "Who will be charged with a federal crime",
       "category": "Politics",
-      "tags": [
-        "SCOTUS & courts"
-      ],
+      "tags": ["SCOTUS & courts"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -401,9 +379,7 @@
       "frequency": "custom",
       "title": "Trump removed",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "U.S. Senate",
@@ -445,9 +421,7 @@
       "frequency": "custom",
       "title": "Senate race Utah",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -481,9 +455,7 @@
       "frequency": "one_off",
       "title": "Will a member of the Trump administration leave over the Epstein files?",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -586,9 +558,7 @@
       "frequency": "one_off",
       "title": "Who will attend a White House Press Briefing?",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -671,9 +641,7 @@
       "frequency": "one_off",
       "title": "Will NYC buses become free before 2027?",
       "category": "Politics",
-      "tags": [
-        "Local"
-      ],
+      "tags": ["Local"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -768,10 +736,7 @@
       "frequency": "custom",
       "title": "Countries FTAs",
       "category": "Politics",
-      "tags": [
-        "International",
-        "Trump"
-      ],
+      "tags": ["International", "Trump"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -790,9 +755,7 @@
       "frequency": "custom",
       "title": "North Carolina Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -826,9 +789,7 @@
       "frequency": "custom",
       "title": "Arizona Governor",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "US State Governments",
@@ -863,9 +824,7 @@
       "frequency": "custom",
       "title": "Ohio Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -899,9 +858,7 @@
       "frequency": "custom",
       "title": "51st state ",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -920,9 +877,7 @@
       "frequency": "custom",
       "title": "Gold cards sold",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -997,9 +952,7 @@
       "frequency": "custom",
       "title": "Idaho Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -1033,10 +986,7 @@
       "frequency": "custom",
       "title": "Corporate tax cut",
       "category": "Politics",
-      "tags": [
-        "Congress",
-        "Trump"
-      ],
+      "tags": ["Congress", "Trump"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -1055,9 +1005,7 @@
       "frequency": "one_off",
       "title": "Gambling Repeal",
       "category": "Politics",
-      "tags": [
-        "Congress"
-      ],
+      "tags": ["Congress"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -1076,10 +1024,7 @@
       "frequency": "one_off",
       "title": "Bitcoin Reserve",
       "category": "Politics",
-      "tags": [
-        "BTC",
-        "Trump"
-      ],
+      "tags": ["BTC", "Trump"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -1102,9 +1047,7 @@
       "frequency": "custom",
       "title": "Maine Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -1138,9 +1081,7 @@
       "frequency": "custom",
       "title": "Syria recognition",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -1159,9 +1100,7 @@
       "frequency": "one_off",
       "title": "Senate VT",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -1214,9 +1153,7 @@
       "frequency": "annual",
       "title": "What countries will Trump visit this year?",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "CNBC",
@@ -1299,9 +1236,7 @@
       "frequency": "custom",
       "title": "Rhode Island Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -1335,9 +1270,7 @@
       "frequency": "one_off",
       "title": "Ali Khamenei out?",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -1408,9 +1341,7 @@
       "frequency": "custom",
       "title": "Nebraska Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -1444,9 +1375,7 @@
       "frequency": "one_off",
       "title": "Fed governor nominee",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -1465,9 +1394,7 @@
       "frequency": "custom",
       "title": "H1B cap lifted",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -1486,10 +1413,7 @@
       "frequency": "monthly",
       "title": "Bills signed monthly",
       "category": "Politics",
-      "tags": [
-        "Recurring",
-        "Trump"
-      ],
+      "tags": ["Recurring", "Trump"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -1531,9 +1455,7 @@
       "frequency": "custom",
       "title": "Special Senate election in Florida",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -1567,9 +1489,7 @@
       "frequency": "custom",
       "title": "Crypto market structure",
       "category": "Politics",
-      "tags": [
-        "Congress"
-      ],
+      "tags": ["Congress"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -1588,9 +1508,7 @@
       "frequency": "custom",
       "title": "Nevada Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -1624,9 +1542,7 @@
       "frequency": "custom",
       "title": "Kentucky Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -1660,9 +1576,7 @@
       "frequency": "custom",
       "title": "Tariffs case",
       "category": "Politics",
-      "tags": [
-        "SCOTUS & courts"
-      ],
+      "tags": ["SCOTUS & courts"],
       "settlementSources": [
         {
           "name": "Supreme Court",
@@ -1681,9 +1595,7 @@
       "frequency": "one_off",
       "title": "Who will be Khamenei's successor?",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -1702,9 +1614,7 @@
       "frequency": "custom",
       "title": "Texas Democratic Senate nominee",
       "category": "Politics",
-      "tags": [
-        "Primaries"
-      ],
+      "tags": ["Primaries"],
       "settlementSources": [
         {
           "name": "Democratic Party",
@@ -1754,9 +1664,7 @@
       "frequency": "custom",
       "title": "AOC Senate",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -1850,9 +1758,7 @@
       "frequency": "one_off",
       "title": "ILD",
       "category": "Politics",
-      "tags": [
-        "Primaries"
-      ],
+      "tags": ["Primaries"],
       "settlementSources": [
         {
           "name": "Democratic Party",
@@ -1875,9 +1781,7 @@
       "frequency": "one_off",
       "title": "CA senate",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -1911,9 +1815,7 @@
       "frequency": "one_off",
       "title": "obamacare subsidy extend",
       "category": "Politics",
-      "tags": [
-        "Congress"
-      ],
+      "tags": ["Congress"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -1932,9 +1834,7 @@
       "frequency": "one_off",
       "title": "Senate WA",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -1968,9 +1868,7 @@
       "frequency": "custom",
       "title": "North Dakota Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -2004,9 +1902,7 @@
       "frequency": "custom",
       "title": "Arizona Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -2040,9 +1936,7 @@
       "frequency": "custom",
       "title": "Mississippi Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -2076,9 +1970,7 @@
       "frequency": "custom",
       "title": "DEPORTCOUNT",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "ICE",
@@ -2097,9 +1989,7 @@
       "frequency": "custom",
       "title": "California Governor's race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -2170,9 +2060,7 @@
       "frequency": "one_off",
       "title": "ACA Credit extension",
       "category": "Politics",
-      "tags": [
-        "Congress"
-      ],
+      "tags": ["Congress"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -2191,9 +2079,7 @@
       "frequency": "one_off",
       "title": "Will lisa cook leave office",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -2280,9 +2166,7 @@
       "frequency": "one_off",
       "title": "Will the appeals court reverse the YPF judgment against Argentina?",
       "category": "Politics",
-      "tags": [
-        "SCOTUS & courts"
-      ],
+      "tags": ["SCOTUS & courts"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -2349,10 +2233,7 @@
       "frequency": "one_off",
       "title": "President RCP approval rating at end of year",
       "category": "Politics",
-      "tags": [
-        "Recurring",
-        "Trump"
-      ],
+      "tags": ["Recurring", "Trump"],
       "settlementSources": [
         {
           "name": "RealClearPolitics",
@@ -2466,9 +2347,7 @@
       "frequency": "custom",
       "title": "Wisconsin Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -2502,9 +2381,7 @@
       "frequency": "one_off",
       "title": "Tim Walz out as Governor of Minnesota?",
       "category": "Politics",
-      "tags": [
-        "Local"
-      ],
+      "tags": ["Local"],
       "settlementSources": [
         {
           "name": "Bloomberg News",
@@ -2571,9 +2448,7 @@
       "frequency": "custom",
       "title": "Kansas Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -2607,9 +2482,7 @@
       "frequency": "custom",
       "title": "Tennessee Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -2643,9 +2516,7 @@
       "frequency": "custom",
       "title": "South Dakota Governor",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "US State Governments",
@@ -2680,9 +2551,7 @@
       "frequency": "custom",
       "title": "Kansas Governor",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "US State Governments",
@@ -2717,9 +2586,7 @@
       "frequency": "custom",
       "title": "Greenland independence",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -2738,9 +2605,7 @@
       "frequency": "custom",
       "title": "Powell leaving",
       "category": "Politics",
-      "tags": [
-        "Fed"
-      ],
+      "tags": ["Fed"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -2858,9 +2723,7 @@
       "frequency": "custom",
       "title": "Virginia Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -2894,9 +2757,7 @@
       "frequency": "one_off",
       "title": "Who will visit Venezuela?",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "CNBC",
@@ -2979,9 +2840,7 @@
       "frequency": "one_off",
       "title": "Elon Win vs Open AI",
       "category": "Politics",
-      "tags": [
-        "SCOTUS & courts"
-      ],
+      "tags": ["SCOTUS & courts"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -3084,9 +2943,7 @@
       "frequency": "custom",
       "title": "Special Senate election in Ohio",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -3120,9 +2977,7 @@
       "frequency": "custom",
       "title": "Epstein list",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -3213,9 +3068,7 @@
       "frequency": "custom",
       "title": "Georgia Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -3249,9 +3102,7 @@
       "frequency": "one_off",
       "title": "Will there be a blue tsunami?",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "Bureau of Labor Statistics",
@@ -3278,9 +3129,7 @@
       "frequency": "one_off",
       "title": "Leader Out",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -3351,10 +3200,7 @@
       "frequency": "custom",
       "title": "PRC FTA",
       "category": "Politics",
-      "tags": [
-        "International",
-        "Trump"
-      ],
+      "tags": ["International", "Trump"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -3373,9 +3219,7 @@
       "frequency": "one_off",
       "title": "Trump attend another UFC event this year",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -3458,9 +3302,7 @@
       "frequency": "one_off",
       "title": "Will anyone be charged in the Minnesota daycare fraud scandal?",
       "category": "Politics",
-      "tags": [
-        "Local"
-      ],
+      "tags": ["Local"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -3543,9 +3385,7 @@
       "frequency": "one_off",
       "title": "HI senate",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -3579,9 +3419,7 @@
       "frequency": "one_off",
       "title": "Spain bans bullfighting",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "ABC News",
@@ -3688,9 +3526,7 @@
       "frequency": "custom",
       "title": "Candidates in Brazilian first round",
       "category": "Politics",
-      "tags": [
-        "Foreign Elections"
-      ],
+      "tags": ["Foreign Elections"],
       "settlementSources": [
         {
           "name": "Brazilian government",
@@ -3709,9 +3545,7 @@
       "frequency": "one_off",
       "title": "Democratic Senate seats",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -3745,9 +3579,7 @@
       "frequency": "one_off",
       "title": "Trump Out As President",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -3818,9 +3650,7 @@
       "frequency": "custom",
       "title": "Illinois Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -3854,9 +3684,7 @@
       "frequency": "custom",
       "title": "ACA repeal",
       "category": "Politics",
-      "tags": [
-        "Congress"
-      ],
+      "tags": ["Congress"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -3875,9 +3703,7 @@
       "frequency": "custom",
       "title": "Oregon Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -3911,9 +3737,7 @@
       "frequency": "custom",
       "title": "US mining Bitcoin",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -3992,9 +3816,7 @@
       "frequency": "custom",
       "title": "Texas Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -4028,9 +3850,7 @@
       "frequency": "one_off",
       "title": "Who will leave the Trump administration",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "Bloomberg News",
@@ -4097,9 +3917,7 @@
       "frequency": "custom",
       "title": "Senate winner",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -4128,9 +3946,7 @@
       "frequency": "custom",
       "title": "Fluoride recommendation",
       "category": "Politics",
-      "tags": [
-        "Health Tech"
-      ],
+      "tags": ["Health Tech"],
       "settlementSources": [
         {
           "name": "US Public Health Service",
@@ -4149,9 +3965,7 @@
       "frequency": "custom",
       "title": "Maryland Governor",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "US State Governments",
@@ -4186,10 +4000,7 @@
       "frequency": "one_off",
       "title": "AI regulation",
       "category": "Politics",
-      "tags": [
-        "AI",
-        "Congress"
-      ],
+      "tags": ["AI", "Congress"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -4208,10 +4019,7 @@
       "frequency": "custom",
       "title": "Greenland acquisition",
       "category": "Politics",
-      "tags": [
-        "International",
-        "Trump"
-      ],
+      "tags": ["International", "Trump"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -4230,9 +4038,7 @@
       "frequency": "one_off",
       "title": "Minnesota Democratic nominee for Governor",
       "category": "Politics",
-      "tags": [
-        "Primaries"
-      ],
+      "tags": ["Primaries"],
       "settlementSources": [
         {
           "name": "Republican Party",
@@ -4266,9 +4072,7 @@
       "frequency": "custom",
       "title": "New Jersey Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -4302,9 +4106,7 @@
       "frequency": "custom",
       "title": "DOE eliminated",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -4331,9 +4133,7 @@
       "frequency": "custom",
       "title": "New York Governor",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "US State Governments",
@@ -4427,9 +4227,7 @@
       "frequency": "custom",
       "title": "Democratic Primary winner",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "Democratic Party",
@@ -4468,9 +4266,7 @@
       "frequency": "one_off",
       "title": "Zelensky and Putin in Trump's term",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -4588,9 +4384,7 @@
       "frequency": "custom",
       "title": "Missouri Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -4624,9 +4418,7 @@
       "frequency": "custom",
       "title": "Michigan Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -4660,9 +4452,7 @@
       "frequency": "custom",
       "title": "Massachusetts Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -4719,9 +4509,7 @@
       "frequency": "custom",
       "title": "US democratic backsliding",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "The Economist",
@@ -4740,9 +4528,7 @@
       "frequency": "custom",
       "title": "New Pope",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -4813,9 +4599,7 @@
       "frequency": "custom",
       "title": "Abraham Accord Saudi Arabia",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -4834,9 +4618,7 @@
       "frequency": "custom",
       "title": "South Dakota Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -4870,10 +4652,7 @@
       "frequency": "custom",
       "title": "SCOTUS confirmations",
       "category": "Politics",
-      "tags": [
-        "SCOTUS & courts",
-        "Trump"
-      ],
+      "tags": ["SCOTUS & courts", "Trump"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -4892,10 +4671,7 @@
       "frequency": "one_off",
       "title": "october right sweep",
       "category": "Politics",
-      "tags": [
-        "Foreign Elections",
-        "International"
-      ],
+      "tags": ["Foreign Elections", "International"],
       "settlementSources": [
         {
           "name": "Bloomberg",
@@ -4930,9 +4706,7 @@
       "frequency": "custom",
       "title": "New Hampshire Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -4966,9 +4740,7 @@
       "frequency": "one_off",
       "title": "ARRESTS",
       "category": "Politics",
-      "tags": [
-        "SCOTUS & courts"
-      ],
+      "tags": ["SCOTUS & courts"],
       "settlementSources": [
         {
           "name": "CNBC",
@@ -5035,9 +4807,7 @@
       "frequency": "one_off",
       "title": "Will the California billionaire wealth tax initiative pass?",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "ABC News",
@@ -5124,10 +4894,7 @@
       "frequency": "weekly",
       "title": "President RCP approval rating this week",
       "category": "Politics",
-      "tags": [
-        "Recurring",
-        "Trump"
-      ],
+      "tags": ["Recurring", "Trump"],
       "settlementSources": [
         {
           "name": "RealClearPolitics",
@@ -5146,10 +4913,7 @@
       "frequency": "custom",
       "title": "Tariff refund",
       "category": "Politics",
-      "tags": [
-        "SCOTUS & courts",
-        "Trump"
-      ],
+      "tags": ["SCOTUS & courts", "Trump"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -5216,9 +4980,7 @@
       "frequency": "custom",
       "title": "California Governor",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "US State Governments",
@@ -5253,9 +5015,7 @@
       "frequency": "custom",
       "title": "Florida Governor Republican nominee",
       "category": "Politics",
-      "tags": [
-        "Primaries"
-      ],
+      "tags": ["Primaries"],
       "settlementSources": [
         {
           "name": "Republican Party",
@@ -5289,9 +5049,7 @@
       "frequency": "custom",
       "title": "Arkansas Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -5325,9 +5083,7 @@
       "frequency": "one_off",
       "title": "Trump resign",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "Office of the Presidency",
@@ -5389,9 +5145,7 @@
       "frequency": "custom",
       "title": "Trump pardons",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "New York Times",
@@ -5414,9 +5168,7 @@
       "frequency": "custom",
       "title": "Republican Primary winner",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "Democratic Party",
@@ -5455,9 +5207,7 @@
       "frequency": "custom",
       "title": "New Mexico Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -5491,9 +5241,7 @@
       "frequency": "one_off",
       "title": "jerome powell leave as Fed governor",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -5580,9 +5328,7 @@
       "frequency": "custom",
       "title": "Boycott WC",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -5649,9 +5395,7 @@
       "frequency": "custom",
       "title": "Tennessee Governor",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "US State Governments",
@@ -5686,9 +5430,7 @@
       "frequency": "custom",
       "title": "Party power",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -5723,9 +5465,7 @@
       "frequency": "custom",
       "title": "Wyoming Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -5782,9 +5522,7 @@
       "frequency": "custom",
       "title": "MJ schedule",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -5859,9 +5597,7 @@
       "frequency": "custom",
       "title": "Alaska Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -5895,10 +5631,7 @@
       "frequency": "one_off",
       "title": "parties in next dutch coalition",
       "category": "Politics",
-      "tags": [
-        "Foreign Elections",
-        "International"
-      ],
+      "tags": ["Foreign Elections", "International"],
       "settlementSources": [
         {
           "name": "Politico",
@@ -5917,9 +5650,7 @@
       "frequency": "custom",
       "title": "Next Cabinet memeber out",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -5942,10 +5673,7 @@
       "frequency": "custom",
       "title": "22nd Amendment",
       "category": "Politics",
-      "tags": [
-        "Trump",
-        "US Elections"
-      ],
+      "tags": ["Trump", "US Elections"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -5968,9 +5696,7 @@
       "frequency": "one_off",
       "title": "Will Reza Pahlavi enter Iran before September?",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "CNBC",
@@ -6053,9 +5779,7 @@
       "frequency": "custom",
       "title": "Deleware Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -6089,9 +5813,7 @@
       "frequency": "custom",
       "title": "Florida Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -6125,9 +5847,7 @@
       "frequency": "custom",
       "title": "Iowa Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -6161,9 +5881,7 @@
       "frequency": "one_off",
       "title": "Alabama",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -6197,9 +5915,7 @@
       "frequency": "custom",
       "title": "Recognize Reza Pahlavi",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -6302,9 +6018,7 @@
       "frequency": "custom",
       "title": "Montana Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -6338,9 +6052,7 @@
       "frequency": "custom",
       "title": "Minnesota Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -6374,9 +6086,7 @@
       "frequency": "annual",
       "title": "Cabinet member leaving",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "White House",
@@ -6395,9 +6105,7 @@
       "frequency": "one_off",
       "title": "Kamala gov ",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -6468,9 +6176,7 @@
       "frequency": "one_off",
       "title": "Will Taiwan be issued a Level 4 travel warning?",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "the U",
@@ -6556,9 +6262,7 @@
       "frequency": "annual",
       "title": "Who will visit Mar-a-Lago this year? ",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -6577,9 +6281,7 @@
       "frequency": "one_off",
       "title": "House MI 4",
       "category": "Politics",
-      "tags": [
-        "House"
-      ],
+      "tags": ["House"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -6614,9 +6316,7 @@
       "frequency": "custom",
       "title": "Kim Jong-Un presidential visit",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -6635,9 +6335,7 @@
       "frequency": "one_off",
       "title": "Who will be the head of state of Venezuela on date?",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -6736,9 +6434,7 @@
       "frequency": "custom",
       "title": "Fed ended",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -6761,9 +6457,7 @@
       "frequency": "custom",
       "title": "Next UK PM",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -6782,9 +6476,7 @@
       "frequency": "custom",
       "title": "Oklahoma Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -6818,9 +6510,7 @@
       "frequency": "one_off",
       "title": "TN 7 special",
       "category": "Politics",
-      "tags": [
-        "House"
-      ],
+      "tags": ["House"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -6855,9 +6545,7 @@
       "frequency": "annual",
       "title": "World leaders out this year?",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -6944,9 +6632,7 @@
       "frequency": "custom",
       "title": "Cultivated meat ban",
       "category": "Politics",
-      "tags": [
-        "Health Tech"
-      ],
+      "tags": ["Health Tech"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -6969,9 +6655,7 @@
       "frequency": "custom",
       "title": "Colorado Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -7005,9 +6689,7 @@
       "frequency": "custom",
       "title": "ATF Director",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -7026,9 +6708,7 @@
       "frequency": "custom",
       "title": "Honduras president",
       "category": "Politics",
-      "tags": [
-        "Foreign Elections"
-      ],
+      "tags": ["Foreign Elections"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -7099,9 +6779,7 @@
       "frequency": "one_off",
       "title": "Vote on Trump tariffs case",
       "category": "Politics",
-      "tags": [
-        "SCOTUS & courts"
-      ],
+      "tags": ["SCOTUS & courts"],
       "settlementSources": [
         {
           "name": "Supreme Court",
@@ -7120,9 +6798,7 @@
       "frequency": "annual",
       "title": "Who will Trump meet this year?",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "ABC News",
@@ -7205,9 +6881,7 @@
       "frequency": "custom",
       "title": "Strait of Hormuz",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -7301,9 +6975,7 @@
       "frequency": "custom",
       "title": "Fed Chair nominee",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -7322,9 +6994,7 @@
       "frequency": "custom",
       "title": "Oklahoma Governor",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "US State Governments",
@@ -7359,9 +7029,7 @@
       "frequency": "weekly",
       "title": "EO this week?",
       "category": "Politics",
-      "tags": [
-        "Recurring"
-      ],
+      "tags": ["Recurring"],
       "settlementSources": [
         {
           "name": "Federal Register",
@@ -7380,9 +7048,7 @@
       "frequency": "one_off",
       "title": "Congress balance of power combo",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "Bureau of Labor Statistics",
@@ -7428,9 +7094,7 @@
       "frequency": "custom",
       "title": "Georgia Governor",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "US State Governments",
@@ -7465,10 +7129,7 @@
       "frequency": "custom",
       "title": "Panama Canal retaken",
       "category": "Politics",
-      "tags": [
-        "International",
-        "Trump"
-      ],
+      "tags": ["International", "Trump"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -7487,10 +7148,7 @@
       "frequency": "one_off",
       "title": "Will the US acquire new territory?",
       "category": "Politics",
-      "tags": [
-        "International",
-        "Trump"
-      ],
+      "tags": ["International", "Trump"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -7509,9 +7167,7 @@
       "frequency": "custom",
       "title": "Elon Mars",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "CNBC",
@@ -7594,9 +7250,7 @@
       "frequency": "custom",
       "title": "Texas Republican Senate nominee",
       "category": "Politics",
-      "tags": [
-        "Primaries"
-      ],
+      "tags": ["Primaries"],
       "settlementSources": [
         {
           "name": "Democratic Party",
@@ -7619,9 +7273,7 @@
       "frequency": "one_off",
       "title": "CT Senate",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -7655,9 +7307,7 @@
       "frequency": "custom",
       "title": "EU exit",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "EU",
@@ -7676,9 +7326,7 @@
       "frequency": "custom",
       "title": "Party winning presidency",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "Office of the Presidency",
@@ -7713,9 +7361,7 @@
       "frequency": "monthly",
       "title": "Trump pardons monthly",
       "category": "Politics",
-      "tags": [
-        "Recurring"
-      ],
+      "tags": ["Recurring"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -7738,9 +7384,7 @@
       "frequency": "custom",
       "title": "Fed Chair nom",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -7835,9 +7479,7 @@
       "frequency": "custom",
       "title": "Chile Presidential election",
       "category": "Politics",
-      "tags": [
-        "Foreign Elections"
-      ],
+      "tags": ["Foreign Elections"],
       "settlementSources": [
         {
           "name": "AP",
@@ -7856,9 +7498,7 @@
       "frequency": "custom",
       "title": "Japan snap election",
       "category": "Politics",
-      "tags": [
-        "Foreign Elections"
-      ],
+      "tags": ["Foreign Elections"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -8024,9 +7664,7 @@
       "frequency": "custom",
       "title": "Government shutdown",
       "category": "Politics",
-      "tags": [
-        "Congress"
-      ],
+      "tags": ["Congress"],
       "settlementSources": [
         {
           "name": "U.S. Office of Personnel Management",
@@ -8068,9 +7706,7 @@
       "frequency": "custom",
       "title": "Indiana Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -8104,9 +7740,7 @@
       "frequency": "custom",
       "title": "President impeached",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -8125,9 +7759,7 @@
       "frequency": "custom",
       "title": "Martial law",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -8269,9 +7901,7 @@
       "frequency": "one_off",
       "title": "How many House votes to extend ACA subsidies?",
       "category": "Politics",
-      "tags": [
-        "Congress"
-      ],
+      "tags": ["Congress"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -8290,9 +7920,7 @@
       "frequency": "custom",
       "title": "South Carolina Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -8326,9 +7954,7 @@
       "frequency": "one_off",
       "title": "Will the UK ban Grok?",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "ABC News",
@@ -8506,9 +8132,7 @@
       "frequency": "one_off",
       "title": "Agencies cut",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "Federal Register",
@@ -8610,9 +8234,7 @@
       "frequency": "custom",
       "title": "US Iran nuclear deal",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -8683,9 +8305,7 @@
       "frequency": "custom",
       "title": "Pennsylvania Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
@@ -8798,9 +8418,7 @@
       "frequency": "one_off",
       "title": "Will the SAVE Act become law?",
       "category": "Politics",
-      "tags": [
-        "Congress"
-      ],
+      "tags": ["Congress"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -8819,9 +8437,7 @@
       "frequency": "custom",
       "title": "Next SCOTUS justice",
       "category": "Politics",
-      "tags": [
-        "SCOTUS & courts"
-      ],
+      "tags": ["SCOTUS & courts"],
       "settlementSources": [
         {
           "name": "Library of Congress",
@@ -8840,10 +8456,7 @@
       "frequency": "one_off",
       "title": "Greenland purchase",
       "category": "Politics",
-      "tags": [
-        "International",
-        "Trump"
-      ],
+      "tags": ["International", "Trump"],
       "settlementSources": [
         {
           "name": "The New York Times",
@@ -8862,9 +8475,7 @@
       "frequency": "one_off",
       "title": "Will Xi Jinping visit Taiwan?",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "CNBC",
@@ -8947,9 +8558,7 @@
       "frequency": "custom",
       "title": "Minnesota Governor",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "US State Governments",
@@ -8984,9 +8593,7 @@
       "frequency": "one_off",
       "title": "Will there be a blue wave?",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "Bureau of Labor Statistics",
@@ -9096,9 +8703,7 @@
       "frequency": "one_off",
       "title": "Maduro out  in November",
       "category": "Politics",
-      "tags": [
-        "International"
-      ],
+      "tags": ["International"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -9169,9 +8774,7 @@
       "frequency": "custom",
       "title": "Insurrection",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -9265,9 +8868,7 @@
       "frequency": "one_off",
       "title": "MED",
       "category": "Politics",
-      "tags": [
-        "Primaries"
-      ],
+      "tags": ["Primaries"],
       "settlementSources": [
         {
           "name": "Democratic Party",
@@ -9290,9 +8891,7 @@
       "frequency": "custom",
       "title": "Winner of next Turkish presidential election",
       "category": "Politics",
-      "tags": [
-        "Foreign Elections"
-      ],
+      "tags": ["Foreign Elections"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -9363,9 +8962,7 @@
       "frequency": "one_off",
       "title": "Will Americans receive tariff dividends in 2025?",
       "category": "Politics",
-      "tags": [
-        "Trump"
-      ],
+      "tags": ["Trump"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -9468,10 +9065,7 @@
       "frequency": "monthly",
       "title": "Who will Trump meet?",
       "category": "Politics",
-      "tags": [
-        "Recurring",
-        "Trump"
-      ],
+      "tags": ["Recurring", "Trump"],
       "settlementSources": [
         {
           "name": "ABC",
@@ -9570,9 +9164,7 @@
       "frequency": "custom",
       "title": "Maryland Senate race",
       "category": "Politics",
-      "tags": [
-        "US Elections"
-      ],
+      "tags": ["US Elections"],
       "settlementSources": [
         {
           "name": "United States Congress",
