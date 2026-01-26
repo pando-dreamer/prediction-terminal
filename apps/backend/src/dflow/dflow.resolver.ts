@@ -258,8 +258,8 @@ export class DFlowResolver {
         volume: market.volume,
         result: market.result,
         openInterest: market.openInterest,
-        yesPrice: market.yesPrice,
-        noPrice: market.noPrice,
+        yesPrice: market.yesAsk || market.yesBid,
+        noPrice: market.noAsk || market.noBid,
         isActive: market.isActive || market.status === 'active',
       })),
     };

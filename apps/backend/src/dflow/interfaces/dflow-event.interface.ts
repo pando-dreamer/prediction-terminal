@@ -45,8 +45,10 @@ export interface DFlowEvent {
     volume: number;
     result?: string;
     openInterest: number;
-    yesPrice?: number;
-    noPrice?: number;
+    yesBid?: number;
+    noBid?: number;
+    yesAsk?: number;
+    noAsk?: number;
     isActive: boolean;
   }>;
 }
