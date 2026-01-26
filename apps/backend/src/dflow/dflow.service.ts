@@ -6,6 +6,12 @@ import {
   DFlowMarketFilter,
   DFlowApiError,
 } from './interfaces/dflow-market.interface';
+import {
+  DFlowEvent,
+  DFlowEventsResponse,
+  DFlowEventFilter,
+  DFlowSearchResponse,
+} from './interfaces/dflow-event.interface';
 
 interface CacheItem<T> {
   data: T;
@@ -240,6 +246,29 @@ export class DFlowService {
     });
   }
 
+  async search(
+    query: string,
+    limit: number = 10,
+    withNestedMarkets: boolean = true,
+    withNestedAccounts: boolean = true
+  ): Promise<DFlowSearchResponse> {
+    const params = new URLSearchParams();
+    params.append('q', query);
+    params.append('limit', limit.toString());
+    params.append('withNestedMarkets', withNestedMarkets.toString());
+    params.append('withNestedAccounts', withNestedAccounts.toString());
+
+    const endpoint = `/api/v1/search?${params.toString()}`;
+
+    try {
+      const response = await this.makeApiCall<DFlowSearchResponse>(endpoint);
+      return response;
+    } catch (error) {
+      this.logger.error('Failed to perform search on DFlow', error);
+      return { events: [] };
+    }
+  }
+
   async getActiveMarkets(limit: number = 50): Promise<DFlowMarket[]> {
     return this.getMarkets({
       status: ['active'],
@@ -288,6 +317,58 @@ export class DFlowService {
     };
 
     return categoryMap[category.toLowerCase()] || [category.toLowerCase()];
+  }
+
+  async getEvents(filters: DFlowEventFilter = {}): Promise<DFlowEvent[]> {
+    const params = new URLSearchParams();
+
+    if (filters.limit) params.append('limit', filters.limit.toString());
+    if (filters.offset) params.append('offset', filters.offset.toString());
+    if (filters.sort) params.append('sort', filters.sort);
+    if (filters.order) params.append('order', filters.order);
+    if (filters.withNestedMarkets) {
+      params.append('withNestedMarkets', filters.withNestedMarkets.toString());
+    }
+    if (filters.search) params.append('search', filters.search);
+
+    const endpoint = `/api/v1/events${params.toString() ? `?${params.toString()}` : ''}`;
+
+    try {
+      const response = await this.makeApiCall<DFlowEventsResponse>(endpoint);
+      return response.events || [];
+    } catch (error) {
+      this.logger.error('Failed to fetch events from DFlow', error);
+
+      // Try to return cached data as fallback
+      const cacheKey = this.getCacheKey(endpoint);
+      const cachedData = this.getCachedData<DFlowEventsResponse>(cacheKey);
+      if (cachedData) {
+        this.logger.warn('Returning stale cached data due to API error');
+        return cachedData.events || [];
+      }
+
+      return []; // Return empty array on error to allow graceful degradation
+    }
+  }
+
+  async getEventByTicker(ticker: string): Promise<DFlowEvent | null> {
+    try {
+      const endpoint = `/api/v1/event/${encodeURIComponent(ticker)}?withNestedMarkets=true`;
+      const event = await this.makeApiCall<DFlowEvent>(endpoint);
+      return event;
+    } catch (error) {
+      this.logger.error(`Failed to fetch event ${ticker} from DFlow`, error);
+      return null;
+    }
+  }
+
+  async getActiveEvents(limit: number = 20): Promise<DFlowEvent[]> {
+    return this.getEvents({
+      limit,
+      sort: 'volume',
+      order: 'desc',
+      withNestedMarkets: true,
+    });
   }
 
   // Health check method

@@ -10,6 +10,44 @@ input CreateMarketInput {
   title: String!
 }
 
+type DFlowEvent {
+  competition: String
+  competitionScope: String
+  imageUrl: String
+  liquidity: Float!
+  markets: [DFlowEventMarket!]
+  openInterest: Float!
+  seriesTicker: String!
+  settlementSources: [DFlowSettlementSource!]
+  strikeDate: Int
+  strikePeriod: String
+  subtitle: String!
+  ticker: String!
+  title: String!
+  volume: Float!
+  volume24h: Float!
+}
+
+type DFlowEventMarket {
+  closeTime: Int!
+  eventTicker: String!
+  expirationTime: Int!
+  isActive: Boolean!
+  marketType: String!
+  noPrice: Float
+  noSubTitle: String!
+  openInterest: Float!
+  openTime: Int!
+  result: String
+  status: String!
+  subtitle: String!
+  ticker: String!
+  title: String!
+  volume: Float!
+  yesPrice: Float
+  yesSubTitle: String!
+}
+
 type DFlowMarketGraphQL {
   accountsJson: String
   canCloseEarly: Boolean!
@@ -51,6 +89,11 @@ enum DFlowMarketStatus {
 enum DFlowMarketType {
   BINARY
   CATEGORICAL
+}
+
+type DFlowSettlementSource {
+  name: String!
+  url: String!
 }
 
 """
@@ -101,12 +144,16 @@ type Mutation {
 }
 
 type Query {
+  activeDFlowEvents(limit: Float): [DFlowEvent!]!
   activeDFlowMarkets(limit: Float): [DFlowMarketGraphQL!]!
   activeMarkets: [Market!]!
+  dflowEvent(ticker: ID!): DFlowEvent
+  dflowEvents(limit: Float, search: String, withNestedMarkets: Boolean): [DFlowEvent!]!
   dflowMarket(ticker: ID!): DFlowMarketGraphQL
   dflowMarkets(category: String, limit: Float, search: String): [DFlowMarketGraphQL!]!
   market(id: ID!): Market!
   markets: [Market!]!
+  searchDFlow(limit: Float, query: String!, withNestedAccounts: Boolean, withNestedMarkets: Boolean): [DFlowEvent!]!
   searchDFlowMarkets(limit: Float, query: String!): [DFlowMarketGraphQL!]!
   user(id: ID!): User!
 }

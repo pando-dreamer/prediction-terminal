@@ -1,7 +1,9 @@
 import { Resolver, Query, Args, ID } from '@nestjs/graphql';
 import { DFlowService } from './dflow.service';
 import { DFlowMarketGraphQL } from './entities/dflow-market.entity';
+import { DFlowEvent } from './entities/dflow-event.entity';
 import { DFlowMarket } from './interfaces/dflow-market.interface';
+import { DFlowEvent as IDFlowEvent } from './interfaces/dflow-event.interface';
 
 @Resolver(() => DFlowMarketGraphQL)
 export class DFlowResolver {
@@ -49,6 +51,57 @@ export class DFlowResolver {
   ): Promise<DFlowMarketGraphQL[]> {
     const markets = await this.dflowService.searchMarkets(query, limit || 20);
     return markets.map(market => this.transformToGraphQL(market));
+  }
+
+  @Query(() => [DFlowEvent], { name: 'dflowEvents' })
+  async findAllDFlowEvents(
+    @Args('limit', { type: () => Number, nullable: true }) limit?: number,
+    @Args('search', { type: () => String, nullable: true }) search?: string,
+    @Args('withNestedMarkets', { type: () => Boolean, nullable: true })
+    withNestedMarkets?: boolean
+  ): Promise<DFlowEvent[]> {
+    const events = await this.dflowService.getEvents({
+      limit: limit || 20,
+      search,
+      withNestedMarkets: withNestedMarkets ?? true,
+      sort: 'volume',
+      order: 'desc',
+    });
+    return events.map(event => this.transformEventToGraphQL(event));
+  }
+
+  @Query(() => [DFlowEvent], { name: 'activeDFlowEvents' })
+  async findActiveDFlowEvents(
+    @Args('limit', { type: () => Number, nullable: true }) limit?: number
+  ): Promise<DFlowEvent[]> {
+    const events = await this.dflowService.getActiveEvents(limit || 20);
+    return events.map(event => this.transformEventToGraphQL(event));
+  }
+
+  @Query(() => DFlowEvent, { name: 'dflowEvent', nullable: true })
+  async findOneDFlowEvent(
+    @Args('ticker', { type: () => ID }) ticker: string
+  ): Promise<DFlowEvent | null> {
+    const event = await this.dflowService.getEventByTicker(ticker);
+    return event ? this.transformEventToGraphQL(event) : null;
+  }
+
+  @Query(() => [DFlowEvent], { name: 'searchDFlow' })
+  async searchDFlow(
+    @Args('query') query: string,
+    @Args('limit', { type: () => Number, nullable: true }) limit?: number,
+    @Args('withNestedMarkets', { type: () => Boolean, nullable: true })
+    withNestedMarkets?: boolean,
+    @Args('withNestedAccounts', { type: () => Boolean, nullable: true })
+    withNestedAccounts?: boolean
+  ): Promise<DFlowEvent[]> {
+    const response = await this.dflowService.search(
+      query,
+      limit || 10,
+      withNestedMarkets ?? true,
+      withNestedAccounts ?? true
+    );
+    return response.events.map(event => this.transformEventToGraphQL(event));
   }
 
   private transformToGraphQL(market: DFlowMarket): DFlowMarketGraphQL {
@@ -155,5 +208,43 @@ export class DFlowResolver {
     }
 
     return 'Other';
+  }
+
+  private transformEventToGraphQL(event: IDFlowEvent): DFlowEvent {
+    return {
+      ticker: event.ticker,
+      seriesTicker: event.seriesTicker,
+      strikeDate: event.strikeDate,
+      strikePeriod: event.strikePeriod,
+      title: event.title,
+      subtitle: event.subtitle,
+      imageUrl: event.imageUrl,
+      competition: event.competition,
+      competitionScope: event.competitionScope,
+      settlementSources: event.settlementSources,
+      volume: event.volume,
+      volume24h: event.volume24h,
+      liquidity: event.liquidity,
+      openInterest: event.openInterest,
+      markets: event.markets?.map(market => ({
+        ticker: market.ticker,
+        eventTicker: market.eventTicker,
+        marketType: market.marketType,
+        title: market.title,
+        subtitle: market.subtitle,
+        yesSubTitle: market.yesSubTitle,
+        noSubTitle: market.noSubTitle,
+        openTime: market.openTime,
+        closeTime: market.closeTime,
+        expirationTime: market.expirationTime,
+        status: market.status,
+        volume: market.volume,
+        result: market.result,
+        openInterest: market.openInterest,
+        yesPrice: market.yesPrice,
+        noPrice: market.noPrice,
+        isActive: market.isActive || market.status === 'active',
+      })),
+    };
   }
 }

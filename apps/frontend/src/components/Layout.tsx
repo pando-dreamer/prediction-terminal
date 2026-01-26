@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { TrendingUp, BarChart3, User, Settings } from 'lucide-react';
+import { TrendingUp, BarChart3, User, Settings, Calendar } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface LayoutProps {
@@ -11,6 +11,7 @@ export function Layout({ children }: LayoutProps) {
   const location = useLocation();
 
   const navigation = [
+    { name: 'Events', href: '/', icon: Calendar },
     { name: 'Markets', href: '/markets', icon: TrendingUp },
     { name: 'Portfolio', href: '/portfolio', icon: BarChart3 },
   ];
@@ -27,7 +28,10 @@ export function Layout({ children }: LayoutProps) {
 
         <nav className="px-4 space-y-2">
           {navigation.map(item => {
-            const isActive = location.pathname.startsWith(item.href);
+            const isActive =
+              item.href === '/'
+                ? location.pathname === '/'
+                : location.pathname.startsWith(item.href);
             return (
               <Link
                 key={item.name}

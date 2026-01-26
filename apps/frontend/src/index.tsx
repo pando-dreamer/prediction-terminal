@@ -6,7 +6,7 @@ import './index.css';
 import App from './App';
 
 const client = new ApolloClient({
-  uri: process.env.REACT_APP_API_URL || 'http://localhost:3001/graphql',
+  uri: process.env.REACT_APP_API_URL || 'http://localhost:3002/graphql',
   cache: new InMemoryCache(),
 });
 
