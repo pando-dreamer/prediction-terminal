@@ -203,8 +203,7 @@ export function Markets() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Prediction Markets</h1>
-        <Button>Create Market</Button>
+        <h1 className="text-3xl font-bold text-white">Prediction Markets</h1>
       </div>
 
       {/* Search and filters */}

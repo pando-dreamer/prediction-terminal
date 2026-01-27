@@ -403,9 +403,15 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
         await monitorAsyncOrder(signature);
       }
 
-      setTradeSuccess(
-        `✅ Trade successful! ${tradeType.toUpperCase()} ${amount} USDC for ${side.toUpperCase()} tokens. Signature: ${signature.substring(0, 8)}...`
-      );
+      if (tradeType === 'buy') {
+        setTradeSuccess(
+          `✅ Trade successful! ${tradeType.toUpperCase()} ${amount}  USDC for ${side.toUpperCase()} tokens. Signature: ${signature.substring(0, 8)}...`
+        );
+      } else {
+        setTradeSuccess(
+          `✅ Trade successful! ${tradeType.toUpperCase()} ${amount} shares of ${side.toUpperCase()}. Signature: ${signature.substring(0, 8)}...`
+        );
+      }
 
       setAmount(0);
       setTimeout(fetchBalances, 2000);

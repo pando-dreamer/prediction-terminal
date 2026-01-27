@@ -1,11 +1,52 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { TrendingUp, BarChart3, User, Settings, Calendar } from 'lucide-react';
+import { TrendingUp, BarChart3, User, Calendar, Wallet } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { WalletButton } from './WalletButton';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
 interface LayoutProps {
   children: React.ReactNode;
+}
+
+function WalletConnectionSection() {
+  const { connected, publicKey, disconnect } = useWallet();
+
+  if (!connected) {
+    return <WalletMultiButton />;
+  }
+
+  return (
+    <div className="space-y-4">
+      <Link
+        to="/portfolio"
+        className="flex items-center gap-2 px-2 text-slate-300 hover:text-white transition-colors"
+      >
+        <User className="h-5 w-5" />
+        <span className="text-sm font-medium">Profile</span>
+      </Link>
+
+      <div className="space-y-2">
+        <div className="text-xs font-semibold text-slate-500 px-2 uppercase tracking-wider">
+          Connected Wallet
+        </div>
+        <div className="px-2">
+          <div className="text-sm text-blue-400 font-mono">
+            {publicKey?.toBase58().slice(0, 7)}...
+            {publicKey?.toBase58().slice(-7)}
+          </div>
+        </div>
+        <div className="px-2">
+          <button
+            onClick={disconnect}
+            className="text-sm text-red-400 hover:text-red-300 font-normal transition-colors"
+          >
+            Disconnect
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function Layout({ children }: LayoutProps) {
@@ -18,11 +59,11 @@ export function Layout({ children }: LayoutProps) {
   ];
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-slate-900">
       {/* Sidebar */}
-      <div className="w-64 bg-card border-r border-border">
+      <div className="w-64 bg-slate-800 border-r border-slate-700">
         <div className="p-6">
-          <h1 className="text-2xl font-bold text-primary">
+          <h1 className="text-2xl font-bold text-blue-400">
             Prediction Terminal
           </h1>
         </div>
@@ -40,8 +81,8 @@ export function Layout({ children }: LayoutProps) {
                 className={cn(
                   'flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors',
                   isActive
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-slate-300 hover:bg-slate-700 hover:text-white'
                 )}
               >
                 <item.icon className="mr-3 h-5 w-5" />
@@ -51,28 +92,16 @@ export function Layout({ children }: LayoutProps) {
           })}
         </nav>
 
-        <div className="absolute bottom-4 left-4 right-4">
-          <div className="flex items-center justify-between">
-            <button className="flex items-center p-2 text-muted-foreground hover:text-foreground">
-              <User className="h-5 w-5 mr-2" />
-              Profile
-            </button>
-            <button className="p-2 text-muted-foreground hover:text-foreground">
-              <Settings className="h-5 w-5" />
-            </button>
-          </div>
+        <div className="absolute bottom-4 left-4 right-4 px-4">
+          <WalletConnectionSection />
         </div>
       </div>
 
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header with Wallet Button */}
-        <header className="border-b border-border bg-card px-6 py-4">
-          <div className="flex items-center justify-end">
-            <WalletButton />
-          </div>
-        </header>
-        <main className="flex-1 overflow-auto p-6">{children}</main>
+        <main className="flex-1 overflow-auto p-6 bg-slate-900">
+          {children}
+        </main>
       </div>
     </div>
   );

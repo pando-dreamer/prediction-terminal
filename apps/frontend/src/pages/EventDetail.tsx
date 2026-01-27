@@ -550,10 +550,10 @@ export function EventDetail() {
       {/* Header */}
       <div className="flex items-center gap-4">
         <Link to="/">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="w-4 h-4 mr-2" />
+          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors border border-slate-700">
+            <ArrowLeft className="w-4 h-4" />
             Back to Events
-          </Button>
+          </button>
         </Link>
       </div>
 
@@ -659,9 +659,14 @@ export function EventDetail() {
             {/* Active Markets */}
             {activeMarkets.length > 0 && (
               <div>
-                <h2 className="text-xl font-semibold mb-4 mt-4">
-                  Active Markets ({activeMarkets.length})
-                </h2>
+                <div className="flex items-center justify-between px-4 py-3 bg-slate-800 rounded-lg border border-slate-700 mb-4 mt-4">
+                  <h2 className="text-xl font-bold text-white">
+                    Active Markets
+                  </h2>
+                  <span className="px-3 py-1 bg-blue-600 text-white text-sm font-semibold rounded-full">
+                    {activeMarkets.length}
+                  </span>
+                </div>
                 <div className="space-y-3">
                   {activeMarkets.map((market: any) => {
                     // Calculate probability from YES price (assuming 0-1 range maps to 0-100%)
@@ -674,10 +679,10 @@ export function EventDetail() {
                     return (
                       <div
                         key={market.ticker}
-                        className={`flex items-center justify-between p-4 border rounded-lg transition-colors ${
+                        className={`flex items-center justify-between p-4 border rounded-lg transition-all cursor-pointer ${
                           selectedMarket?.ticker === market.ticker
-                            ? 'bg-primary/10 border-primary'
-                            : 'bg-card hover:bg-muted/50'
+                            ? 'bg-blue-600/20 border-blue-500 shadow-lg shadow-blue-500/20'
+                            : 'bg-slate-800/50 border-slate-700 hover:bg-slate-800 hover:border-slate-600'
                         }`}
                       >
                         {/* Left: Market Title & Volume - Clickable area */}
@@ -687,17 +692,17 @@ export function EventDetail() {
                             setSelectedMarket(market);
                           }}
                         >
-                          <h3 className="font-semibold text-base truncate">
+                          <h3 className="font-semibold text-base truncate text-white">
                             {market.title}
                           </h3>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm text-slate-400">
                             {formatVolume(market.volume)} Vol.
                           </p>
                         </div>
 
                         {/* Center: Probability */}
                         <div className="flex items-center justify-center min-w-[80px] mx-6">
-                          <span className="text-2xl font-bold">
+                          <span className="text-2xl font-bold text-white">
                             {probabilityDisplay}
                           </span>
                           {probability > 1 && probability < 99 && (
@@ -760,13 +765,20 @@ export function EventDetail() {
               <div className="mt-6">
                 <button
                   onClick={() => setShowCompletedMarkets(!showCompletedMarkets)}
-                  className="flex items-center gap-2 text-xl font-semibold mb-4 hover:text-primary transition-colors"
+                  className="w-full flex items-center justify-between px-4 py-3 bg-slate-800 rounded-lg border border-slate-700 mb-4 hover:bg-slate-700 transition-colors"
                 >
-                  <span>Completed Markets ({completedMarkets.length})</span>
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-xl font-bold text-white">
+                      Completed Markets
+                    </h2>
+                    <span className="px-3 py-1 bg-slate-600 text-white text-sm font-semibold rounded-full">
+                      {completedMarkets.length}
+                    </span>
+                  </div>
                   {showCompletedMarkets ? (
-                    <ChevronUp className="h-5 w-5" />
+                    <ChevronUp className="h-5 w-5 text-slate-300" />
                   ) : (
-                    <ChevronDown className="h-5 w-5" />
+                    <ChevronDown className="h-5 w-5 text-slate-300" />
                   )}
                 </button>
                 {showCompletedMarkets && (
@@ -922,87 +934,97 @@ export function EventDetail() {
 
                   {/* Orderbook Display */}
                   {orderbook && !loadingOrderbook && (
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center text-xs text-slate-400 border-b border-slate-600 pb-1">
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center text-xs text-slate-300 border-b border-slate-600 pb-1 font-semibold">
                         <span>PRICE</span>
                         <span>SHARES</span>
                         <span>TOTAL</span>
                       </div>
 
-                      {/* Asks (NO bids - people selling YES) */}
-                      <div className="space-y-1">
-                        {orderbook.noBids
-                          .slice(0, 4)
-                          .map((level: any, i: number) => {
-                            const maxTotal = Math.max(
-                              ...orderbook.noBids.map((l: any) => l.total),
-                              ...orderbook.yesBids.map((l: any) => l.total)
-                            );
-                            const depth = (level.total / maxTotal) * 100;
-                            return (
-                              <div
-                                key={i}
-                                className="relative flex justify-between items-center text-xs py-1"
-                              >
+                      {/* NO Orders (Asks - people selling YES) */}
+                      <div>
+                        <div className="text-xs font-semibold text-red-400 mb-2">
+                          NO (Sell YES)
+                        </div>
+                        <div className="max-h-32 overflow-y-auto space-y-1 pr-1">
+                          {[...orderbook.noBids]
+                            .sort((a, b) => b.price - a.price)
+                            .map((level: any, i: number) => {
+                              const maxTotal = Math.max(
+                                ...orderbook.noBids.map((l: any) => l.total),
+                                ...orderbook.yesBids.map((l: any) => l.total)
+                              );
+                              const depth = (level.total / maxTotal) * 100;
+                              return (
                                 <div
-                                  className="absolute inset-0 bg-red-900/20"
-                                  style={{ width: `${depth}%` }}
-                                />
-                                <span className="relative z-10 text-red-400">
-                                  {(level.price * 100).toFixed(0)}¢
-                                </span>
-                                <span className="relative z-10 text-slate-300">
-                                  {level.shares.toLocaleString()}
-                                </span>
-                                <span className="relative z-10 text-slate-300">
-                                  ${level.total.toFixed(0)}
-                                </span>
-                              </div>
-                            );
-                          })}
+                                  key={i}
+                                  className="relative flex justify-between items-center text-xs py-1.5 px-1"
+                                >
+                                  <div
+                                    className="absolute inset-0 bg-red-900/20"
+                                    style={{ width: `${depth}%` }}
+                                  />
+                                  <span className="relative z-10 text-red-400 font-medium">
+                                    {(level.price * 100).toFixed(0)}¢
+                                  </span>
+                                  <span className="relative z-10 text-slate-200">
+                                    {level.shares.toLocaleString()}
+                                  </span>
+                                  <span className="relative z-10 text-slate-200">
+                                    ${level.total.toFixed(0)}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                        </div>
                       </div>
 
                       {/* Spread */}
-                      <div className="flex justify-between items-center text-xs py-1 bg-slate-700/50 px-2 rounded">
-                        <span className="text-slate-400">
+                      <div className="flex justify-between items-center text-xs py-2 bg-slate-700 px-3 rounded">
+                        <span className="text-slate-200 font-medium">
                           Last: {(orderbook.lastPrice * 100).toFixed(0)}¢
                         </span>
-                        <span className="text-slate-400">
+                        <span className="text-slate-200 font-medium">
                           Spread: {(orderbook.spread * 100).toFixed(0)}¢
                         </span>
                       </div>
 
-                      {/* Bids (YES bids - people buying YES) */}
-                      <div className="space-y-1">
-                        {orderbook.yesBids
-                          .slice(0, 4)
-                          .map((level: any, i: number) => {
-                            const maxTotal = Math.max(
-                              ...orderbook.noBids.map((l: any) => l.total),
-                              ...orderbook.yesBids.map((l: any) => l.total)
-                            );
-                            const depth = (level.total / maxTotal) * 100;
-                            return (
-                              <div
-                                key={i}
-                                className="relative flex justify-between items-center text-xs py-1"
-                              >
+                      {/* YES Orders (Bids - people buying YES) */}
+                      <div>
+                        <div className="text-xs font-semibold text-green-400 mb-2">
+                          YES (Buy YES)
+                        </div>
+                        <div className="max-h-32 overflow-y-auto space-y-1 pr-1">
+                          {[...orderbook.yesBids]
+                            .sort((a, b) => b.price - a.price)
+                            .map((level: any, i: number) => {
+                              const maxTotal = Math.max(
+                                ...orderbook.noBids.map((l: any) => l.total),
+                                ...orderbook.yesBids.map((l: any) => l.total)
+                              );
+                              const depth = (level.total / maxTotal) * 100;
+                              return (
                                 <div
-                                  className="absolute inset-0 bg-green-900/20"
-                                  style={{ width: `${depth}%` }}
-                                />
-                                <span className="relative z-10 text-green-400">
-                                  {(level.price * 100).toFixed(0)}¢
-                                </span>
-                                <span className="relative z-10 text-slate-300">
-                                  {level.shares.toLocaleString()}
-                                </span>
-                                <span className="relative z-10 text-slate-300">
-                                  ${level.total.toFixed(0)}
-                                </span>
-                              </div>
-                            );
-                          })}
+                                  key={i}
+                                  className="relative flex justify-between items-center text-xs py-1.5 px-1"
+                                >
+                                  <div
+                                    className="absolute inset-0 bg-green-900/20"
+                                    style={{ width: `${depth}%` }}
+                                  />
+                                  <span className="relative z-10 text-green-400 font-medium">
+                                    {(level.price * 100).toFixed(0)}¢
+                                  </span>
+                                  <span className="relative z-10 text-slate-200">
+                                    {level.shares.toLocaleString()}
+                                  </span>
+                                  <span className="relative z-10 text-slate-200">
+                                    ${level.total.toFixed(0)}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                        </div>
                       </div>
                     </div>
                   )}

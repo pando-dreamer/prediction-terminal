@@ -271,144 +271,141 @@ export function Events() {
     const totalMarkets = event.markets?.length || 0;
 
     return (
-      <Card
-        key={event.ticker}
-        className="cursor-pointer hover:shadow-md transition-shadow"
-      >
-        <CardHeader>
-          <div className="flex justify-between items-start">
-            <div className="flex-1">
-              <CardTitle className="text-lg mb-2">{event.title}</CardTitle>
-              <CardDescription className="line-clamp-2">
-                {event.subtitle}
-              </CardDescription>
+      <Link to={`/events/${event.ticker}`} key={event.ticker}>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow h-full flex flex-col">
+          <CardHeader>
+            <div className="flex justify-between items-start">
+              <div className="flex-1">
+                <CardTitle className="text-lg mb-2">{event.title}</CardTitle>
+                <CardDescription className="line-clamp-2">
+                  {event.subtitle}
+                </CardDescription>
+              </div>
+              {event.imageUrl && (
+                <img
+                  src={event.imageUrl}
+                  alt={event.title}
+                  className="w-16 h-16 object-cover rounded-md ml-4"
+                />
+              )}
             </div>
-            {event.imageUrl && (
-              <img
-                src={event.imageUrl}
-                alt={event.title}
-                className="w-16 h-16 object-cover rounded-md ml-4"
-              />
-            )}
-          </div>
-          <div className="flex gap-2 mt-2">
-            <Badge variant="secondary">{event.competition || 'General'}</Badge>
-            <Badge variant="outline">
-              {totalMarkets} market{totalMarkets !== 1 ? 's' : ''}
-            </Badge>
-            {activeMarkets.length > 0 && (
-              <Badge variant="default" className="bg-green-500">
-                {activeMarkets.length} active
+            <div className="flex gap-2 mt-2">
+              <Badge variant="secondary">{event.competition || 'General'}</Badge>
+              <Badge variant="outline">
+                {totalMarkets} market{totalMarkets !== 1 ? 's' : ''}
               </Badge>
+              {activeMarkets.length > 0 && (
+                <Badge variant="default" className="bg-green-500">
+                  {activeMarkets.length} active
+                </Badge>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent className="flex-1 flex flex-col">
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">Volume:</span>
+                <span className="font-medium">{formatVolume(event.volume)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">24h Volume:</span>
+                <span className="font-medium">
+                  {formatVolume(event.volume24h)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">
+                  Open Interest:
+                </span>
+                <span className="font-medium">
+                  {formatVolume(event.openInterest)}
+                </span>
+              </div>
+            </div>
+
+            {/* Show top markets */}
+            {event.markets && event.markets.length > 0 && (
+              <div className="space-y-2 flex-1">
+                <h4 className="text-sm font-medium text-muted-foreground">
+                  Top Active Markets:
+                </h4>
+                {(() => {
+                  // Filter only active markets and sort by volume (highest first)
+                  const activeMarkets = event.markets
+                    .filter(
+                      (market: any) =>
+                        market.isActive && market.status === 'active'
+                    )
+                    .sort((a: any, b: any) => (b.volume || 0) - (a.volume || 0))
+                    .slice(0, 2);
+
+                  return activeMarkets.length > 0 ? (
+                    <>
+                      {activeMarkets.map((market: any) => (
+                        <div
+                          key={market.ticker}
+                          className="flex justify-between items-start p-2 bg-muted/30 rounded-md gap-2"
+                        >
+                          <div className="flex-1 min-w-0">
+                            <p
+                              className="text-sm font-medium line-clamp-2 leading-tight"
+                              title={market.title}
+                            >
+                              {market.title}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1 truncate">
+                              YES: {market.yesSubTitle} | NO: {market.noSubTitle}
+                            </p>
+                            {market.volume && (
+                              <p className="text-xs text-blue-600 mt-1">
+                                Vol: {formatVolume(market.volume)}
+                              </p>
+                            )}
+                          </div>
+                          <div className="text-right ml-2 flex-shrink-0">
+                            {market.yesPrice && (
+                              <p className="text-sm font-medium text-green-600">
+                                ${market.yesPrice.toFixed(2)}
+                              </p>
+                            )}
+                            <Badge
+                              variant={market.isActive ? 'default' : 'secondary'}
+                              className="text-xs mt-1"
+                            >
+                              {market.status}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                      {(() => {
+                        const totalActiveMarkets = event.markets.filter(
+                          (market: any) =>
+                            market.isActive && market.status === 'active'
+                        ).length;
+                        return (
+                          totalActiveMarkets > 2 && (
+                            <p className="text-xs text-muted-foreground text-center">
+                              +{totalActiveMarkets - 2} more active markets
+                            </p>
+                          )
+                        );
+                      })()}
+                    </>
+                  ) : (
+                    <p className="text-xs text-muted-foreground text-center py-2">
+                      No active markets available
+                    </p>
+                  );
+                })()}
+              </div>
             )}
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2 mb-4">
-            <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">Volume:</span>
-              <span className="font-medium">{formatVolume(event.volume)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">24h Volume:</span>
-              <span className="font-medium">
-                {formatVolume(event.volume24h)}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">
-                Open Interest:
-              </span>
-              <span className="font-medium">
-                {formatVolume(event.openInterest)}
-              </span>
-            </div>
-          </div>
 
-          {/* Show top markets */}
-          {event.markets && event.markets.length > 0 && (
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium text-muted-foreground">
-                Top Active Markets:
-              </h4>
-              {(() => {
-                // Filter only active markets and sort by volume (highest first)
-                const activeMarkets = event.markets
-                  .filter(
-                    (market: any) =>
-                      market.isActive && market.status === 'active'
-                  )
-                  .sort((a: any, b: any) => (b.volume || 0) - (a.volume || 0))
-                  .slice(0, 3);
-
-                return activeMarkets.length > 0 ? (
-                  <>
-                    {activeMarkets.map((market: any) => (
-                      <div
-                        key={market.ticker}
-                        className="flex justify-between items-start p-2 bg-muted/30 rounded-md gap-2"
-                      >
-                        <div className="flex-1 min-w-0">
-                          <p
-                            className="text-sm font-medium line-clamp-2 leading-tight"
-                            title={market.title}
-                          >
-                            {market.title}
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-1 truncate">
-                            YES: {market.yesSubTitle} | NO: {market.noSubTitle}
-                          </p>
-                          {market.volume && (
-                            <p className="text-xs text-blue-600 mt-1">
-                              Vol: {formatVolume(market.volume)}
-                            </p>
-                          )}
-                        </div>
-                        <div className="text-right ml-2 flex-shrink-0">
-                          {market.yesPrice && (
-                            <p className="text-sm font-medium text-green-600">
-                              ${market.yesPrice.toFixed(2)}
-                            </p>
-                          )}
-                          <Badge
-                            variant={market.isActive ? 'default' : 'secondary'}
-                            className="text-xs mt-1"
-                          >
-                            {market.status}
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
-                    {(() => {
-                      const totalActiveMarkets = event.markets.filter(
-                        (market: any) =>
-                          market.isActive && market.status === 'active'
-                      ).length;
-                      return (
-                        totalActiveMarkets > 3 && (
-                          <p className="text-xs text-muted-foreground text-center">
-                            +{totalActiveMarkets - 3} more active markets
-                          </p>
-                        )
-                      );
-                    })()}
-                  </>
-                ) : (
-                  <p className="text-xs text-muted-foreground text-center py-2">
-                    No active markets available
-                  </p>
-                );
-              })()}
-            </div>
-          )}
-
-          <div className="mt-4">
-            <Link to={`/events/${event.ticker}`}>
+            <div className="mt-4">
               <Button className="w-full">View Event & Markets</Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+            </div>
+          </CardContent>
+        </Card>
+      </Link>
     );
   };
 
@@ -418,14 +415,13 @@ export function Events() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Prediction Events</h1>
+          <h1 className="text-3xl font-bold text-white">Prediction Events</h1>
           {!shouldSearch && (
-            <p className="text-muted-foreground mt-1">
+            <p className="text-slate-400 mt-1 text-sm">
               Active events sorted by 24h volume
             </p>
           )}
         </div>
-        <Button>Create Market</Button>
       </div>
 
       {/* Search */}
