@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { TrendingUp, BarChart3, User, Settings, Calendar } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { WalletButton } from './WalletButton';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -65,6 +66,12 @@ export function Layout({ children }: LayoutProps) {
 
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header with Wallet Button */}
+        <header className="border-b border-border bg-card px-6 py-4">
+          <div className="flex items-center justify-end">
+            <WalletButton />
+          </div>
+        </header>
         <main className="flex-1 overflow-auto p-6">{children}</main>
       </div>
     </div>

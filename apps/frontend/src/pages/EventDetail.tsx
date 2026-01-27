@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useQuery, useLazyQuery } from '@apollo/client';
 import {
   Card,
   CardContent,
@@ -10,7 +10,7 @@ import {
 } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
-import { ArrowLeft, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronUp } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -61,6 +61,26 @@ const GET_DFLOW_EVENT = gql`
   }
 `;
 
+const GET_ORDERBOOK = gql`
+  query GetDFlowOrderbook($ticker: ID!) {
+    dflowOrderbook(ticker: $ticker) {
+      yesBids {
+        price
+        shares
+        total
+      }
+      noBids {
+        price
+        shares
+        total
+      }
+      spread
+      lastPrice
+      sequence
+    }
+  }
+`;
+
 export function EventDetail() {
   const { ticker } = useParams<{ ticker: string }>();
 
@@ -69,18 +89,26 @@ export function EventDetail() {
     errorPolicy: 'ignore',
   });
 
+  const [getOrderbook] = useLazyQuery(GET_ORDERBOOK, {
+    fetchPolicy: 'network-only',
+  });
+
   // Trading component state - must be at top level before any early returns
   const [selectedMarket, setSelectedMarket] = useState<any>(null);
   const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
   const [side, setSide] = useState<'yes' | 'no'>('yes');
   const [amount, setAmount] = useState<number>(0);
+  const [showCompletedMarkets, setShowCompletedMarkets] =
+    useState<boolean>(false);
+  const [orderbook, setOrderbook] = useState<any>(null);
+  const [loadingOrderbook, setLoadingOrderbook] = useState<boolean>(false);
 
   // Derived data
   const event = data?.dflowEvent;
   const activeMarkets =
     event?.markets
       ?.filter((m: any) => m.isActive)
-      ?.sort((a: any, b: any) => (b.volume || 0) - (a.volume || 0)) || [];
+      ?.sort((a: any, b: any) => (b.yesPrice || 0) - (a.yesPrice || 0)) || [];
   const completedMarkets =
     event?.markets?.filter((m: any) => !m.isActive) || [];
 
@@ -90,6 +118,25 @@ export function EventDetail() {
       setSelectedMarket(activeMarkets[0]);
     }
   }, [activeMarkets, selectedMarket]);
+
+  // Fetch orderbook when market is selected
+  useEffect(() => {
+    if (selectedMarket?.ticker) {
+      setLoadingOrderbook(true);
+      getOrderbook({ variables: { ticker: selectedMarket.ticker } })
+        .then(result => {
+          if (result.data?.dflowOrderbook) {
+            setOrderbook(result.data.dflowOrderbook);
+          }
+        })
+        .catch(err => {
+          console.error('Failed to fetch orderbook:', err);
+        })
+        .finally(() => {
+          setLoadingOrderbook(false);
+        });
+    }
+  }, [selectedMarket, getOrderbook]);
 
   const formatVolume = (volume: number) => {
     if (volume >= 1000000) {
@@ -255,7 +302,7 @@ export function EventDetail() {
             {/* Active Markets */}
             {activeMarkets.length > 0 && (
               <div>
-                <h2 className="text-xl font-semibold mb-4 mt-6">
+                <h2 className="text-xl font-semibold mb-4 mt-4">
                   Active Markets ({activeMarkets.length})
                 </h2>
                 <div className="space-y-3">
@@ -270,18 +317,17 @@ export function EventDetail() {
                     return (
                       <div
                         key={market.ticker}
-                        className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors"
+                        className={`flex items-center justify-between p-4 border rounded-lg transition-colors ${
+                          selectedMarket?.ticker === market.ticker
+                            ? 'bg-primary/10 border-primary'
+                            : 'bg-card hover:bg-muted/50'
+                        }`}
                       >
                         {/* Left: Market Title & Volume - Clickable area */}
                         <div
                           className="flex-1 min-w-0 cursor-pointer"
                           onClick={() => {
                             setSelectedMarket(market);
-                            // Also route to market detail page
-                            window.open(
-                              `/markets/dflow/${market.ticker}`,
-                              '_blank'
-                            );
                           }}
                         >
                           <h3 className="font-semibold text-base truncate">
@@ -321,11 +367,6 @@ export function EventDetail() {
                               e.preventDefault();
                               setSelectedMarket(market);
                               setSide('yes');
-                              // Navigate to market detail page with yes side selected
-                              window.open(
-                                `/markets/dflow/${market.ticker}?side=yes`,
-                                '_blank'
-                              );
                             }}
                           >
                             Buy Yes{' '}
@@ -342,11 +383,6 @@ export function EventDetail() {
                               e.preventDefault();
                               setSelectedMarket(market);
                               setSide('no');
-                              // Navigate to market detail page with no side selected
-                              window.open(
-                                `/markets/dflow/${market.ticker}?side=no`,
-                                '_blank'
-                              );
                             }}
                           >
                             Buy No{' '}
@@ -364,45 +400,55 @@ export function EventDetail() {
 
             {/* Completed Markets */}
             {completedMarkets.length > 0 && (
-              <div>
-                <h2 className="text-xl font-semibold mb-4">
-                  Completed Markets ({completedMarkets.length})
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {completedMarkets.map((market: any) => (
-                    <Card key={market.ticker} className="opacity-75">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-base">
-                          {market.title}
-                        </CardTitle>
-                        <div className="flex gap-2">
-                          <Badge variant="secondary">{market.status}</Badge>
-                          {market.result && (
-                            <Badge variant="outline">
-                              Result: {market.result.toUpperCase()}
-                            </Badge>
-                          )}
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">
-                              Final Volume:
-                            </span>
-                            <span>{formatVolume(market.volume)}</span>
+              <div className="mt-6">
+                <button
+                  onClick={() => setShowCompletedMarkets(!showCompletedMarkets)}
+                  className="flex items-center gap-2 text-xl font-semibold mb-4 hover:text-primary transition-colors"
+                >
+                  <span>Completed Markets ({completedMarkets.length})</span>
+                  {showCompletedMarkets ? (
+                    <ChevronUp className="h-5 w-5" />
+                  ) : (
+                    <ChevronDown className="h-5 w-5" />
+                  )}
+                </button>
+                {showCompletedMarkets && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {completedMarkets.map((market: any) => (
+                      <Card key={market.ticker} className="opacity-75">
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-base">
+                            {market.title}
+                          </CardTitle>
+                          <div className="flex gap-2">
+                            <Badge variant="secondary">{market.status}</Badge>
+                            {market.result && (
+                              <Badge variant="outline">
+                                Result: {market.result.toUpperCase()}
+                              </Badge>
+                            )}
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">
-                              Closed:
-                            </span>
-                            <span>{formatDate(market.closeTime)}</span>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">
+                                Final Volume:
+                              </span>
+                              <span>{formatVolume(market.volume)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">
+                                Closed:
+                              </span>
+                              <span>{formatDate(market.closeTime)}</span>
+                            </div>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -516,6 +562,99 @@ export function EventDetail() {
                       </div>
                     </button>
                   </div>
+
+                  {/* Orderbook Display */}
+                  {orderbook && !loadingOrderbook && (
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-xs text-slate-400 border-b border-slate-600 pb-1">
+                        <span>PRICE</span>
+                        <span>SHARES</span>
+                        <span>TOTAL</span>
+                      </div>
+
+                      {/* Asks (NO bids - people selling YES) */}
+                      <div className="space-y-1">
+                        {orderbook.noBids
+                          .slice(0, 4)
+                          .map((level: any, i: number) => {
+                            const maxTotal = Math.max(
+                              ...orderbook.noBids.map((l: any) => l.total),
+                              ...orderbook.yesBids.map((l: any) => l.total)
+                            );
+                            const depth = (level.total / maxTotal) * 100;
+                            return (
+                              <div
+                                key={i}
+                                className="relative flex justify-between items-center text-xs py-1"
+                              >
+                                <div
+                                  className="absolute inset-0 bg-red-900/20"
+                                  style={{ width: `${depth}%` }}
+                                />
+                                <span className="relative z-10 text-red-400">
+                                  {(level.price * 100).toFixed(0)}¢
+                                </span>
+                                <span className="relative z-10 text-slate-300">
+                                  {level.shares.toLocaleString()}
+                                </span>
+                                <span className="relative z-10 text-slate-300">
+                                  ${level.total.toFixed(0)}
+                                </span>
+                              </div>
+                            );
+                          })}
+                      </div>
+
+                      {/* Spread */}
+                      <div className="flex justify-between items-center text-xs py-1 bg-slate-700/50 px-2 rounded">
+                        <span className="text-slate-400">
+                          Last: {(orderbook.lastPrice * 100).toFixed(0)}¢
+                        </span>
+                        <span className="text-slate-400">
+                          Spread: {(orderbook.spread * 100).toFixed(0)}¢
+                        </span>
+                      </div>
+
+                      {/* Bids (YES bids - people buying YES) */}
+                      <div className="space-y-1">
+                        {orderbook.yesBids
+                          .slice(0, 4)
+                          .map((level: any, i: number) => {
+                            const maxTotal = Math.max(
+                              ...orderbook.noBids.map((l: any) => l.total),
+                              ...orderbook.yesBids.map((l: any) => l.total)
+                            );
+                            const depth = (level.total / maxTotal) * 100;
+                            return (
+                              <div
+                                key={i}
+                                className="relative flex justify-between items-center text-xs py-1"
+                              >
+                                <div
+                                  className="absolute inset-0 bg-green-900/20"
+                                  style={{ width: `${depth}%` }}
+                                />
+                                <span className="relative z-10 text-green-400">
+                                  {(level.price * 100).toFixed(0)}¢
+                                </span>
+                                <span className="relative z-10 text-slate-300">
+                                  {level.shares.toLocaleString()}
+                                </span>
+                                <span className="relative z-10 text-slate-300">
+                                  ${level.total.toFixed(0)}
+                                </span>
+                              </div>
+                            );
+                          })}
+                      </div>
+                    </div>
+                  )}
+
+                  {loadingOrderbook && (
+                    <div className="text-center py-4 text-slate-400 text-sm">
+                      Loading orderbook...
+                    </div>
+                  )}
 
                   {/* Amount Input */}
                   <div className="space-y-3">

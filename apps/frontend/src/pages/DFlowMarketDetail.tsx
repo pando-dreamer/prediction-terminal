@@ -10,6 +10,7 @@ import {
 } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
+import { TradingPanel } from '../components/TradingPanel';
 
 const GET_DFLOW_MARKET = gql`
   query GetDFlowMarket($ticker: ID!) {
@@ -247,6 +248,14 @@ export function DFlowMarketDetail() {
 
         {/* Right Column - Market Stats */}
         <div className="space-y-6">
+          {/* Trading Panel */}
+          <TradingPanel
+            marketTicker={market.ticker}
+            marketTitle={market.title}
+            yesPrice={market.yesPrice}
+            noPrice={market.noPrice}
+          />
+
           {/* Market Stats */}
           <Card>
             <CardHeader>

@@ -14,6 +14,11 @@ import {
   DFlowEventSort,
   DFlowMarketStatus,
 } from './interfaces/dflow-event.interface';
+import {
+  DFlowOrderbook,
+  ProcessedOrderbook,
+  OrderbookLevel,
+} from './interfaces/orderbook.interface';
 
 interface CacheItem<T> {
   data: T;
@@ -92,7 +97,8 @@ export class DFlowService {
 
   private async makeApiCall<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    cacheTTL?: number
   ): Promise<T> {
     const url = `${this.apiUrl}${endpoint}`;
     const cacheKey = this.getCacheKey(endpoint, options.body);
@@ -162,9 +168,11 @@ export class DFlowService {
 
         // Cache successful GET responses
         if (!options.method || options.method === 'GET') {
-          const ttl = endpoint.includes('/markets')
-            ? this.MARKETS_CACHE_TTL
-            : this.DEFAULT_CACHE_TTL;
+          const ttl =
+            cacheTTL ||
+            (endpoint.includes('/markets')
+              ? this.MARKETS_CACHE_TTL
+              : this.DEFAULT_CACHE_TTL);
           this.setCachedData(cacheKey, data, ttl);
         }
 
@@ -374,6 +382,68 @@ export class DFlowService {
       status: [DFlowMarketStatus.ACTIVE],
       withNestedMarkets: true,
     });
+  }
+
+  async getOrderbook(ticker: string): Promise<ProcessedOrderbook | null> {
+    try {
+      const endpoint = `/api/v1/orderbook/${encodeURIComponent(ticker)}`;
+      const orderbook = await this.makeApiCall<DFlowOrderbook>(
+        endpoint,
+        {},
+        5000
+      ); // 5 second cache for orderbook
+
+      // Process orderbook data
+      const processYesBids = (
+        bids: Record<string, number>
+      ): OrderbookLevel[] => {
+        return Object.entries(bids)
+          .map(([price, shares]) => ({
+            price: parseFloat(price),
+            shares,
+            total: parseFloat(price) * shares,
+          }))
+          .sort((a, b) => b.price - a.price) // Highest price first
+          .slice(0, 10); // Top 10 levels
+      };
+
+      const processNoBids = (
+        bids: Record<string, number>
+      ): OrderbookLevel[] => {
+        return Object.entries(bids)
+          .map(([price, shares]) => ({
+            price: parseFloat(price),
+            shares,
+            total: parseFloat(price) * shares,
+          }))
+          .sort((a, b) => a.price - b.price) // Lowest price first (asks)
+          .slice(0, 10); // Top 10 levels
+      };
+
+      const yesBids = processYesBids(orderbook.yes_bids || {});
+      const noBids = processNoBids(orderbook.no_bids || {});
+
+      // Calculate spread and last price
+      const highestYesBid = yesBids[0]?.price || 0;
+      const lowestNoAsk = noBids[0]?.price || 0;
+      const spread =
+        lowestNoAsk && highestYesBid ? lowestNoAsk - highestYesBid : 0;
+      const lastPrice = highestYesBid || 0;
+
+      return {
+        yesBids,
+        noBids,
+        spread,
+        lastPrice,
+        sequence: orderbook.sequence,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Failed to fetch orderbook for ${ticker} from DFlow`,
+        error
+      );
+      return null;
+    }
   }
 
   // Health check method
