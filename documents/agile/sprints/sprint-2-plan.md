@@ -37,9 +37,9 @@
    - Analyze existing DFlow API patterns and responses
    - Document current API capabilities and limitations
 
-2. **Data Design Phase** (Day 1-2) 
+2. **Data Design Phase** (Day 1-2)
    - Design TypeScript interfaces for all trading data structures
-   - Define GraphQL schema extensions for trading operations  
+   - Define GraphQL schema extensions for trading operations
    - Create API endpoint specifications
    - Validate data flows end-to-end
 
@@ -54,13 +54,13 @@
 
 ### Selected User Stories
 
-| Story ID | Title | Story Points | Priority | Status | DFlow API |
-|----------|-------|--------------|----------|--------|-----------|
-| US-007 | Connect Solana wallet for trading | 5 | High | 📋 Planning | Authentication |
-| US-008 | Get real-time trading quotes | 4 | High | 📋 Planning | Quote API |
-| US-009 | Execute buy orders for YES/NO tokens | 8 | High | 📋 Planning | Create Order API |
-| US-010 | Execute sell orders for prediction markets | 6 | High | 📋 Planning | Create Order API |
-| US-011 | Monitor order execution status | 2 | High | 📋 Planning | Order Status API |
+| Story ID | Title                                      | Story Points | Priority | Status      | DFlow API        |
+| -------- | ------------------------------------------ | ------------ | -------- | ----------- | ---------------- |
+| US-007   | Connect Solana wallet for trading          | 5            | High     | 📋 Planning | Authentication   |
+| US-008   | Get real-time trading quotes               | 4            | High     | 📋 Planning | Quote API        |
+| US-009   | Execute buy orders for YES/NO tokens       | 8            | High     | 📋 Planning | Create Order API |
+| US-010   | Execute sell orders for prediction markets | 6            | High     | 📋 Planning | Create Order API |
+| US-011   | Monitor order execution status             | 2            | High     | 📋 Planning | Order Status API |
 
 **Total Story Points**: 25  
 **Velocity Alignment**: Slightly above Sprint 1 capacity due to experience gained ✅
@@ -74,8 +74,9 @@ Based on `#sym:trade` and response `#file:order-prediction-JDJxu7NWnJHckdDPcbuxz
 #### Key Trading Components Identified:
 
 1. **Create Order Flow**:
+
    ```typescript
-   createOrder(publicKey, inputMint, outputMint, amount, slippageBps)
+   createOrder(publicKey, inputMint, outputMint, amount, slippageBps);
    ```
 
 2. **Transaction Handling**:
@@ -85,8 +86,9 @@ Based on `#sym:trade` and response `#file:order-prediction-JDJxu7NWnJHckdDPcbuxz
    - Handle both sync/async execution modes
 
 3. **Order Status Monitoring**:
+
    ```typescript
-   getOrderStatus(signature) // Returns: status, fills[]
+   getOrderStatus(signature); // Returns: status, fills[]
    ```
 
 4. **Order Status Types**:
@@ -118,7 +120,7 @@ Based on `#sym:trade` and response `#file:order-prediction-JDJxu7NWnJHckdDPcbuxz
 // Core trading interfaces
 interface DFlowQuoteRequest {
   inputMint: string;
-  outputMint: string; 
+  outputMint: string;
   amount: string; // In micro units
   slippageBps: number;
   userPublicKey: string;
@@ -235,7 +237,7 @@ enum OutcomeType {
 
 enum TradeDirection {
   BUY
-  SELL  
+  SELL
 }
 
 enum ExecutionMode {
@@ -270,6 +272,7 @@ enum ExecutionMode {
 - [ ] Write tests for wallet integration (3h)
 
 **Technical Notes:**
+
 - Use `@solana/wallet-adapter-react` for wallet integration
 - Support multiple wallet types through adapter
 - Store wallet state in React context
@@ -284,7 +287,7 @@ enum ExecutionMode {
 **Acceptance Criteria:**
 
 - [ ] Users can get quotes for buying YES tokens with USDC
-- [ ] Users can get quotes for buying NO tokens with USDC  
+- [ ] Users can get quotes for buying NO tokens with USDC
 - [ ] Users can get quotes for selling YES/NO tokens for USDC
 - [ ] Quotes show expected output amount and price impact
 - [ ] Quotes include slippage tolerance settings
@@ -302,6 +305,7 @@ enum ExecutionMode {
 - [ ] Add comprehensive error handling (2h)
 
 **Technical Notes:**
+
 - Based on reference: `createOrder()` API call
 - Quote endpoint: `/api/v1/quote` or similar
 - Cache quotes for 30-60 seconds to reduce API calls
@@ -337,6 +341,7 @@ enum ExecutionMode {
 - [ ] Write integration tests (4h)
 
 **Technical Notes:**
+
 - Reference: `trade()` function flow in #sym:trade
 - Handle VersionedTransaction deserialization and signing
 - Monitor transaction confirmation on Solana
@@ -370,6 +375,7 @@ enum ExecutionMode {
 - [ ] Write tests for sell operations (3h)
 
 **Technical Notes:**
+
 - Requires checking user's token account balances
 - Validate sell amount <= current holdings
 - Same transaction flow as buy but different input/output mints
@@ -400,6 +406,7 @@ enum ExecutionMode {
 - [ ] Create status monitoring tests (2h)
 
 **Technical Notes:**
+
 - Reference: `getOrderStatus()` in #sym:trade
 - Poll every 2 seconds for active orders
 - Stop polling when status is 'closed' or 'failed'
@@ -449,23 +456,25 @@ export class TransactionService {
 
 ### Identified Risks
 
-| Risk | Impact | Probability | Mitigation Strategy |
-|------|--------|-------------|-------------------|
-| Wallet integration complexity | High | Medium | Use proven wallet adapter libraries, thorough testing |
-| Transaction signing failures | High | Medium | Comprehensive error handling, fallback mechanisms |
-| Network congestion affects trades | Medium | High | Implement proper retry logic, user communication |
-| Slippage exceeding user tolerance | Medium | Medium | Clear slippage warnings, confirmation dialogs |
-| Gas fee estimation inaccuracy | Low | Medium | Use latest priority fee recommendations |
+| Risk                              | Impact | Probability | Mitigation Strategy                                   |
+| --------------------------------- | ------ | ----------- | ----------------------------------------------------- |
+| Wallet integration complexity     | High   | Medium      | Use proven wallet adapter libraries, thorough testing |
+| Transaction signing failures      | High   | Medium      | Comprehensive error handling, fallback mechanisms     |
+| Network congestion affects trades | Medium | High        | Implement proper retry logic, user communication      |
+| Slippage exceeding user tolerance | Medium | Medium      | Clear slippage warnings, confirmation dialogs         |
+| Gas fee estimation inaccuracy     | Low    | Medium      | Use latest priority fee recommendations               |
 
 ### Dependencies
 
 **External Dependencies:**
+
 - [ ] Solana network stability and performance
-- [ ] DFlow trading API availability and documentation  
+- [ ] DFlow trading API availability and documentation
 - [ ] Wallet provider compatibility (Phantom, Solflare, etc.)
 - [ ] RPC endpoint reliability
 
 **Internal Dependencies:**
+
 - [ ] Sprint 1 event/market discovery functionality working
 - [ ] Environment configuration for trading APIs
 - [ ] Database schema ready for storing trading data
@@ -490,7 +499,7 @@ TEST_WALLET_PRIVATE_KEY=your-test-key-here
 ### New Dependencies
 
 ```bash
-# Frontend dependencies  
+# Frontend dependencies
 pnpm add --filter @prediction-terminal/frontend @solana/web3.js
 pnpm add --filter @prediction-terminal/frontend @solana/wallet-adapter-react
 pnpm add --filter @prediction-terminal/frontend @solana/wallet-adapter-wallets
@@ -540,7 +549,7 @@ All stories in sprint backlog have:
 - [x] Clear acceptance criteria defined with reference to actual API flows
 - [x] Technical approach documented using provided references
 - [x] DFlow Trading API endpoints identified and analyzed
-- [x] TypeScript interfaces designed for all data structures  
+- [x] TypeScript interfaces designed for all data structures
 - [x] GraphQL schema extensions specified
 - [x] Effort estimated with story points based on complexity
 - [x] Dependencies identified and manageable within sprint
@@ -571,12 +580,14 @@ For each story to be considered complete:
 ## Success Metrics
 
 **Primary Metrics:**
+
 - [ ] All 5 user stories completed (25/25 story points)
 - [ ] End-to-end trade execution working (buy/sell flow)
 - [ ] Zero critical bugs in trading functionality
 - [ ] Average trade completion time < 30 seconds
 
 **Technical Metrics:**
+
 - [ ] Wallet connection success rate > 95%
 - [ ] Quote API response time < 2 seconds
 - [ ] Transaction submission success rate > 90%
@@ -585,16 +596,19 @@ For each story to be considered complete:
 ## Open Questions for Sprint Start
 
 **Architecture Questions:**
+
 - Should we store all trade history locally or rely on blockchain queries?
 - How should we handle partial fills in async execution mode?
 - What's the best UX for displaying gas fees and slippage?
 
 **Integration Questions:**
+
 - Are there rate limits on DFlow trading APIs we need to handle?
 - Should we implement trade simulation/preview before actual execution?
 - How do we handle wallet disconnection during active trades?
 
 **Research Tasks (Day 1):**
+
 - [ ] Review complete DFlow trading API documentation
 - [ ] Test all trading endpoints in development environment
 - [ ] Understand gas fee calculation and optimization
@@ -612,10 +626,11 @@ For each story to be considered complete:
 **New Sprint Startup Rule Added:**
 
 > **CRITICAL Sprint Startup Process**: Before ANY implementation work begins in any sprint:
+>
 > 1. **Reference Analysis** - Review all provided examples, existing patterns, API responses
-> 2. **Data Design Phase** - Define TypeScript interfaces, GraphQL schemas, API contracts  
+> 2. **Data Design Phase** - Define TypeScript interfaces, GraphQL schemas, API contracts
 > 3. **Implementation Phase** - Code only after data types and APIs are fully designed
-> 
+>
 > This prevents rework and ensures consistent, well-architected solutions.
 
 **Created By**: Development Team  
