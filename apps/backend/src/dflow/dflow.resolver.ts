@@ -107,6 +107,7 @@ export class DFlowResolver {
   async searchDFlow(
     @Args('query') query: string,
     @Args('limit', { type: () => Number, nullable: true }) limit?: number,
+    @Args('offset', { type: () => Number, nullable: true }) offset?: number,
     @Args('withNestedMarkets', { type: () => Boolean, nullable: true })
     withNestedMarkets?: boolean,
     @Args('withNestedAccounts', { type: () => Boolean, nullable: true })
@@ -116,7 +117,8 @@ export class DFlowResolver {
       query,
       limit || 10,
       withNestedMarkets ?? true,
-      withNestedAccounts ?? true
+      withNestedAccounts ?? true,
+      offset || 0
     );
     return response.events.map(event => this.transformEventToGraphQL(event));
   }

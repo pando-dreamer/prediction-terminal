@@ -165,7 +165,7 @@ type Query {
   dflowMarkets(category: String, limit: Float, search: String): [DFlowMarketGraphQL!]!
   market(id: ID!): Market!
   markets: [Market!]!
-  searchDFlow(limit: Float, query: String!, withNestedAccounts: Boolean, withNestedMarkets: Boolean): [DFlowEvent!]!
+  searchDFlow(limit: Float, offset: Float, query: String!, withNestedAccounts: Boolean, withNestedMarkets: Boolean): [DFlowEvent!]!
   searchDFlowMarkets(limit: Float, query: String!): [DFlowMarketGraphQL!]!
   user(id: ID!): User!
 }

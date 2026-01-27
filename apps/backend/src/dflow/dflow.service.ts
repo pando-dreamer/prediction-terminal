@@ -252,11 +252,13 @@ export class DFlowService {
     query: string,
     limit: number = 10,
     withNestedMarkets: boolean = true,
-    withNestedAccounts: boolean = true
+    withNestedAccounts: boolean = true,
+    offset: number = 0
   ): Promise<DFlowSearchResponse> {
     const params = new URLSearchParams();
     params.append('q', query);
     params.append('limit', limit.toString());
+    if (offset > 0) params.append('offset', offset.toString());
     params.append('withNestedMarkets', withNestedMarkets.toString());
     params.append('withNestedAccounts', withNestedAccounts.toString());
 
