@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import { useWallet, useConnection } from '../contexts/WalletContext';
-import { VersionedTransaction } from '@solana/web3.js';
+import { VersionedTransaction, PublicKey } from '@solana/web3.js';
+import {
+  getAssociatedTokenAddress,
+  getAccount,
+  getMint,
+  TOKEN_2022_PROGRAM_ID,
+} from '@solana/spl-token';
 import {
   Card,
   CardContent,
@@ -125,6 +131,17 @@ const GET_ORDER_STATUS = gql`
   }
 `;
 
+const GET_MARKET_MINTS = gql`
+  query GetMarketMints($marketId: String!) {
+    dflowMarketMints(marketId: $marketId) {
+      baseMint
+      yesMint
+      noMint
+      marketId
+    }
+  }
+`;
+
 export function EventDetail() {
   const { ticker } = useParams<{ ticker: string }>();
   const { publicKey, connected, signTransaction } = useWallet();
@@ -143,6 +160,7 @@ export function EventDetail() {
   const [getOrderStatus] = useLazyQuery(GET_ORDER_STATUS, {
     fetchPolicy: 'network-only',
   });
+  const [getMarketMints] = useLazyQuery(GET_MARKET_MINTS);
 
   // Trading component state - must be at top level before any early returns
   const [selectedMarket, setSelectedMarket] = useState<any>(null);
@@ -156,6 +174,19 @@ export function EventDetail() {
   const [isTrading, setIsTrading] = useState<boolean>(false);
   const [tradeError, setTradeError] = useState<string>('');
   const [tradeSuccess, setTradeSuccess] = useState<string>('');
+  const [balances, setBalances] = useState({
+    usdc: 0,
+    yes: 0,
+    no: 0,
+  });
+  const [isLoadingBalances, setIsLoadingBalances] = useState<boolean>(false);
+  const [marketMints, setMarketMints] = useState<{
+    yesMint: string;
+    noMint: string;
+  } | null>(null);
+
+  // USDC mint address
+  const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 
   // Derived data
   const event = data?.dflowEvent;
@@ -166,12 +197,125 @@ export function EventDetail() {
   const completedMarkets =
     event?.markets?.filter((m: any) => !m.isActive) || [];
 
+  // Fetch user's token balances
+  const fetchBalances = async () => {
+    if (!publicKey || !connected) {
+      setBalances({ usdc: 0, yes: 0, no: 0 });
+      return;
+    }
+
+    setIsLoadingBalances(true);
+    try {
+      const usdcMint = new PublicKey(USDC_MINT);
+      const usdcTokenAccount = await getAssociatedTokenAddress(
+        usdcMint,
+        publicKey
+      );
+
+      const newBalances = { usdc: 0, yes: 0, no: 0 };
+
+      try {
+        const usdcBalance =
+          await connection.getTokenAccountBalance(usdcTokenAccount);
+        newBalances.usdc = parseFloat(
+          usdcBalance.value.uiAmount?.toString() || '0'
+        );
+        console.log('USDC balance:', newBalances.usdc);
+      } catch (err) {
+        console.log('USDC account not found');
+      }
+
+      // Fetch YES/NO token balances if we have market mints
+      if (marketMints) {
+        try {
+          const yesMint = new PublicKey(marketMints.yesMint);
+          const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
+            publicKey,
+            { mint: yesMint, programId: TOKEN_2022_PROGRAM_ID }
+          );
+          const yesBalance = tokenAccounts.value
+            .map(acc => acc.account.data.parsed.info.tokenAmount)
+            .reduce(
+              (pre, cur) =>
+                Number(pre?.uiAmount || 0) + Number(cur?.uiAmount || 0),
+              0
+            );
+          newBalances.yes = yesBalance;
+          console.log('YES balance:', newBalances.yes);
+        } catch (err) {
+          console.error('Error fetching YES token balance:', err);
+        }
+
+        try {
+          const noMint = new PublicKey(marketMints.noMint);
+          const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
+            publicKey,
+            { mint: noMint, programId: TOKEN_2022_PROGRAM_ID }
+          );
+          const noBalance = tokenAccounts.value
+            .map(acc => acc.account.data.parsed.info.tokenAmount)
+            .reduce(
+              (pre, cur) =>
+                Number(pre?.uiAmount || 0) + Number(cur?.uiAmount || 0),
+              0
+            );
+          newBalances.no = noBalance;
+          console.log('NO balance:', newBalances.no);
+        } catch (err) {
+          console.error('Error fetching NO token balance:', err);
+        }
+      }
+
+      setBalances(newBalances);
+    } catch (err) {
+      console.error('Error fetching balances:', err);
+    } finally {
+      setIsLoadingBalances(false);
+    }
+  };
+
+  const isInsufficientBalance = useMemo(() => {
+    if (tradeType === 'buy' && balances.usdc < amount) return true;
+    if (tradeType === 'sell' && balances[side] < amount) return true;
+    return false;
+  }, [balances, tradeType, amount, side]);
+
   // Set initial selected market when activeMarkets are available
   useEffect(() => {
     if (activeMarkets.length > 0 && !selectedMarket) {
       setSelectedMarket(activeMarkets[0]);
     }
   }, [activeMarkets, selectedMarket]);
+
+  // Fetch market mints when selectedMarket changes
+  useEffect(() => {
+    const fetchMints = async () => {
+      if (!selectedMarket?.ticker) return;
+
+      try {
+        const result = await getMarketMints({
+          variables: { marketId: selectedMarket.ticker },
+        });
+        if (result.data?.dflowMarketMints) {
+          setMarketMints({
+            yesMint: result.data.dflowMarketMints.yesMint,
+            noMint: result.data.dflowMarketMints.noMint,
+          });
+          console.log('Market mints fetched:', result.data.dflowMarketMints);
+        }
+      } catch (err) {
+        console.error('Error fetching market mints:', err);
+      }
+    };
+    fetchMints();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedMarket]);
+
+  // Fetch balances when wallet connects or market mints change
+  useEffect(() => {
+    fetchBalances();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [publicKey, connected, marketMints]);
 
   // Fetch orderbook when market is selected
   useEffect(() => {
@@ -873,9 +1017,21 @@ export function EventDetail() {
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <span className="text-white font-medium">Amount</span>
-                      <span className="text-slate-400 text-sm">
-                        Balance $9.63
-                      </span>
+                      {isLoadingBalances ? (
+                        <span className="text-slate-400 text-sm">
+                          Loading...
+                        </span>
+                      ) : (
+                        <span className="text-slate-400 text-sm">
+                          {tradeType === 'buy'
+                            ? `${balances.usdc.toFixed(2)} USDC`
+                            : marketMints
+                              ? side === 'yes'
+                                ? `${balances.yes.toFixed(1)} YES`
+                                : `${balances.no.toFixed(1)} NO`
+                              : `${balances.usdc.toFixed(2)} USDC`}
+                        </span>
+                      )}
                     </div>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-3xl font-bold text-slate-300">
@@ -908,7 +1064,11 @@ export function EventDetail() {
                       variant="secondary"
                       size="sm"
                       className="bg-slate-600 hover:bg-slate-500 text-white"
-                      onClick={() => setAmount(9.63)} // Max balance
+                      onClick={() =>
+                        setAmount(
+                          tradeType === 'buy' ? balances.usdc : balances[side]
+                        )
+                      } // Max balance
                     >
                       Max
                     </Button>
@@ -942,7 +1102,12 @@ export function EventDetail() {
                         : 'bg-red-600 hover:bg-red-700'
                     }`}
                     onClick={handleExecuteTrade}
-                    disabled={isTrading || !connected || !amount}
+                    disabled={
+                      isTrading ||
+                      !connected ||
+                      !amount ||
+                      isInsufficientBalance
+                    }
                   >
                     {isTrading
                       ? 'Processing...'

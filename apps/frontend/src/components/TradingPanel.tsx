@@ -40,6 +40,17 @@ const EXECUTE_TRADE = gql`
   }
 `;
 
+const GET_MARKET_MINTS = gql`
+  query GetMarketMints($marketId: String!) {
+    dflowMarketMints(marketId: $marketId) {
+      baseMint
+      yesMint
+      noMint
+      marketId
+    }
+  }
+`;
+
 const GET_ORDER_STATUS = gql`
   query GetOrderStatus($signature: String!) {
     dflowOrderStatus(signature: $signature) {
@@ -83,6 +94,7 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
   const { connection } = useConnection();
 
   const [outcome, setOutcome] = useState<OutcomeType>('YES');
+  const [direction, setDirection] = useState<TradeDirection>('BUY');
   const [amount, setAmount] = useState<string>('');
   const [slippage, setSlippage] = useState<number>(100); // 1% = 100 bps
   const [isLoading, setIsLoading] = useState(false);
@@ -94,8 +106,13 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
     no: 0,
   });
   const [isLoadingBalances, setIsLoadingBalances] = useState(false);
+  const [marketMints, setMarketMints] = useState<{
+    yesMint: string;
+    noMint: string;
+  } | null>(null);
 
   const [executeTradeMutation] = useMutation(EXECUTE_TRADE);
+  const [getMarketMints] = useLazyQuery(GET_MARKET_MINTS);
   const [getOrderStatus] = useLazyQuery(GET_ORDER_STATUS, {
     fetchPolicy: 'network-only',
   });
@@ -121,25 +138,74 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
         publicKey
       );
 
+      const newBalances = { usdc: 0, yes: 0, no: 0 };
+
       try {
         const usdcBalance =
           await connection.getTokenAccountBalance(usdcTokenAccount);
-        const balance = parseFloat(
+        newBalances.usdc = parseFloat(
           usdcBalance.value.uiAmount?.toString() || '0'
         );
-        console.log('USDC balance fetched:', balance);
-        setBalances(prev => ({
-          ...prev,
-          usdc: balance,
-        }));
+        console.log('USDC balance:', {
+          uiAmount: usdcBalance.value.uiAmount,
+          amount: usdcBalance.value.amount,
+          decimals: usdcBalance.value.decimals,
+          parsed: newBalances.usdc,
+        });
       } catch (err) {
-        // Account doesn't exist, balance is 0
         console.log('USDC account not found, setting balance to 0');
-        setBalances(prev => ({ ...prev, usdc: 0 }));
       }
 
-      // TODO: Fetch YES/NO token balances when we have market mints
-      // For now, we'll set them to 0 and only check USDC for BUY
+      // Fetch YES/NO token balances if we have market mints
+      if (marketMints) {
+        console.log('Fetching token balances for mints:', marketMints);
+        try {
+          const yesMint = new PublicKey(marketMints.yesMint);
+          const yesTokenAccount = await getAssociatedTokenAddress(
+            yesMint,
+            publicKey
+          );
+          const yesBalance =
+            await connection.getTokenAccountBalance(yesTokenAccount);
+          newBalances.yes = parseFloat(
+            yesBalance.value.uiAmount?.toString() || '0'
+          );
+          console.log('YES balance:', {
+            uiAmount: yesBalance.value.uiAmount,
+            amount: yesBalance.value.amount,
+            decimals: yesBalance.value.decimals,
+            parsed: newBalances.yes,
+          });
+        } catch (err) {
+          console.log('YES token account not found:', err);
+        }
+
+        try {
+          const noMint = new PublicKey(marketMints.noMint);
+          const noTokenAccount = await getAssociatedTokenAddress(
+            noMint,
+            publicKey
+          );
+          const noBalance =
+            await connection.getTokenAccountBalance(noTokenAccount);
+          newBalances.no = parseFloat(
+            noBalance.value.uiAmount?.toString() || '0'
+          );
+          console.log('NO balance:', {
+            uiAmount: noBalance.value.uiAmount,
+            amount: noBalance.value.amount,
+            decimals: noBalance.value.decimals,
+            parsed: newBalances.no,
+          });
+        } catch (err) {
+          console.log('NO token account not found:', err);
+        }
+      } else {
+        console.log('Market mints not available yet');
+      }
+
+      console.log('Final balances:', newBalances);
+      setBalances(newBalances);
     } catch (err) {
       console.error('Error fetching balances:', err);
     } finally {
@@ -147,11 +213,33 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
     }
   };
 
-  // Fetch balances when wallet connects or outcome changes
+  // Fetch market mints on mount
+  useEffect(() => {
+    const fetchMints = async () => {
+      try {
+        const result = await getMarketMints({
+          variables: { marketId: marketTicker },
+        });
+        if (result.data?.dflowMarketMints) {
+          setMarketMints({
+            yesMint: result.data.dflowMarketMints.yesMint,
+            noMint: result.data.dflowMarketMints.noMint,
+          });
+          console.log('Market mints fetched:', result.data.dflowMarketMints);
+        }
+      } catch (err) {
+        console.error('Error fetching market mints:', err);
+      }
+    };
+    fetchMints();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [marketTicker]);
+
+  // Fetch balances when wallet connects or market mints are loaded
   useEffect(() => {
     fetchBalances();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [publicKey, connected]);
+  }, [publicKey, connected, marketMints]);
 
   // Refetch balances after successful trade
   useEffect(() => {
@@ -166,7 +254,26 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
   const safeYesPrice = yesPrice ?? 0.5;
   const safeNoPrice = noPrice ?? 0.5;
   const currentPrice = outcome === 'YES' ? safeYesPrice : safeNoPrice;
-  const estimatedTokens = amount ? parseFloat(amount) / currentPrice : 0;
+
+  // For BUY: amount is USDC, calculate tokens
+  // For SELL: amount is tokens (shares), calculate USDC
+  const estimatedTokens =
+    direction === 'BUY'
+      ? amount
+        ? parseFloat(amount) / currentPrice
+        : 0
+      : amount
+        ? parseFloat(amount)
+        : 0;
+
+  const estimatedUSDC =
+    direction === 'SELL'
+      ? amount
+        ? parseFloat(amount) * currentPrice
+        : 0
+      : amount
+        ? parseFloat(amount)
+        : 0;
 
   // Balance validation
   const getInsufficientBalanceWarning = (
@@ -185,13 +292,14 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
     });
 
     if (direction === 'BUY') {
+      // For BUY, input amount is USDC
       if (inputAmount > balances.usdc) {
         console.log('Insufficient USDC for BUY');
         return `Insufficient USDC balance. You have ${balances.usdc.toFixed(2)} USDC`;
       }
     } else {
-      // SELL
-      const requiredTokens = estimatedTokens;
+      // SELL - input amount is shares/tokens
+      const requiredTokens = inputAmount; // Direct input, not calculated
       const tokenBalance = outcome === 'YES' ? balances.yes : balances.no;
 
       if (requiredTokens > tokenBalance) {
@@ -203,9 +311,10 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
     return null;
   };
 
-  // Get the active warning based on which button would be clickable
-  const buyWarning = amount ? getInsufficientBalanceWarning('BUY') : null;
-  const sellWarning = amount ? getInsufficientBalanceWarning('SELL') : null;
+  // Get the active warning based on current direction
+  const currentWarning = amount
+    ? getInsufficientBalanceWarning(direction)
+    : null;
 
   /**
    * Monitor transaction status for sync execution mode
@@ -308,6 +417,14 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
     setSuccessMessage('');
 
     try {
+      // Calculate the amount to send to API
+      // For BUY: amount is already in USDC
+      // For SELL: convert shares to USDC equivalent
+      const apiAmount =
+        direction === 'BUY'
+          ? parseFloat(amount)
+          : parseFloat(amount) * currentPrice;
+
       // 1. Get quote and transaction from backend
       const { data } = await executeTradeMutation({
         variables: {
@@ -315,7 +432,7 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
             market: marketTicker,
             outcome,
             direction,
-            amount: parseFloat(amount),
+            amount: apiAmount,
             slippageBps: slippage,
             userPublicKey: publicKey.toBase58(),
           },
@@ -399,6 +516,23 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
         <CardTitle>Trade on {marketTitle}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* Direction Toggle */}
+        <div className="space-y-2">
+          <Label>Direction</Label>
+          <Tabs
+            value={direction}
+            onValueChange={v => {
+              setDirection(v as TradeDirection);
+              setAmount(''); // Clear amount when switching
+            }}
+          >
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="BUY">Buy</TabsTrigger>
+              <TabsTrigger value="SELL">Sell</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+
         {/* Outcome Selection */}
         <div className="space-y-2">
           <Label>Outcome</Label>
@@ -421,7 +555,11 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
 
         {/* Amount Input */}
         <div className="space-y-2">
-          <Label htmlFor="amount">Amount (USDC)</Label>
+          <Label htmlFor="amount">
+            {direction === 'BUY'
+              ? 'Amount (USDC)'
+              : `Shares (${outcome} tokens)`}
+          </Label>
           <Input
             id="amount"
             type="number"
@@ -434,7 +572,9 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
           <div className="flex items-center justify-between text-sm">
             {amount && (
               <p className="text-muted-foreground">
-                ≈ {estimatedTokens.toFixed(2)} {outcome} tokens
+                {direction === 'BUY'
+                  ? `≈ ${estimatedTokens.toFixed(2)} ${outcome} tokens`
+                  : `≈ ${estimatedUSDC.toFixed(2)} USDC`}
               </p>
             )}
             {isLoadingBalances ? (
@@ -442,7 +582,15 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
             ) : (
               <div className="flex items-center gap-1 text-muted-foreground">
                 <Wallet className="h-3 w-3" />
-                <span>{balances.usdc.toFixed(2)} USDC</span>
+                <span>
+                  {direction === 'BUY'
+                    ? `${balances.usdc.toFixed(6)} USDC`
+                    : marketMints
+                      ? outcome === 'YES'
+                        ? `${balances.yes.toFixed(6)} YES`
+                        : `${balances.no.toFixed(6)} NO`
+                      : `${balances.usdc.toFixed(6)} USDC`}
+                </span>
               </div>
             )}
           </div>
@@ -481,40 +629,25 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
           </Alert>
         )}
 
-        {/* Balance Warnings - Show either BUY or SELL warning, prioritize BUY */}
-        {buyWarning && (
+        {/* Balance Warning */}
+        {currentWarning && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{buyWarning}</AlertDescription>
-          </Alert>
-        )}
-        {!buyWarning && sellWarning && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{sellWarning}</AlertDescription>
+            <AlertDescription>{currentWarning}</AlertDescription>
           </Alert>
         )}
 
-        {/* Trade Buttons */}
-        <div className="grid grid-cols-2 gap-4">
-          <Button
-            onClick={() => handleTrade('BUY')}
-            disabled={isLoading || !amount || !!buyWarning || isLoadingBalances}
-            className="w-full"
-          >
-            {isLoading ? 'Processing...' : 'Buy'}
-          </Button>
-          <Button
-            onClick={() => handleTrade('SELL')}
-            disabled={
-              isLoading || !amount || !!sellWarning || isLoadingBalances
-            }
-            variant="outline"
-            className="w-full"
-          >
-            {isLoading ? 'Processing...' : 'Sell'}
-          </Button>
-        </div>
+        {/* Trade Button */}
+        <Button
+          onClick={() => handleTrade(direction)}
+          disabled={
+            isLoading || !amount || !!currentWarning || isLoadingBalances
+          }
+          className="w-full"
+          variant={direction === 'SELL' ? 'outline' : 'default'}
+        >
+          {isLoading ? 'Processing...' : direction === 'BUY' ? 'Buy' : 'Sell'}
+        </Button>
 
         {/* Trading Info */}
         <div className="text-xs text-muted-foreground space-y-1">
