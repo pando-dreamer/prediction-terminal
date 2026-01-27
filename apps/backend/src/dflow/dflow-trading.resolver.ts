@@ -61,20 +61,46 @@ export class DFlowTradingResolver {
     );
 
     try {
-      // TODO: Implement full trade execution flow:
-      // 1. Resolve market to get mints (YES/NO token addresses)
-      // 2. Convert human-readable amount to micro units
-      // 3. Call createOrder from trading service
-      // 4. Return response with transaction to sign
+      // 1. Get market mints (YES/NO token addresses)
+      const mints = await this.tradingService.getMarketMints(request.market);
+      if (!mints) {
+        throw new Error(`Market ${request.market} not found`);
+      }
 
-      // For now, return error indicating implementation needed
+      // 2. Determine input/output mints based on direction and outcome
+      let inputMint: string;
+      let outputMint: string;
+      const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+
+      if (request.direction === 'BUY') {
+        // Buying tokens: USDC -> YES/NO token
+        inputMint = USDC_MINT;
+        outputMint = request.outcome === 'YES' ? mints.yesMint : mints.noMint;
+      } else {
+        // Selling tokens: YES/NO token -> USDC
+        inputMint = request.outcome === 'YES' ? mints.yesMint : mints.noMint;
+        outputMint = USDC_MINT;
+      }
+
+      // 3. Convert human-readable amount to micro units (USDC has 6 decimals)
+      const amountInMicroUnits = Math.floor(
+        request.amount * 1_000_000
+      ).toString();
+
+      // 4. Create order via DFlow API (this returns transaction to sign)
+      const order = await this.tradingService.createOrder({
+        inputMint,
+        outputMint,
+        amount: amountInMicroUnits,
+        slippageBps: request.slippageBps,
+        userPublicKey: request.userPublicKey,
+      });
+
+      // 5. Return response with order and transaction to sign
       return {
-        success: false,
-        error: {
-          code: TradingErrorCode.API_ERROR,
-          message: 'Trade execution not yet fully implemented',
-          timestamp: new Date().toISOString(),
-        },
+        success: true,
+        signature: null, // Will be set after user signs and submits
+        quote: order, // Order response has same structure as quote
       };
     } catch (error) {
       this.logger.error('Trade execution failed', error);

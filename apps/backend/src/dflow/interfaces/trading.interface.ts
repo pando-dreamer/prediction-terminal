@@ -66,20 +66,18 @@ export interface DFlowOrderResponse extends DFlowQuoteResponse {
 }
 
 export interface DFlowOrderStatus {
-  signature: string;
-  status: OrderStatus;
-  fills: DFlowOrderFill[];
-  timestamp: string;
-  error?: string;
+  status: string; // Order status: open, closed, failed, etc.
+  inAmount?: string; // Total input amount
+  outAmount?: string; // Total output amount
+  fills: DFlowOrderFill[]; // List of fills
 }
 
 export interface DFlowOrderFill {
-  fillId: string;
-  inputAmount: string; // Amount of input token filled
-  outputAmount: string; // Amount of output token received
-  price: string; // Execution price
-  timestamp: string; // Fill timestamp
-  transactionSignature?: string;
+  signature: string; // Transaction signature
+  inputMint: string; // Input token mint
+  inAmount: string; // Amount of input token
+  outputMint: string; // Output token mint
+  outAmount: string; // Amount of output token received
 }
 
 // ==============================================================================

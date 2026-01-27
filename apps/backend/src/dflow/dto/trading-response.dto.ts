@@ -57,40 +57,34 @@ export class DFlowQuoteResponse {
 @ObjectType()
 export class DFlowOrderFill {
   @Field()
-  fillId: string;
+  signature: string;
 
   @Field()
-  inputAmount: string;
+  inputMint: string;
 
   @Field()
-  outputAmount: string;
+  inAmount: string;
 
   @Field()
-  price: string;
+  outputMint: string;
 
   @Field()
-  timestamp: string;
-
-  @Field({ nullable: true })
-  transactionSignature?: string;
+  outAmount: string;
 }
 
 @ObjectType()
 export class DFlowOrderStatus {
   @Field()
-  signature: string;
-
-  @Field()
   status: string;
+
+  @Field({ nullable: true })
+  inAmount?: string;
+
+  @Field({ nullable: true })
+  outAmount?: string;
 
   @Field(() => [DFlowOrderFill])
   fills: DFlowOrderFill[];
-
-  @Field()
-  timestamp: string;
-
-  @Field({ nullable: true })
-  error?: string;
 }
 
 @ObjectType()

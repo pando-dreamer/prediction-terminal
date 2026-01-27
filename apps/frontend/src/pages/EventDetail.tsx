@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { gql, useQuery, useLazyQuery } from '@apollo/client';
+import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
+import { useWallet, useConnection } from '../contexts/WalletContext';
+import { VersionedTransaction } from '@solana/web3.js';
 import {
   Card,
   CardContent,
@@ -19,6 +21,8 @@ import {
   SelectValue,
 } from '../components/ui/select';
 import { Input } from '../components/ui/input';
+import { Alert, AlertDescription } from '../components/ui/alert';
+import { AlertCircle, CheckCircle } from 'lucide-react';
 
 const GET_DFLOW_EVENT = gql`
   query GetDFlowEvent($ticker: ID!) {
@@ -81,8 +85,50 @@ const GET_ORDERBOOK = gql`
   }
 `;
 
+const EXECUTE_TRADE = gql`
+  mutation ExecuteDFlowTrade($request: DFlowTradeRequestInput!) {
+    executeDFlowTrade(request: $request) {
+      success
+      signature
+      quote {
+        inputMint
+        inAmount
+        outputMint
+        outAmount
+        slippageBps
+        priceImpactPct
+        executionMode
+        transaction
+      }
+      error {
+        code
+        message
+      }
+    }
+  }
+`;
+
+const GET_ORDER_STATUS = gql`
+  query GetOrderStatus($signature: String!) {
+    dflowOrderStatus(signature: $signature) {
+      status
+      inAmount
+      outAmount
+      fills {
+        signature
+        inputMint
+        inAmount
+        outputMint
+        outAmount
+      }
+    }
+  }
+`;
+
 export function EventDetail() {
   const { ticker } = useParams<{ ticker: string }>();
+  const { publicKey, connected, signTransaction } = useWallet();
+  const { connection } = useConnection();
 
   const { loading, error, data } = useQuery(GET_DFLOW_EVENT, {
     variables: { ticker },
@@ -90,6 +136,11 @@ export function EventDetail() {
   });
 
   const [getOrderbook] = useLazyQuery(GET_ORDERBOOK, {
+    fetchPolicy: 'network-only',
+  });
+
+  const [executeTradeMutation] = useMutation(EXECUTE_TRADE);
+  const [getOrderStatus] = useLazyQuery(GET_ORDER_STATUS, {
     fetchPolicy: 'network-only',
   });
 
@@ -102,6 +153,9 @@ export function EventDetail() {
     useState<boolean>(false);
   const [orderbook, setOrderbook] = useState<any>(null);
   const [loadingOrderbook, setLoadingOrderbook] = useState<boolean>(false);
+  const [isTrading, setIsTrading] = useState<boolean>(false);
+  const [tradeError, setTradeError] = useState<string>('');
+  const [tradeSuccess, setTradeSuccess] = useState<string>('');
 
   // Derived data
   const event = data?.dflowEvent;
@@ -137,6 +191,165 @@ export function EventDetail() {
         });
     }
   }, [selectedMarket, getOrderbook]);
+
+  // Monitor transaction for sync mode
+  const monitorSyncTransaction = async (signature: string) => {
+    let retries = 0;
+    const maxRetries = 60;
+
+    while (retries < maxRetries) {
+      const statusResult = await connection.getSignatureStatuses([signature]);
+      const status = statusResult.value[0];
+
+      if (!status) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        retries++;
+        continue;
+      }
+
+      if (status.confirmationStatus === 'finalized') {
+        if (status.err) {
+          throw new Error('Transaction failed on blockchain');
+        }
+        return true;
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      retries++;
+    }
+
+    throw new Error('Transaction confirmation timeout');
+  };
+
+  // Monitor order for async mode
+  const monitorAsyncOrder = async (signature: string) => {
+    let retries = 0;
+    const maxRetries = 30;
+
+    while (retries < maxRetries) {
+      try {
+        const { data } = await getOrderStatus({
+          variables: { signature },
+        });
+
+        const orderStatus = data?.dflowOrderStatus;
+
+        if (!orderStatus) {
+          console.log('Waiting for order status...');
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          retries++;
+          continue;
+        }
+
+        console.log(`Order status: ${orderStatus.status}`);
+
+        if (orderStatus.status === 'closed') {
+          if (orderStatus.fills && orderStatus.fills.length > 0) {
+            return true;
+          }
+          throw new Error('Order closed without fills');
+        }
+
+        if (orderStatus.status === 'failed') {
+          throw new Error('Order failed to execute');
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        retries++;
+      } catch (err) {
+        console.error('Error monitoring order:', err);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        retries++;
+      }
+    }
+
+    throw new Error('Order monitoring timeout');
+  };
+
+  // Execute trade
+  const handleExecuteTrade = async () => {
+    if (!connected || !publicKey) {
+      setTradeError('Please connect your wallet first');
+      return;
+    }
+
+    if (!amount || amount <= 0) {
+      setTradeError('Please enter a valid amount');
+      return;
+    }
+
+    if (!signTransaction) {
+      setTradeError('Wallet does not support transaction signing');
+      return;
+    }
+
+    if (!selectedMarket) {
+      setTradeError('Please select a market');
+      return;
+    }
+
+    setIsTrading(true);
+    setTradeError('');
+    setTradeSuccess('');
+
+    try {
+      // Get order from backend
+      const { data } = await executeTradeMutation({
+        variables: {
+          request: {
+            market: selectedMarket.ticker,
+            outcome: side.toUpperCase(),
+            direction: tradeType.toUpperCase(),
+            amount,
+            slippageBps: 100,
+            userPublicKey: publicKey.toBase58(),
+          },
+        },
+      });
+
+      if (!data?.executeDFlowTrade?.success) {
+        throw new Error(
+          data?.executeDFlowTrade?.error?.message || 'Trade failed'
+        );
+      }
+
+      const { quote } = data.executeDFlowTrade;
+
+      // Deserialize and sign transaction
+      setTradeSuccess('Signing transaction...');
+      const transactionBuffer = Buffer.from(quote.transaction, 'base64');
+      const transaction = VersionedTransaction.deserialize(transactionBuffer);
+      const signedTransaction = await signTransaction(transaction);
+
+      // Submit transaction
+      setTradeSuccess('Submitting transaction...');
+      const signature = await connection.sendRawTransaction(
+        signedTransaction.serialize(),
+        { skipPreflight: false, maxRetries: 3 }
+      );
+
+      setTradeSuccess(`Transaction submitted: ${signature.substring(0, 8)}...`);
+
+      // Monitor based on execution mode
+      if (quote.executionMode === 'sync') {
+        setTradeSuccess('Monitoring transaction...');
+        await monitorSyncTransaction(signature);
+      } else {
+        setTradeSuccess('Monitoring order execution...');
+        await monitorAsyncOrder(signature);
+      }
+
+      setTradeSuccess(
+        `✅ Trade successful! ${tradeType.toUpperCase()} ${amount} USDC for ${side.toUpperCase()} tokens`
+      );
+      setAmount(0);
+    } catch (err: any) {
+      console.error('Trade error:', err);
+      setTradeError(err.message || 'Trade failed');
+    } finally {
+      setIsTrading(false);
+    }
+  };
 
   const formatVolume = (volume: number) => {
     if (volume >= 1000000) {
@@ -701,6 +914,26 @@ export function EventDetail() {
                     </Button>
                   </div>
 
+                  {/* Error Display */}
+                  {tradeError && (
+                    <Alert className="bg-red-900/20 border-red-500">
+                      <AlertCircle className="h-4 w-4 text-red-400" />
+                      <AlertDescription className="text-red-200">
+                        {tradeError}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {/* Success Display */}
+                  {tradeSuccess && (
+                    <Alert className="bg-green-900/20 border-green-500">
+                      <CheckCircle className="h-4 w-4 text-green-400" />
+                      <AlertDescription className="text-green-200">
+                        {tradeSuccess}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
                   {/* Trade Button */}
                   <Button
                     className={`w-full py-3 font-bold text-lg ${
@@ -708,18 +941,12 @@ export function EventDetail() {
                         ? 'bg-green-600 hover:bg-green-700'
                         : 'bg-red-600 hover:bg-red-700'
                     }`}
-                    onClick={() => {
-                      // Handle trade execution
-                      console.log('Execute trade:', {
-                        market: selectedMarket.ticker,
-                        type: tradeType,
-                        side,
-                        amount,
-                      });
-                    }}
+                    onClick={handleExecuteTrade}
+                    disabled={isTrading || !connected || !amount}
                   >
-                    {tradeType === 'buy' ? 'Buy' : 'Sell'}{' '}
-                    {side === 'yes' ? 'Yes' : 'No'}
+                    {isTrading
+                      ? 'Processing...'
+                      : `${tradeType === 'buy' ? 'Buy' : 'Sell'} ${side === 'yes' ? 'Yes' : 'No'}`}
                   </Button>
                 </CardContent>
               </Card>

@@ -10,6 +10,7 @@ import {
   TradingError,
   TradingErrorCode,
 } from './interfaces/trading.interface';
+import { DFlowService } from './dflow.service';
 
 @Injectable()
 export class DFlowTradingService {
@@ -17,7 +18,7 @@ export class DFlowTradingService {
   private readonly apiBaseUrl: string;
   private readonly apiKey?: string;
 
-  constructor() {
+  constructor(private readonly dflowService: DFlowService) {
     this.apiBaseUrl =
       process.env.DFLOW_QUOTE_ENDPOINT || 'https://api.dflow.trade';
     this.apiKey = process.env.DFLOW_API_KEY;
@@ -127,7 +128,7 @@ export class DFlowTradingService {
       });
 
       const response = await fetch(
-        `${this.apiBaseUrl}/api/v1/order-status?${queryParams.toString()}`,
+        `${this.apiBaseUrl}/order-status?${queryParams.toString()}`,
         {
           method: 'GET',
           headers: {
@@ -161,15 +162,41 @@ export class DFlowTradingService {
 
   /**
    * Get market mints for trading
-   * Note: This may need to be implemented based on DFlow's market API
+   * Fetches the market data and extracts YES/NO token mint addresses
    */
   async getMarketMints(marketId: string): Promise<MarketMints> {
     try {
       this.logger.log(`Getting market mints for: ${marketId}`);
 
-      // TODO: Implement based on DFlow's market metadata API
-      // For now, return placeholder structure
-      throw new Error('Market mints API not yet implemented');
+      // Fetch market data using DFlowService
+      const market = await this.dflowService.getMarketByTicker(marketId);
+
+      if (!market) {
+        throw new Error(`Market ${marketId} not found`);
+      }
+
+      // USDC mint address
+      const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+
+      // Get the account for USDC trading
+      const usdcAccount = market.accounts?.[USDC_MINT];
+
+      if (!usdcAccount) {
+        throw new Error(
+          `Market ${marketId} does not have USDC trading account`
+        );
+      }
+
+      this.logger.log(
+        `Found mints for ${marketId}: YES=${usdcAccount.yesMint}, NO=${usdcAccount.noMint}`
+      );
+
+      return {
+        baseMint: USDC_MINT,
+        yesMint: usdcAccount.yesMint,
+        noMint: usdcAccount.noMint,
+        marketId,
+      };
     } catch (error) {
       this.logger.error('Failed to get market mints', error);
       throw this.handleError(error, TradingErrorCode.INVALID_MARKET);

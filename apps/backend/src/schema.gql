@@ -104,20 +104,18 @@ enum DFlowMarketType {
 }
 
 type DFlowOrderFill {
-  fillId: String!
-  inputAmount: String!
-  outputAmount: String!
-  price: String!
-  timestamp: String!
-  transactionSignature: String
+  inAmount: String!
+  inputMint: String!
+  outAmount: String!
+  outputMint: String!
+  signature: String!
 }
 
 type DFlowOrderStatus {
-  error: String
   fills: [DFlowOrderFill!]!
-  signature: String!
+  inAmount: String
+  outAmount: String
   status: String!
-  timestamp: String!
 }
 
 type DFlowOrderbookGraphQL {
