@@ -290,7 +290,9 @@ export function Events() {
               )}
             </div>
             <div className="flex gap-2 mt-2">
-              <Badge variant="secondary">{event.competition || 'General'}</Badge>
+              <Badge variant="secondary">
+                {event.competition || 'General'}
+              </Badge>
               <Badge variant="outline">
                 {totalMarkets} market{totalMarkets !== 1 ? 's' : ''}
               </Badge>
@@ -305,10 +307,14 @@ export function Events() {
             <div className="space-y-2 mb-4">
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Volume:</span>
-                <span className="font-medium">{formatVolume(event.volume)}</span>
+                <span className="font-medium">
+                  {formatVolume(event.volume)}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">24h Volume:</span>
+                <span className="text-sm text-muted-foreground">
+                  24h Volume:
+                </span>
                 <span className="font-medium">
                   {formatVolume(event.volume24h)}
                 </span>
@@ -354,7 +360,8 @@ export function Events() {
                               {market.title}
                             </p>
                             <p className="text-xs text-muted-foreground mt-1 truncate">
-                              YES: {market.yesSubTitle} | NO: {market.noSubTitle}
+                              YES: {market.yesSubTitle} | NO:{' '}
+                              {market.noSubTitle}
                             </p>
                             {market.volume && (
                               <p className="text-xs text-blue-600 mt-1">
@@ -369,7 +376,9 @@ export function Events() {
                               </p>
                             )}
                             <Badge
-                              variant={market.isActive ? 'default' : 'secondary'}
+                              variant={
+                                market.isActive ? 'default' : 'secondary'
+                              }
                               className="text-xs mt-1"
                             >
                               {market.status}
