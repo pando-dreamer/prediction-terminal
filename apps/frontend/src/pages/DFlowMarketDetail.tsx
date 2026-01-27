@@ -246,14 +246,17 @@ export function DFlowMarketDetail() {
           </Card>
         </div>
 
-        {/* Right Column - Market Stats */}
+        {/* Right Column - Trading & Stats */}
         <div className="space-y-6">
           {/* Trading Panel */}
           <TradingPanel
-            marketTicker={market.ticker}
-            marketTitle={market.title}
-            yesPrice={market.yesPrice}
-            noPrice={market.noPrice}
+            defaultMarket={{
+              ticker: market.ticker,
+              title: market.title,
+              yesPrice: market.yesPrice,
+              noPrice: market.noPrice,
+            }}
+            title={`Trade on ${market.title}`}
           />
 
           {/* Market Stats */}

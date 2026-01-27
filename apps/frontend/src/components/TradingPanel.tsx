@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { gql, useMutation, useLazyQuery } from '@apollo/client';
+import { gql, useLazyQuery, useMutation } from '@apollo/client';
 import { useWallet, useConnection } from '../contexts/WalletContext';
 import { VersionedTransaction, PublicKey } from '@solana/web3.js';
 import { getAssociatedTokenAddress } from '@solana/spl-token';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
-import { Alert, AlertDescription } from './ui/alert';
 import {
-  AlertCircle,
-  TrendingUp,
-  TrendingDown,
-  CheckCircle,
-  Wallet,
-} from 'lucide-react';
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Alert, AlertDescription } from '../components/ui/alert';
+import { AlertCircle, CheckCircle, Wallet } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
+import { ChevronDown } from 'lucide-react';
 
 const EXECUTE_TRADE = gql`
   mutation ExecuteDFlowTrade($request: DFlowTradeRequestInput!) {
@@ -40,17 +45,6 @@ const EXECUTE_TRADE = gql`
   }
 `;
 
-const GET_MARKET_MINTS = gql`
-  query GetMarketMints($marketId: String!) {
-    dflowMarketMints(marketId: $marketId) {
-      baseMint
-      yesMint
-      noMint
-      marketId
-    }
-  }
-`;
-
 const GET_ORDER_STATUS = gql`
   query GetOrderStatus($signature: String!) {
     dflowOrderStatus(signature: $signature) {
@@ -68,61 +62,107 @@ const GET_ORDER_STATUS = gql`
   }
 `;
 
-interface TradingPanelProps {
-  marketTicker: string;
-  marketTitle: string;
+const GET_MARKET_MINTS = gql`
+  query GetMarketMints($marketId: String!) {
+    dflowMarketMints(marketId: $marketId) {
+      baseMint
+      yesMint
+      noMint
+      marketId
+    }
+  }
+`;
+
+const GET_ORDERBOOK = gql`
+  query GetDFlowOrderbook($ticker: ID!) {
+    dflowOrderbook(ticker: $ticker) {
+      yesBids {
+        price
+        shares
+        total
+      }
+      noBids {
+        price
+        shares
+        total
+      }
+      spread
+      lastPrice
+      sequence
+    }
+  }
+`;
+
+interface Market {
+  ticker: string;
+  title: string;
   yesPrice?: number;
   noPrice?: number;
 }
 
-type OutcomeType = 'YES' | 'NO';
-type TradeDirection = 'BUY' | 'SELL';
+interface TradingPanelProps {
+  markets?: Market[];
+  defaultMarket?: Market;
+  showMarketSelector?: boolean;
+  showOrderbook?: boolean;
+  title?: string;
+  imageUrl?: string;
+}
 
-/**
- * Trading Panel Component
- *
- * Provides UI for buying and selling YES/NO tokens on prediction markets.
- * Integrates with Solana wallet and DFlow trading API.
- */
 export const TradingPanel: React.FC<TradingPanelProps> = ({
-  marketTicker,
-  marketTitle,
-  yesPrice = 0.5,
-  noPrice = 0.5,
+  markets = [],
+  defaultMarket,
+  showMarketSelector = false,
+  showOrderbook = false,
+  title,
+  imageUrl,
 }) => {
   const { publicKey, connected, signTransaction } = useWallet();
   const { connection } = useConnection();
 
-  const [outcome, setOutcome] = useState<OutcomeType>('YES');
-  const [direction, setDirection] = useState<TradeDirection>('BUY');
-  const [amount, setAmount] = useState<string>('');
-  const [slippage, setSlippage] = useState<number>(100); // 1% = 100 bps
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string>('');
-  const [successMessage, setSuccessMessage] = useState<string>('');
+  const [executeTradeMutation] = useMutation(EXECUTE_TRADE);
+  const [getOrderStatus] = useLazyQuery(GET_ORDER_STATUS, {
+    fetchPolicy: 'network-only',
+  });
+  const [getMarketMints] = useLazyQuery(GET_MARKET_MINTS);
+  const [getOrderbook] = useLazyQuery(GET_ORDERBOOK, {
+    fetchPolicy: 'network-only',
+  });
+
+  // Trading state
+  const [selectedMarket, setSelectedMarket] = useState<Market | null>(
+    defaultMarket || (markets.length > 0 ? markets[0] : null)
+  );
+  const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
+  const [side, setSide] = useState<'yes' | 'no'>('yes');
+  const [amount, setAmount] = useState<number>(0);
+  const [isTrading, setIsTrading] = useState<boolean>(false);
+  const [tradeError, setTradeError] = useState<string>('');
+  const [tradeSuccess, setTradeSuccess] = useState<string>('');
   const [balances, setBalances] = useState({
     usdc: 0,
     yes: 0,
     no: 0,
   });
-  const [isLoadingBalances, setIsLoadingBalances] = useState(false);
+  const [isLoadingBalances, setIsLoadingBalances] = useState<boolean>(false);
   const [marketMints, setMarketMints] = useState<{
     yesMint: string;
     noMint: string;
   } | null>(null);
-
-  const [executeTradeMutation] = useMutation(EXECUTE_TRADE);
-  const [getMarketMints] = useLazyQuery(GET_MARKET_MINTS);
-  const [getOrderStatus] = useLazyQuery(GET_ORDER_STATUS, {
-    fetchPolicy: 'network-only',
-  });
+  const [orderbook, setOrderbook] = useState<any>(null);
+  const [loadingOrderbook, setLoadingOrderbook] = useState<boolean>(false);
 
   // USDC mint address
   const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 
-  /**
-   * Fetch user's token balances
-   */
+  // Update selected market when defaultMarket changes
+  useEffect(() => {
+    if (defaultMarket) {
+      setSelectedMarket(defaultMarket);
+    }
+  }, [defaultMarket]);
+
+  // Fetch user's token balances
   const fetchBalances = async () => {
     if (!publicKey || !connected) {
       setBalances({ usdc: 0, yes: 0, no: 0 });
@@ -131,7 +171,6 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
 
     setIsLoadingBalances(true);
     try {
-      // Get USDC balance
       const usdcMint = new PublicKey(USDC_MINT);
       const usdcTokenAccount = await getAssociatedTokenAddress(
         usdcMint,
@@ -146,19 +185,13 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
         newBalances.usdc = parseFloat(
           usdcBalance.value.uiAmount?.toString() || '0'
         );
-        console.log('USDC balance:', {
-          uiAmount: usdcBalance.value.uiAmount,
-          amount: usdcBalance.value.amount,
-          decimals: usdcBalance.value.decimals,
-          parsed: newBalances.usdc,
-        });
+        console.log('USDC balance:', newBalances.usdc);
       } catch (err) {
-        console.log('USDC account not found, setting balance to 0');
+        console.log('USDC account not found');
       }
 
       // Fetch YES/NO token balances if we have market mints
       if (marketMints) {
-        console.log('Fetching token balances for mints:', marketMints);
         try {
           const yesMint = new PublicKey(marketMints.yesMint);
           const yesTokenAccount = await getAssociatedTokenAddress(
@@ -170,14 +203,9 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
           newBalances.yes = parseFloat(
             yesBalance.value.uiAmount?.toString() || '0'
           );
-          console.log('YES balance:', {
-            uiAmount: yesBalance.value.uiAmount,
-            amount: yesBalance.value.amount,
-            decimals: yesBalance.value.decimals,
-            parsed: newBalances.yes,
-          });
+          console.log('YES balance:', newBalances.yes);
         } catch (err) {
-          console.log('YES token account not found:', err);
+          console.log('YES token account not found');
         }
 
         try {
@@ -191,20 +219,12 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
           newBalances.no = parseFloat(
             noBalance.value.uiAmount?.toString() || '0'
           );
-          console.log('NO balance:', {
-            uiAmount: noBalance.value.uiAmount,
-            amount: noBalance.value.amount,
-            decimals: noBalance.value.decimals,
-            parsed: newBalances.no,
-          });
+          console.log('NO balance:', newBalances.no);
         } catch (err) {
-          console.log('NO token account not found:', err);
+          console.log('NO token account not found');
         }
-      } else {
-        console.log('Market mints not available yet');
       }
 
-      console.log('Final balances:', newBalances);
       setBalances(newBalances);
     } catch (err) {
       console.error('Error fetching balances:', err);
@@ -213,12 +233,14 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
     }
   };
 
-  // Fetch market mints on mount
+  // Fetch market mints when market changes
   useEffect(() => {
     const fetchMints = async () => {
+      if (!selectedMarket?.ticker) return;
+
       try {
         const result = await getMarketMints({
-          variables: { marketId: marketTicker },
+          variables: { marketId: selectedMarket.ticker },
         });
         if (result.data?.dflowMarketMints) {
           setMarketMints({
@@ -233,127 +255,38 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
     };
     fetchMints();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [marketTicker]);
+  }, [selectedMarket?.ticker]);
 
-  // Fetch balances when wallet connects or market mints are loaded
+  // Fetch orderbook when market changes
+  useEffect(() => {
+    if (showOrderbook && selectedMarket?.ticker) {
+      setLoadingOrderbook(true);
+      getOrderbook({ variables: { ticker: selectedMarket.ticker } })
+        .then(result => {
+          if (result.data?.dflowOrderbook) {
+            setOrderbook(result.data.dflowOrderbook);
+          }
+        })
+        .catch(err => {
+          console.error('Failed to fetch orderbook:', err);
+        })
+        .finally(() => {
+          setLoadingOrderbook(false);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedMarket?.ticker, showOrderbook]);
+
+  // Fetch balances when wallet connects or market mints change
   useEffect(() => {
     fetchBalances();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicKey, connected, marketMints]);
 
-  // Refetch balances after successful trade
-  useEffect(() => {
-    if (successMessage.includes('✅')) {
-      // Wait a bit for blockchain to update
-      setTimeout(fetchBalances, 2000);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [successMessage]);
-
-  // Handle null/undefined prices
-  const safeYesPrice = yesPrice ?? 0.5;
-  const safeNoPrice = noPrice ?? 0.5;
-  const currentPrice = outcome === 'YES' ? safeYesPrice : safeNoPrice;
-
-  // For BUY: amount is USDC, calculate tokens
-  // For SELL: amount is tokens (shares), calculate USDC
-  const estimatedTokens =
-    direction === 'BUY'
-      ? amount
-        ? parseFloat(amount) / currentPrice
-        : 0
-      : amount
-        ? parseFloat(amount)
-        : 0;
-
-  const estimatedUSDC =
-    direction === 'SELL'
-      ? amount
-        ? parseFloat(amount) * currentPrice
-        : 0
-      : amount
-        ? parseFloat(amount)
-        : 0;
-
-  // Balance validation
-  const getInsufficientBalanceWarning = (
-    direction: TradeDirection
-  ): string | null => {
-    const inputAmount = parseFloat(amount || '0');
-
-    if (inputAmount <= 0) return null;
-
-    console.log(`Checking ${direction} balance:`, {
-      inputAmount,
-      usdcBalance: balances.usdc,
-      yesBalance: balances.yes,
-      noBalance: balances.no,
-      estimatedTokens,
-    });
-
-    if (direction === 'BUY') {
-      // For BUY, input amount is USDC
-      if (inputAmount > balances.usdc) {
-        console.log('Insufficient USDC for BUY');
-        return `Insufficient USDC balance. You have ${balances.usdc.toFixed(2)} USDC`;
-      }
-    } else {
-      // SELL - input amount is shares/tokens
-      const requiredTokens = inputAmount; // Direct input, not calculated
-      const tokenBalance = outcome === 'YES' ? balances.yes : balances.no;
-
-      if (requiredTokens > tokenBalance) {
-        console.log(`Insufficient ${outcome} tokens for SELL`);
-        return `Insufficient ${outcome} token balance. You have ${tokenBalance.toFixed(2)} ${outcome} tokens`;
-      }
-    }
-
-    return null;
-  };
-
-  // Get the active warning based on current direction
-  const currentWarning = amount
-    ? getInsufficientBalanceWarning(direction)
-    : null;
-
-  /**
-   * Monitor transaction status for sync execution mode
-   */
-  const monitorSyncTransaction = async (signature: string) => {
-    let retries = 0;
-    const maxRetries = 60; // 60 seconds timeout
-
-    while (retries < maxRetries) {
-      const statusResult = await connection.getSignatureStatuses([signature]);
-      const status = statusResult.value[0];
-
-      if (!status) {
-        console.log('Waiting for transaction confirmation...');
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        retries++;
-        continue;
-      }
-
-      if (status.confirmationStatus === 'finalized') {
-        if (status.err) {
-          throw new Error('Transaction failed on blockchain');
-        }
-        return true;
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      retries++;
-    }
-
-    throw new Error('Transaction confirmation timeout');
-  };
-
-  /**
-   * Monitor order status for async execution mode
-   */
+  // Monitor order status for async execution mode
   const monitorAsyncOrder = async (signature: string) => {
     let retries = 0;
-    const maxRetries = 30; // 60 seconds timeout (2 sec intervals)
+    const maxRetries = 30;
 
     while (retries < maxRetries) {
       try {
@@ -383,7 +316,6 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
           throw new Error('Order failed to execute');
         }
 
-        // Continue polling for 'open' or 'pendingClose'
         await new Promise(resolve => setTimeout(resolve, 2000));
         retries++;
       } catch (err) {
@@ -396,67 +328,66 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
     throw new Error('Order monitoring timeout');
   };
 
-  const handleTrade = async (direction: TradeDirection) => {
+  const handleTrade = async () => {
     if (!connected || !publicKey) {
-      setError('Please connect your wallet first');
+      setTradeError('Please connect your wallet first');
       return;
     }
 
-    if (!amount || parseFloat(amount) <= 0) {
-      setError('Please enter a valid amount');
+    if (!amount || amount <= 0) {
+      setTradeError('Please enter a valid amount');
       return;
     }
 
     if (!signTransaction) {
-      setError('Wallet does not support transaction signing');
+      setTradeError('Wallet does not support transaction signing');
       return;
     }
 
-    setIsLoading(true);
-    setError('');
-    setSuccessMessage('');
+    if (!selectedMarket) {
+      setTradeError('Please select a market');
+      return;
+    }
+
+    setIsTrading(true);
+    setTradeError('');
+    setTradeSuccess('');
 
     try {
-      // Calculate the amount to send to API
-      // For BUY: amount is already in USDC
-      // For SELL: convert shares to USDC equivalent
-      const apiAmount =
-        direction === 'BUY'
-          ? parseFloat(amount)
-          : parseFloat(amount) * currentPrice;
+      const currentPrice =
+        side === 'yes'
+          ? selectedMarket.yesPrice || 0.5
+          : selectedMarket.noPrice || 0.5;
+      const apiAmount = tradeType === 'buy' ? amount : amount * currentPrice;
 
-      // 1. Get quote and transaction from backend
-      const { data } = await executeTradeMutation({
+      const { data: tradeData } = await executeTradeMutation({
         variables: {
           request: {
-            market: marketTicker,
-            outcome,
-            direction,
+            market: selectedMarket.ticker,
+            outcome: side.toUpperCase(),
+            direction: tradeType.toUpperCase(),
             amount: apiAmount,
-            slippageBps: slippage,
+            slippageBps: 100,
             userPublicKey: publicKey.toBase58(),
           },
         },
       });
 
-      if (!data?.executeDFlowTrade?.success) {
+      if (!tradeData?.executeDFlowTrade?.success) {
         throw new Error(
-          data?.executeDFlowTrade?.error?.message || 'Trade failed'
+          tradeData?.executeDFlowTrade?.error?.message || 'Trade failed'
         );
       }
 
-      const { quote } = data.executeDFlowTrade;
+      const { quote } = tradeData.executeDFlowTrade;
 
-      // 2. Deserialize the transaction
       const transactionBuffer = Buffer.from(quote.transaction, 'base64');
       const transaction = VersionedTransaction.deserialize(transactionBuffer);
 
-      // 3. Sign the transaction with user's wallet
-      setSuccessMessage('Signing transaction...');
+      setTradeSuccess('Signing transaction...');
       const signedTransaction = await signTransaction(transaction);
 
-      // 4. Send the signed transaction to Solana
-      setSuccessMessage('Submitting transaction...');
+      setTradeSuccess('Submitting transaction...');
       const signature = await connection.sendRawTransaction(
         signedTransaction.serialize(),
         {
@@ -465,45 +396,40 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
         }
       );
 
-      setSuccessMessage(
-        `Transaction submitted: ${signature.substring(0, 8)}...`
-      );
+      setTradeSuccess(`Transaction submitted: ${signature.substring(0, 8)}...`);
 
-      // 5. Monitor transaction based on execution mode
-      if (quote.executionMode === 'sync') {
-        setSuccessMessage('Monitoring transaction...');
-        await monitorSyncTransaction(signature);
-      } else {
-        setSuccessMessage('Monitoring order execution...');
+      if (quote.executionMode === 'async') {
+        setTradeSuccess('Monitoring order execution...');
         await monitorAsyncOrder(signature);
       }
 
-      setSuccessMessage(
-        `✅ Trade successful! ${direction} ${amount} USDC for ${outcome} tokens. Signature: ${signature.substring(0, 8)}...`
+      setTradeSuccess(
+        `✅ Trade successful! ${tradeType.toUpperCase()} ${amount} USDC for ${side.toUpperCase()} tokens. Signature: ${signature.substring(0, 8)}...`
       );
 
-      // Reset form
-      setAmount('');
+      setAmount(0);
+      setTimeout(fetchBalances, 2000);
     } catch (err: any) {
       console.error('Trade error:', err);
-      setError(err.message || 'Trade failed');
+      setTradeError(err.message || 'Trade failed');
     } finally {
-      setIsLoading(false);
+      setIsTrading(false);
     }
   };
 
-  if (!connected) {
+  // Check for insufficient balance
+  const isInsufficientBalance =
+    tradeType === 'buy'
+      ? amount > balances.usdc
+      : amount > (side === 'yes' ? balances.yes : balances.no);
+
+  if (!selectedMarket) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Trading</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <Card className="bg-slate-800 border-slate-700">
+        <CardContent className="p-6">
           <Alert>
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              Connect your wallet to start trading
-            </AlertDescription>
+            <AlertDescription>No market selected</AlertDescription>
           </Alert>
         </CardContent>
       </Card>
@@ -511,153 +437,321 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
   }
 
   return (
-    <Card>
+    <Card className="bg-slate-800 border-slate-700">
       <CardHeader>
-        <CardTitle>Trade on {marketTitle}</CardTitle>
+        <div className="flex items-center gap-3">
+          {imageUrl && (
+            <img
+              src={imageUrl}
+              alt={selectedMarket.title}
+              className="w-12 h-12 object-cover rounded-lg"
+            />
+          )}
+          <div>
+            <CardTitle className="text-lg text-white">
+              {title || selectedMarket.title}
+            </CardTitle>
+          </div>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Direction Toggle */}
-        <div className="space-y-2">
-          <Label>Direction</Label>
-          <Tabs
-            value={direction}
-            onValueChange={v => {
-              setDirection(v as TradeDirection);
-              setAmount(''); // Clear amount when switching
-            }}
-          >
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="BUY">Buy</TabsTrigger>
-              <TabsTrigger value="SELL">Sell</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+      <CardContent className="space-y-4">
+        {!connected ? (
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Connect your wallet to start trading
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <>
+            {/* Buy/Sell Toggle */}
+            <div className="flex border-b border-slate-600">
+              <button
+                className={`flex-1 py-2 text-center font-medium ${
+                  tradeType === 'buy'
+                    ? 'text-white border-b-2 border-white'
+                    : 'text-slate-400'
+                }`}
+                onClick={() => setTradeType('buy')}
+              >
+                Buy
+              </button>
+              <button
+                className={`flex-1 py-2 text-center font-medium ${
+                  tradeType === 'sell'
+                    ? 'text-white border-b-2 border-white'
+                    : 'text-slate-400'
+                }`}
+                onClick={() => setTradeType('sell')}
+              >
+                Sell
+              </button>
+            </div>
 
-        {/* Outcome Selection */}
-        <div className="space-y-2">
-          <Label>Outcome</Label>
-          <Tabs
-            value={outcome}
-            onValueChange={v => setOutcome(v as OutcomeType)}
-          >
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="YES" className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" />
-                YES ${safeYesPrice.toFixed(2)}
-              </TabsTrigger>
-              <TabsTrigger value="NO" className="flex items-center gap-2">
-                <TrendingDown className="h-4 w-4" />
-                NO ${safeNoPrice.toFixed(2)}
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-
-        {/* Amount Input */}
-        <div className="space-y-2">
-          <Label htmlFor="amount">
-            {direction === 'BUY'
-              ? 'Amount (USDC)'
-              : `Shares (${outcome} tokens)`}
-          </Label>
-          <Input
-            id="amount"
-            type="number"
-            placeholder="0.00"
-            value={amount}
-            onChange={e => setAmount(e.target.value)}
-            min="0"
-            step="0.01"
-          />
-          <div className="flex items-center justify-between text-sm">
-            {amount && (
-              <p className="text-muted-foreground">
-                {direction === 'BUY'
-                  ? `≈ ${estimatedTokens.toFixed(2)} ${outcome} tokens`
-                  : `≈ ${estimatedUSDC.toFixed(2)} USDC`}
-              </p>
-            )}
-            {isLoadingBalances ? (
-              <p className="text-muted-foreground">Loading balances...</p>
-            ) : (
-              <div className="flex items-center gap-1 text-muted-foreground">
-                <Wallet className="h-3 w-3" />
-                <span>
-                  {direction === 'BUY'
-                    ? `${balances.usdc.toFixed(6)} USDC`
-                    : marketMints
-                      ? outcome === 'YES'
-                        ? `${balances.yes.toFixed(6)} YES`
-                        : `${balances.no.toFixed(6)} NO`
-                      : `${balances.usdc.toFixed(6)} USDC`}
-                </span>
+            {/* Market Selector */}
+            {showMarketSelector && markets.length > 1 && (
+              <div>
+                <Select
+                  value={selectedMarket.ticker}
+                  onValueChange={value => {
+                    const market = markets.find(m => m.ticker === value);
+                    if (market) setSelectedMarket(market);
+                  }}
+                >
+                  <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                    <SelectValue placeholder="Select market" />
+                    <ChevronDown className="h-4 w-4" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-700 border-slate-600">
+                    {markets.map((market: Market) => (
+                      <SelectItem
+                        key={market.ticker}
+                        value={market.ticker}
+                        className="text-white hover:bg-slate-600"
+                      >
+                        {market.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             )}
-          </div>
-        </div>
 
-        {/* Slippage */}
-        <div className="space-y-2">
-          <Label htmlFor="slippage">Slippage Tolerance</Label>
-          <div className="flex gap-2">
-            {[50, 100, 200, 500].map(bps => (
-              <Button
-                key={bps}
-                variant={slippage === bps ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setSlippage(bps)}
+            {/* Yes/No Buttons */}
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                className={`p-4 rounded-lg font-bold transition-colors ${
+                  side === 'yes'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-slate-600 text-slate-300 hover:bg-slate-500'
+                }`}
+                onClick={() => setSide('yes')}
               >
-                {(bps / 100).toFixed(1)}%
+                <div>Yes</div>
+                <div className="text-lg">
+                  {selectedMarket.yesPrice
+                    ? `${(selectedMarket.yesPrice * 100).toFixed(1)}¢`
+                    : 'N/A'}
+                </div>
+              </button>
+              <button
+                className={`p-4 rounded-lg font-bold transition-colors ${
+                  side === 'no'
+                    ? 'bg-red-600 text-white'
+                    : 'bg-slate-600 text-slate-300 hover:bg-slate-500'
+                }`}
+                onClick={() => setSide('no')}
+              >
+                <div>No</div>
+                <div className="text-lg">
+                  {selectedMarket.noPrice
+                    ? `${(selectedMarket.noPrice * 100).toFixed(1)}¢`
+                    : 'N/A'}
+                </div>
+              </button>
+            </div>
+
+            {/* Orderbook Display */}
+            {showOrderbook && orderbook && !loadingOrderbook && (
+              <div className="space-y-2">
+                <div className="flex justify-between items-center text-xs text-slate-400 border-b border-slate-600 pb-1">
+                  <span>PRICE</span>
+                  <span>SHARES</span>
+                  <span>TOTAL</span>
+                </div>
+
+                {/* Asks (NO bids - people selling YES) */}
+                <div className="space-y-1">
+                  {orderbook.noBids.slice(0, 4).map((level: any, i: number) => {
+                    const maxTotal = Math.max(
+                      ...orderbook.noBids.map((l: any) => l.total),
+                      ...orderbook.yesBids.map((l: any) => l.total)
+                    );
+                    const depth = (level.total / maxTotal) * 100;
+                    return (
+                      <div
+                        key={i}
+                        className="relative flex justify-between items-center text-xs py-1"
+                      >
+                        <div
+                          className="absolute inset-0 bg-red-900/20"
+                          style={{ width: `${depth}%` }}
+                        />
+                        <span className="relative z-10 text-red-400">
+                          {(level.price * 100).toFixed(0)}¢
+                        </span>
+                        <span className="relative z-10 text-slate-300">
+                          {level.shares.toLocaleString()}
+                        </span>
+                        <span className="relative z-10 text-slate-300">
+                          ${level.total.toFixed(0)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Spread */}
+                <div className="flex justify-between items-center text-xs py-1 bg-slate-700/50 px-2 rounded">
+                  <span className="text-slate-400">
+                    Last: {(orderbook.lastPrice * 100).toFixed(0)}¢
+                  </span>
+                  <span className="text-slate-400">
+                    Spread: {(orderbook.spread * 100).toFixed(0)}¢
+                  </span>
+                </div>
+
+                {/* Bids (YES bids - people buying YES) */}
+                <div className="space-y-1">
+                  {orderbook.yesBids
+                    .slice(0, 4)
+                    .map((level: any, i: number) => {
+                      const maxTotal = Math.max(
+                        ...orderbook.noBids.map((l: any) => l.total),
+                        ...orderbook.yesBids.map((l: any) => l.total)
+                      );
+                      const depth = (level.total / maxTotal) * 100;
+                      return (
+                        <div
+                          key={i}
+                          className="relative flex justify-between items-center text-xs py-1"
+                        >
+                          <div
+                            className="absolute inset-0 bg-green-900/20"
+                            style={{ width: `${depth}%` }}
+                          />
+                          <span className="relative z-10 text-green-400">
+                            {(level.price * 100).toFixed(0)}¢
+                          </span>
+                          <span className="relative z-10 text-slate-300">
+                            {level.shares.toLocaleString()}
+                          </span>
+                          <span className="relative z-10 text-slate-300">
+                            ${level.total.toFixed(0)}
+                          </span>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+            )}
+
+            {showOrderbook && loadingOrderbook && (
+              <div className="text-center py-4 text-slate-400 text-sm">
+                Loading orderbook...
+              </div>
+            )}
+
+            {/* Amount Input */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-white font-medium">Amount</span>
+                {isLoadingBalances ? (
+                  <span className="text-slate-400 text-sm">Loading...</span>
+                ) : (
+                  <div className="flex items-center gap-1 text-slate-400 text-sm">
+                    <Wallet className="h-3 w-3" />
+                    <span>
+                      {tradeType === 'buy'
+                        ? `${balances.usdc.toFixed(6)} USDC`
+                        : marketMints
+                          ? side === 'yes'
+                            ? `${balances.yes.toFixed(6)} YES`
+                            : `${balances.no.toFixed(6)} NO`
+                          : `${balances.usdc.toFixed(6)} USDC`}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-3xl font-bold text-slate-300">
+                  $
+                </span>
+                <Input
+                  type="number"
+                  value={amount || ''}
+                  onChange={e => setAmount(Number(e.target.value))}
+                  className="bg-slate-700 border-slate-600 text-white text-3xl font-bold pl-8 pr-4 py-6"
+                  placeholder="0"
+                />
+              </div>
+            </div>
+
+            {/* Quick Amount Buttons */}
+            <div className="grid grid-cols-4 gap-2">
+              {[1, 20, 100].map(value => (
+                <Button
+                  key={value}
+                  variant="secondary"
+                  size="sm"
+                  className="bg-slate-600 hover:bg-slate-500 text-white"
+                  onClick={() => setAmount(amount + value)}
+                >
+                  +${value}
+                </Button>
+              ))}
+              <Button
+                variant="secondary"
+                size="sm"
+                className="bg-slate-600 hover:bg-slate-500 text-white"
+                onClick={() =>
+                  setAmount(
+                    tradeType === 'buy' ? balances.usdc : balances[side]
+                  )
+                }
+              >
+                Max
               </Button>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        {/* Error Display */}
-        {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+            {/* Error Display */}
+            {tradeError && (
+              <Alert className="bg-red-900/20 border-red-500">
+                <AlertCircle className="h-4 w-4 text-red-400" />
+                <AlertDescription className="text-red-200">
+                  {tradeError}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Success Display */}
+            {tradeSuccess && (
+              <Alert className="bg-green-900/20 border-green-500">
+                <CheckCircle className="h-4 w-4 text-green-400" />
+                <AlertDescription className="text-green-200">
+                  {tradeSuccess}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Insufficient Balance Warning */}
+            {isInsufficientBalance && amount > 0 && (
+              <Alert className="bg-yellow-900/20 border-yellow-500">
+                <AlertCircle className="h-4 w-4 text-yellow-400" />
+                <AlertDescription className="text-yellow-200">
+                  Insufficient balance
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Trade Button */}
+            <Button
+              className={`w-full py-3 font-bold text-lg ${
+                side === 'yes'
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-red-600 hover:bg-red-700'
+              }`}
+              onClick={handleTrade}
+              disabled={
+                isTrading || !amount || amount <= 0 || isInsufficientBalance
+              }
+            >
+              {isTrading
+                ? 'Processing...'
+                : `${tradeType === 'buy' ? 'Buy' : 'Sell'} ${side === 'yes' ? 'Yes' : 'No'}`}
+            </Button>
+          </>
         )}
-
-        {/* Success Display */}
-        {successMessage && (
-          <Alert className="border-green-500 bg-green-50 text-green-900">
-            <CheckCircle className="h-4 w-4 text-green-600" />
-            <AlertDescription>{successMessage}</AlertDescription>
-          </Alert>
-        )}
-
-        {/* Balance Warning */}
-        {currentWarning && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{currentWarning}</AlertDescription>
-          </Alert>
-        )}
-
-        {/* Trade Button */}
-        <Button
-          onClick={() => handleTrade(direction)}
-          disabled={
-            isLoading || !amount || !!currentWarning || isLoadingBalances
-          }
-          className="w-full"
-          variant={direction === 'SELL' ? 'outline' : 'default'}
-        >
-          {isLoading ? 'Processing...' : direction === 'BUY' ? 'Buy' : 'Sell'}
-        </Button>
-
-        {/* Trading Info */}
-        <div className="text-xs text-muted-foreground space-y-1">
-          <p>• Trades are executed on DFlow prediction market</p>
-          <p>• Network: Solana Mainnet</p>
-          <p>
-            • Wallet: {publicKey?.toBase58().slice(0, 8)}...
-            {publicKey?.toBase58().slice(-8)}
-          </p>
-        </div>
       </CardContent>
     </Card>
   );
