@@ -1,0 +1,36 @@
+{
+  "inputMint": "So11111111111111111111111111111111111111112",
+  "inAmount": "1000000000",
+  "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  "outAmount": "124470109",
+  "otherAmountThreshold": "123847759",
+  "minOutAmount": "123847759",
+  "slippageBps": 50,
+  "platformFee": null,
+  "priceImpactPct": "0",
+  "routePlan": [
+    {
+      "venue": "DFlow JIT Router",
+      "marketKey": "DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH",
+      "data": "AgAAAAAAAAAFAAAALAAAAAAAAABGa3NmZkVxbkJSaXhZR1I3OTFRdzJNZ2RVN3pOQ3BIVkZZQkw0RmE0cVZ1SAUAAAAsAAAAAAAAADZuOVZoQ3dRN0V3SzZOcUZEam5IUHpFazZ3WmRSQlRmaDQzUkZnSFFXSHVR",
+      "inputMint": "So11111111111111111111111111111111111111112",
+      "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "inAmount": "1000000000",
+      "outAmount": "124470109",
+      "inputMintDecimals": 9,
+      "outputMintDecimals": 6
+    }
+  ],
+  "contextSlot": 396106491,
+  "executionMode": "sync",
+  "transaction": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAEByaPLmH4/HUCx4CpvVqp/ggf/6g+3ZUBpaUvGNkS9ScGip96f7KdVwW4v9usKA+lmDhFOkBDmAdkWyey4EOZ2KnszSa8LNH4UpbEvEG7hhP15/94+Ci0Z3N/i7EiY0raggMGRm/lIRcy/+ytunLDm+e8jOW7xfcSayxDmzpAAAAAteNKFOK8c0hpDuH1r13u1lU4QKNtqrhgsFBgc73APBD3iLN5JEqM0qHzCNCaAs/otWPgCZHOblXwqXh7vNrnrfzRPaBBVZATz0rroahO1wI61P8hqEdH/zsFqzD6ggfDjY8YEtTVzhVIsT1Y5Q8x8kItJQoRmERy2zZRiwNumLAEAwAFAuCTBAADAAkDRJsCAAAAAAAEBgACDhEVDRAvPpusg80lyQDKmjsAAAAABB4RFQ0AEwQPEgQEAAIBDhYPFAwLChAFBhQHCQgQBQaFAfjGnpHhdYfIAgAAACWM0c38bKABM9USFYm/+Ty+/g/ZrXkB2QUYoXPTcpv0vET2TdkQeIMyHDtx7azPzatnMVWbu75/gbb5ES25BmcJkRucFwAAAABRAAAAHwIAAAADtDZrCXEHXH0DrWIraKtKmkoAypo7AAAAAANdQ2sHAAAAADIAAAADpYT8M/1YgEevM7B7IxKo7BojNrNZru8plWwhku8NV3UACgBiAgQGBwxCCGNTS4pmfOWwD0dUjrFNMOeHl7tTFmA0XY34KAyBWA+8egPq7esA+O1bgHHnMZTiMGB+HWMwtF+g6eoZWvgYEUX9ca9SxXsD6+zoAA==",
+  "lastValidBlockHeight": 374230724,
+  "prioritizationFeeLamports": 51246,
+  "computeUnitLimit": 300000,
+  "prioritizationType": {
+    "computeBudget": {
+      "microLamports": 170820,
+      "estimatedMicroLamports": 170820
+    }
+  }
+}

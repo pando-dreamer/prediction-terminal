@@ -1,0 +1,186 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateMarketInput {
+  category: MarketCategory!
+  currentPrice: Float
+  description: String!
+  expiryDate: DateTime!
+  title: String!
+}
+
+type DFlowEvent {
+  competition: String
+  competitionScope: String
+  imageUrl: String
+  liquidity: Float!
+  markets: [DFlowEventMarket!]
+  openInterest: Float!
+  seriesTicker: String!
+  settlementSources: [DFlowSettlementSource!]
+  strikeDate: Int
+  strikePeriod: String
+  subtitle: String!
+  ticker: String!
+  title: String!
+  volume: Float!
+  volume24h: Float!
+}
+
+type DFlowEventMarket {
+  closeTime: Int!
+  eventTicker: String!
+  expirationTime: Int!
+  isActive: Boolean!
+  marketType: String!
+  noPrice: Float
+  noSubTitle: String!
+  openInterest: Float!
+  openTime: Int!
+  result: String
+  status: String!
+  subtitle: String!
+  ticker: String!
+  title: String!
+  volume: Float!
+  yesPrice: Float
+  yesSubTitle: String!
+}
+
+"""Available sort options for DFlow events"""
+enum DFlowEventSort {
+  LIQUIDITY
+  OPEN_INTEREST
+  START_DATE
+  VOLUME
+  VOLUME_24H
+}
+
+type DFlowMarketGraphQL {
+  accountsJson: String
+  canCloseEarly: Boolean!
+  category: String
+  closeTime: Float!
+  earlyCloseCondition: String
+  eventTicker: String!
+  expirationTime: Float!
+  isActive: Boolean!
+  marketType: DFlowMarketType!
+  noAsk: Float
+  noBid: Float
+  noPrice: Float
+  noSubTitle: String!
+  openInterest: Float!
+  openTime: Float!
+  result: String
+  rulesPrimary: String!
+  rulesSecondary: String
+  status: DFlowMarketStatus!
+  subtitle: String
+  ticker: ID!
+  timeUntilClose: Float!
+  title: String!
+  volume: Float!
+  yesAsk: Float
+  yesBid: Float
+  yesPrice: Float
+  yesSubTitle: String!
+}
+
+enum DFlowMarketStatus {
+  ACTIVE
+  CANCELLED
+  CLOSED
+  DETERMINED
+  FINALIZED
+  INACTIVE
+  INITIALIZED
+}
+
+enum DFlowMarketType {
+  BINARY
+  CATEGORICAL
+}
+
+type DFlowSettlementSource {
+  name: String!
+  url: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type Market {
+  category: MarketCategory!
+  createdAt: DateTime!
+  currentPrice: Float!
+  description: String!
+  expiryDate: DateTime!
+  id: ID!
+  outcome: Boolean
+  resolvedAt: DateTime
+  status: MarketStatus!
+  title: String!
+  totalLiquidity: Float!
+  totalVolume: Float!
+  updatedAt: DateTime!
+}
+
+enum MarketCategory {
+  CRYPTO
+  ENTERTAINMENT
+  OTHER
+  POLITICS
+  SPORTS
+}
+
+enum MarketStatus {
+  ACTIVE
+  CLOSED
+  RESOLVED
+}
+
+type Mutation {
+  createMarket(createMarketInput: CreateMarketInput!): Market!
+  login(loginInput: LoginInput!): User!
+  register(registerInput: RegisterInput!): User!
+  resolveMarket(id: ID!, outcome: Boolean!): Market!
+}
+
+type Query {
+  activeDFlowEvents(limit: Float): [DFlowEvent!]!
+  activeDFlowMarkets(limit: Float): [DFlowMarketGraphQL!]!
+  activeMarkets: [Market!]!
+  dflowEvent(ticker: ID!): DFlowEvent
+  dflowEvents(limit: Float, offset: Float, search: String, sort: DFlowEventSort, status: DFlowMarketStatus, withNestedMarkets: Boolean): [DFlowEvent!]!
+  dflowMarket(ticker: ID!): DFlowMarketGraphQL
+  dflowMarkets(category: String, limit: Float, search: String): [DFlowMarketGraphQL!]!
+  market(id: ID!): Market!
+  markets: [Market!]!
+  searchDFlow(limit: Float, offset: Float, query: String!, withNestedAccounts: Boolean, withNestedMarkets: Boolean): [DFlowEvent!]!
+  searchDFlowMarkets(limit: Float, query: String!): [DFlowMarketGraphQL!]!
+  user(id: ID!): User!
+}
+
+input RegisterInput {
+  email: String!
+  password: String!
+  username: String!
+}
+
+type User {
+  balance: Float!
+  createdAt: DateTime!
+  email: String!
+  id: ID!
+  updatedAt: DateTime!
+  username: String!
+}

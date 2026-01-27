@@ -1,0 +1,40 @@
+{
+  "ticker": "KXSB-26-SEA",
+  "eventTicker": "KXSB-26",
+  "marketType": "binary",
+  "title": "Will the Seattle win the 2026 Pro Football Championship?",
+  "subtitle": "",
+  "yesSubTitle": "Seattle",
+  "noSubTitle": "Seattle",
+  "openTime": 1739372400,
+  "closeTime": 1833634800,
+  "expirationTime": 1833634800,
+  "status": "active",
+  "volume": 16533272,
+  "result": "",
+  "openInterest": 10029602,
+  "canCloseEarly": true,
+  "earlyCloseCondition": "This market will close and expire after a title holder is declared.",
+  "rulesPrimary": "If Seattle wins the 2026 Pro Football Championship, then the market resolves to Yes.",
+  "rulesSecondary": "",
+  "yesBid": "0.6600",
+  "yesAsk": "0.6700",
+  "noBid": "0.3300",
+  "noAsk": "0.3400",
+  "accounts": {
+    "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH": {
+      "marketLedger": "2STXKmH3UwyEiKaGB2qc4zgiSq36LLTgE6G6MKoCyUGq",
+      "yesMint": "9xUDJs6TjXaQE1NPWVaAmEXZADxvKdtSRoSoWWYZUypd",
+      "noMint": "H8YaUJvkEbvxRsZVsAftipnUPEHzTfHqb41b7xP8Qkat",
+      "isInitialized": true,
+      "redemptionStatus": "pending"
+    },
+    "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": {
+      "marketLedger": "FwpYB95m9JmPKN6YFPN5oFSZSixxyNXwX623VHE1wokt",
+      "yesMint": "GNr3UXmnwokHCBwpe2QWC9qr3M8v3mTjoAUQj6TVTbyP",
+      "noMint": "HTG9V5gMoFJoN7p42o1npWLX4kQMsyh1t5SrM4kb7swV",
+      "isInitialized": true,
+      "redemptionStatus": "pending"
+    }
+  }
+}

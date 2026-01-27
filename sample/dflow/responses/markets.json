@@ -1,0 +1,415 @@
+{
+  "markets": [
+    {
+      "ticker": "PRES-2024-KH",
+      "eventTicker": "PRES-2024",
+      "marketType": "binary",
+      "title": "Will Kamala Harris or another Democrat win the Presidency?",
+      "subtitle": "",
+      "yesSubTitle": "Kamala Harris",
+      "noSubTitle": "Kamala Harris",
+      "openTime": 1728044100,
+      "closeTime": 1737392628,
+      "expirationTime": 1762354800,
+      "status": "finalized",
+      "volume": 273312857,
+      "result": "no",
+      "openInterest": 55939388,
+      "canCloseEarly": true,
+      "earlyCloseCondition": "This market will close following the inauguration of a non-acting President for the term beginning January 20, 2025.",
+      "rulesPrimary": "If Kamala Harris or another representative of the Democratic party is inaugurated as President for the term beginning January 20, 2025, then the market resolves to Yes.",
+      "rulesSecondary": "",
+      "yesBid": null,
+      "yesAsk": null,
+      "noBid": null,
+      "noAsk": null,
+      "accounts": {
+        "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH": {
+          "marketLedger": "FvQx2gx1qDQj9uS2YYa1LAUHkw2aoADd73YWdGsbNWtf",
+          "yesMint": "ZUB5tvLrnch7Fz8khGuz2JezhQe3rSFLP5CMFeVipzy",
+          "noMint": "6CvNH47HC9hi3Dv2ELL4Tbgrg33UqsUHs2mkyKwuPoad",
+          "isInitialized": false,
+          "redemptionStatus": null
+        },
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": {
+          "marketLedger": "7y4kTrRUitXYhFgg5mzpUhPDKBQTRFz2vjjyQK88tcPP",
+          "yesMint": "F4Fo7jaT6wvFr9z6iMnejnPECtPwext5rZQBxXQcmWZL",
+          "noMint": "3CrbJmeG912tNphnKSZwEyZ1cyQV4dnFQ1NwxpFKvsrU",
+          "isInitialized": false,
+          "redemptionStatus": null
+        }
+      }
+    },
+    {
+      "ticker": "PRES-2024-DJT",
+      "eventTicker": "PRES-2024",
+      "marketType": "binary",
+      "title": "Will Donald Trump or another Republican win the Presidency?",
+      "subtitle": "",
+      "yesSubTitle": "Donald Trump",
+      "noSubTitle": "Donald Trump",
+      "openTime": 1728044100,
+      "closeTime": 1737392628,
+      "expirationTime": 1762354800,
+      "status": "finalized",
+      "volume": 262334207,
+      "result": "yes",
+      "openInterest": 48737297,
+      "canCloseEarly": true,
+      "earlyCloseCondition": "This market will close following the inauguration of a non-acting President for the term beginning January 20, 2025.",
+      "rulesPrimary": "If Donald Trump or another representative of the Republican party is inaugurated as President for the term beginning January 20, 2025, then the market resolves to Yes.",
+      "rulesSecondary": "",
+      "yesBid": null,
+      "yesAsk": null,
+      "noBid": null,
+      "noAsk": null,
+      "accounts": {
+        "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH": {
+          "marketLedger": "82k7sDH89TFFrK8QDENAE8Lk5s9yhanu7TxFEhYKjvwc",
+          "yesMint": "8XdWJdL6EikodvcM3pmUzJmCDLZyz35rhVtEda4Euki3",
+          "noMint": "7LMF28VrEYPkPq9PTWFpfbxy7Pb7d1fZmQ313Sqzp61H",
+          "isInitialized": false,
+          "redemptionStatus": null
+        },
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": {
+          "marketLedger": "GcjHd3rwCG478Lv5in4NicaEkUiuZVSBmBRoQBxsRELs",
+          "yesMint": "CQKoRgJdo8mptwvaptkiCZuNQ6rm1a3G5WiRvZAg5vie",
+          "noMint": "AGPVPXWPRn2MkY6wSQVt7QN9mQtKKLHVkc4BjxYAjJrX",
+          "isInitialized": false,
+          "redemptionStatus": null
+        }
+      }
+    },
+    {
+      "ticker": "KXBOXING-25DEC19JPAUAJOS-JPAU",
+      "eventTicker": "KXBOXING-25DEC19JPAUAJOS",
+      "marketType": "binary",
+      "title": "Jake Paul vs. Anthony Joshua Winner",
+      "subtitle": "",
+      "yesSubTitle": "Jake Paul",
+      "noSubTitle": "Jake Paul",
+      "openTime": 1763737200,
+      "closeTime": 1766207168,
+      "expirationTime": 1767402000,
+      "status": "finalized",
+      "volume": 63808642,
+      "result": "no",
+      "openInterest": 55371406,
+      "canCloseEarly": true,
+      "earlyCloseCondition": "This market will close and expire after a winner is declared.",
+      "rulesPrimary": "If Jake Paul wins the Jake Paul vs. Anthony Joshua boxing match originally scheduled for Dec 19, 2025, then the market resolves to Yes.",
+      "rulesSecondary": "The following market refers to the Jake Paul vs. Anthony Joshua boxing match originally scheduled for Dec 19, 2025. If this match is postponed or delayed, the market will remain open and close after the rescheduled match has finished (within two weeks). If the cancelled match is not played, rescheduled, or declared a tie, the market will resolve to 50/50 for both competitors.",
+      "yesBid": null,
+      "yesAsk": null,
+      "noBid": null,
+      "noAsk": null,
+      "accounts": {
+        "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH": {
+          "marketLedger": "72n4kbEgRUwHeDLocCbVqh2Ghz9q9m5RVxtzB1E9nJQX",
+          "yesMint": "8JEuancqUNagRejGMG5VxgK5XdghP1wegoS7Neik3oE2",
+          "noMint": "E3Q6o2PKMaYepmQT84fZb4sZ5qcq6mEJpeJwZaZKdZEu",
+          "isInitialized": true,
+          "redemptionStatus": "open",
+          "scalarOutcomePct": 0
+        },
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": {
+          "marketLedger": "7qJf7nwC8zg2cTHat7LmwBaZFaAPBAjbShWT7dA9Z4pr",
+          "yesMint": "6xwesjAPkVyhCw6FsWAtd2Tr5RCMUfTW2owMTv94tb6z",
+          "noMint": "Fjf2BGbsHcHTBsSJkJiFuMW7UFnP7TJcHz25WtdEpZgG",
+          "isInitialized": true,
+          "redemptionStatus": "open",
+          "scalarOutcomePct": 0
+        }
+      }
+    },
+    {
+      "ticker": "KXNCAAF-26-MIA",
+      "eventTicker": "KXNCAAF-26",
+      "marketType": "binary",
+      "title": "Will the Miami (FL) win the College Football Playoff National Championship?",
+      "subtitle": "",
+      "yesSubTitle": "Miami (FL)",
+      "noSubTitle": "Miami (FL)",
+      "openTime": 1739286000,
+      "closeTime": 1768882705,
+      "expirationTime": 1831906800,
+      "status": "finalized",
+      "volume": 59099836,
+      "result": "no",
+      "openInterest": 31633994,
+      "canCloseEarly": true,
+      "earlyCloseCondition": "This market will close and expire after a title holder is declared.",
+      "rulesPrimary": "If Miami (FL) wins the College Football Playoff National Championship, then the market resolves to Yes.",
+      "rulesSecondary": "",
+      "yesBid": null,
+      "yesAsk": null,
+      "noBid": null,
+      "noAsk": null,
+      "accounts": {
+        "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH": {
+          "marketLedger": "6yiSEumfR662AxDYrRFQ4CFwfukpntaFtBsMnuoUu5tk",
+          "yesMint": "F7mf2on7XzUs1t5yyhcZ8UUXJ4LLdNnj1RdWC8Udx5f9",
+          "noMint": "FpBEJ3BasH4erN21pNwx2r24sBcnJU4JZtp3CWsvAEQZ",
+          "isInitialized": true,
+          "redemptionStatus": "open",
+          "scalarOutcomePct": 0
+        },
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": {
+          "marketLedger": "9Tror4tgBU2SFNM1Xb7S9EwfmEUKQ3aXCRu43dBG5hhH",
+          "yesMint": "2qSSALrrG59aLAgaLJAYQvBsyHB9NmwgxPAvmkEV2LXd",
+          "noMint": "DU26WFwpTh8BMEj1EUF9eorQ3K87vaUiFnwgUDFdHqiX",
+          "isInitialized": true,
+          "redemptionStatus": "open",
+          "scalarOutcomePct": 0
+        }
+      }
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "eventTicker": "KXNBA-25",
+      "marketType": "binary",
+      "title": "Will the Indiana Pacers win the NBA Finals?",
+      "subtitle": "",
+      "yesSubTitle": "Indiana",
+      "noSubTitle": "Indiana",
+      "openTime": 1737637200,
+      "closeTime": 1750647069,
+      "expirationTime": 1814364000,
+      "status": "finalized",
+      "volume": 58114197,
+      "result": "no",
+      "openInterest": 26959155,
+      "canCloseEarly": true,
+      "earlyCloseCondition": "This market will close and expire after a title holder is declared.",
+      "rulesPrimary": "If the Indiana basketball team wins the Pro Men's Basketball Championship, then the market resolves to Yes.",
+      "rulesSecondary": "",
+      "yesBid": null,
+      "yesAsk": null,
+      "noBid": null,
+      "noAsk": null,
+      "accounts": {
+        "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH": {
+          "marketLedger": "2sZne9oXhzboaj5jT7w5UAEKrHCUiDzpyN5eE66nJaS2",
+          "yesMint": "CeL74Xd1TNRg2Dfhczp7VfJ8BNyyniB3A2eHy5Lmca9p",
+          "noMint": "J7ttSrgF7z2ofJKgivq1mn6jvnZk88dYi5XnFT2gZVCT",
+          "isInitialized": false,
+          "redemptionStatus": null
+        },
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": {
+          "marketLedger": "419Gm5TBEjPKvp8CE9AJPKPpKJbHDDwijDBy4UVqVeBd",
+          "yesMint": "BY5DwX64Cg6sg2ocxx8C97aajpYDqDXC98toXrYSX8K2",
+          "noMint": "9kBQmnnonycpsLUxKzK8t2mhb5QTvCpkYaG8NpeNuBjv",
+          "isInitialized": false,
+          "redemptionStatus": null
+        }
+      }
+    },
+    {
+      "ticker": "KXNFLGAME-26JAN10GBCHI-CHI",
+      "eventTicker": "KXNFLGAME-26JAN10GBCHI",
+      "marketType": "binary",
+      "title": "Green Bay at Chicago Winner?",
+      "subtitle": "",
+      "yesSubTitle": "Chicago",
+      "noSubTitle": "Chicago",
+      "openTime": 1767589200,
+      "closeTime": 1768106121,
+      "expirationTime": 1769302800,
+      "status": "finalized",
+      "volume": 56261713,
+      "result": "yes",
+      "openInterest": 19328418,
+      "canCloseEarly": true,
+      "earlyCloseCondition": "This market will close and expire after a winner is declared.",
+      "rulesPrimary": "If Chicago wins the Green Bay at Chicago professional football game originally scheduled for Jan 10, 2026, then the market resolves to Yes.",
+      "rulesSecondary": "The following market refers to the team who is the winner (or participant awarded a tie) in the Green Bay at Chicago professional football game originally scheduled for Jan 10, 2026. If this game is postponed or delayed, the market will remain open and close after the rescheduled game has finished (within two weeks). If the cancelled game is not played or is rescheduled further than two weeks out, the market will resolve to a fair price for each team in accordance with the rules. If the game is declared a tie, the market will resolve to 50/50 for both teams.",
+      "yesBid": null,
+      "yesAsk": null,
+      "noBid": null,
+      "noAsk": null,
+      "accounts": {
+        "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH": {
+          "marketLedger": "325Dc7MZQGu5SecCSaQLexav1ETxKrsJsuryzHiLiDAN",
+          "yesMint": "9qwvCpKzQ9fdwwhThZNaVqXpRZm6KT9ut3UHFFGMzzEC",
+          "noMint": "FJquBSCjBWtFX8hW18f8WkUaNBf363GxoQ8K9Mnytue5",
+          "isInitialized": true,
+          "redemptionStatus": "open",
+          "scalarOutcomePct": 10000
+        },
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": {
+          "marketLedger": "5phQLYTg3NosTH53F6fKMoLkfbs8PDknwGmnPwph6d3X",
+          "yesMint": "3qJpxLzJfecwEmUG6PnkjqzzeewtJKUHWzdx3nN5sVJ1",
+          "noMint": "UdxYhC5g3qZcMvE1gwCiXFf4bcjgcMC4b5G4PyyDh2v",
+          "isInitialized": true,
+          "redemptionStatus": "open",
+          "scalarOutcomePct": 10000
+        }
+      }
+    },
+    {
+      "ticker": "KXNFLGAME-26JAN18SFSEA-SF",
+      "eventTicker": "KXNFLGAME-26JAN18SFSEA",
+      "marketType": "binary",
+      "title": "San Francisco at Seattle Winner?",
+      "subtitle": "",
+      "yesSubTitle": "San Francisco",
+      "noSubTitle": "San Francisco",
+      "openTime": 1768191960,
+      "closeTime": 1768709726,
+      "expirationTime": 1769968800,
+      "status": "finalized",
+      "volume": 55684296,
+      "result": "no",
+      "openInterest": 41149516,
+      "canCloseEarly": true,
+      "earlyCloseCondition": "This market will close and expire after a winner is declared.",
+      "rulesPrimary": "If San Francisco wins the San Francisco at Seattle professional football divisional round game, then the market resolves to Yes.",
+      "rulesSecondary": "The following market refers to the team who is the winner (or participant awarded a tie) in the San Francisco at Seattle professional football divisional round game. If this game is postponed or delayed, the market will remain open and close after the rescheduled game has finished (within two weeks). If the cancelled game is not played or is rescheduled further than two weeks out, the market will resolve to a fair price for each team in accordance with the rules. If the game is declared a tie, the market will resolve to 50/50 for both teams.",
+      "yesBid": null,
+      "yesAsk": null,
+      "noBid": null,
+      "noAsk": null,
+      "accounts": {
+        "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH": {
+          "marketLedger": "4YZ9JXMUmiqg2LuUM9nFwtfq3RrMZJygGAq7G2P6f4or",
+          "yesMint": "8UpH2GZPH9VG1wjzQmA5rC2cWs8eibK4jU3Lo4TH8XY4",
+          "noMint": "H4JFm577hKU8iPokttjhJsEQmX32RH82MaMs2b1jf4AA",
+          "isInitialized": true,
+          "redemptionStatus": "open",
+          "scalarOutcomePct": 0
+        },
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": {
+          "marketLedger": "Ewmdr6PQG1qPCqcj4oT7KnPhd77UVswGhc6urvGrjUb",
+          "yesMint": "7ntVMJfNHy5MbmveNxFM15ztaUUs3zGoFne1UW9ezoLg",
+          "noMint": "jRCU3bshqBVf9nmwCnuwkgPiG3oNThePrvtfMtQsR7m",
+          "isInitialized": true,
+          "redemptionStatus": "open",
+          "scalarOutcomePct": 0
+        }
+      }
+    },
+    {
+      "ticker": "KXNFLGAME-26JAN18LACHI-CHI",
+      "eventTicker": "KXNFLGAME-26JAN18LACHI",
+      "marketType": "binary",
+      "title": "Los Angeles R at Chicago Winner?",
+      "subtitle": "",
+      "yesSubTitle": "Chicago",
+      "noSubTitle": "Chicago",
+      "openTime": 1768191960,
+      "closeTime": 1768791807,
+      "expirationTime": 1769968800,
+      "status": "finalized",
+      "volume": 53729274,
+      "result": "no",
+      "openInterest": 25525790,
+      "canCloseEarly": true,
+      "earlyCloseCondition": "This market will close and expire after a winner is declared.",
+      "rulesPrimary": "If Chicago wins the Los Angeles R at Chicago professional football divisional round game, then the market resolves to Yes.",
+      "rulesSecondary": "The following market refers to the team who is the winner (or participant awarded a tie) in the Los Angeles R at Chicago professional football divisional round game. If this game is postponed or delayed, the market will remain open and close after the rescheduled game has finished (within two weeks). If the cancelled game is not played or is rescheduled further than two weeks out, the market will resolve to a fair price for each team in accordance with the rules. If the game is declared a tie, the market will resolve to 50/50 for both teams.",
+      "yesBid": null,
+      "yesAsk": null,
+      "noBid": null,
+      "noAsk": null,
+      "accounts": {
+        "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH": {
+          "marketLedger": "GjYDdqGgMnL2j69gmr83ub9qiSfrkMowNMAw77dZp3NE",
+          "yesMint": "BqLsRn9Vcj6sP6DR8KcT5Bhb8FdfwGXX1Nw5usmN4nFn",
+          "noMint": "2GKYpKvhxboCAKoK7eYBva9TkozKHFMeh5jzcwayxR1y",
+          "isInitialized": true,
+          "redemptionStatus": "open",
+          "scalarOutcomePct": 0
+        },
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": {
+          "marketLedger": "6N1sxBTMnicr9W6QQRVwnwjZ1nsVX5P3WiHZwm57Tcr1",
+          "yesMint": "GqbJseQFsed6sA32wyV5ozCoaR3Vwx1KSwwa81zgs2Bo",
+          "noMint": "CimA1Mre6xZckujHUSjDCWFzRRWTEeg4GD7YWhJVbMps",
+          "isInitialized": true,
+          "redemptionStatus": "open",
+          "scalarOutcomePct": 0
+        }
+      }
+    },
+    {
+      "ticker": "KXMAYORNYCPARTY-25-AC",
+      "eventTicker": "KXMAYORNYCPARTY-25",
+      "marketType": "binary",
+      "title": "Will a representative of the Andrew Cuomo party win the NYC Mayor race in 2025?",
+      "subtitle": "",
+      "yesSubTitle": "Andrew Cuomo",
+      "noSubTitle": "Andrew Cuomo",
+      "openTime": 1750823100,
+      "closeTime": 1762485538,
+      "expirationTime": 1793804400,
+      "status": "finalized",
+      "volume": 53423150,
+      "result": "no",
+      "openInterest": 30271150,
+      "canCloseEarly": true,
+      "earlyCloseCondition": "This market will close following in the swearing in of the Mayor pursuant to the election.",
+      "rulesPrimary": "If Andrew Cuomo (as an independent only) is sworn in pursuant to the NYC Mayoral election on Nov 4, 2025, then the market resolves to Yes.",
+      "rulesSecondary": "",
+      "yesBid": null,
+      "yesAsk": null,
+      "noBid": null,
+      "noAsk": null,
+      "accounts": {
+        "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH": {
+          "marketLedger": "74ivo6JfQpPiqZ4LY7r73TmhZEqgWV8gSmjmKNsWKcj6",
+          "yesMint": "8ABuFakFfmU42hrC2RcCdrdsA1YJbJML8463Uezns68c",
+          "noMint": "9csHxfZHHJwnyRVi4gXUK7afYNH54ex2BP6sxJWgRhc4",
+          "isInitialized": false,
+          "redemptionStatus": null
+        },
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": {
+          "marketLedger": "5Wy9iPFsHmLjuxwZsSxc6jE4zkQDag5KBKKtEKKhR8Qi",
+          "yesMint": "6fT42wTayqcsEQ9afVSGoen68y6aHTKMY4oyRsVCrmQK",
+          "noMint": "BX9A8n4y3ZPw8E9QjLDMyroVZ7x2UYNpHC15oju6nKgZ",
+          "isInitialized": false,
+          "redemptionStatus": null
+        }
+      }
+    },
+    {
+      "ticker": "KXMAYORNYCPARTY-25-D",
+      "eventTicker": "KXMAYORNYCPARTY-25",
+      "marketType": "binary",
+      "title": "Will a representative of the Democratic party win the NYC Mayor race in 2025?",
+      "subtitle": "",
+      "yesSubTitle": "Zohran Mamdani",
+      "noSubTitle": "Zohran Mamdani",
+      "openTime": 1731178800,
+      "closeTime": 1762485538,
+      "expirationTime": 1793804400,
+      "status": "finalized",
+      "volume": 48713982,
+      "result": "yes",
+      "openInterest": 24879936,
+      "canCloseEarly": true,
+      "earlyCloseCondition": "This market will close following in the swearing in of the Mayor pursuant to the election.",
+      "rulesPrimary": "If a representative of the Democratic Party is sworn in pursuant to the NYC Mayoral election on Nov 4, 2025, then the market resolves to Yes.",
+      "rulesSecondary": "",
+      "yesBid": null,
+      "yesAsk": null,
+      "noBid": null,
+      "noAsk": null,
+      "accounts": {
+        "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH": {
+          "marketLedger": "BbDquDVK4wAREjLtusDygygs9FM85Z3xYQ6zoacpcCL5",
+          "yesMint": "4unpi3v1tK813KtB8bDMHDuaDBcijU11mURLqWuxfvU3",
+          "noMint": "95XdSCqVa5QqSHttxtA4Ezs6smVWNPPr6pnajoduTM7q",
+          "isInitialized": false,
+          "redemptionStatus": null
+        },
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": {
+          "marketLedger": "5m5seHtDGnCukWTAuPv2brGeTNH5t6T9uQVvGjsm9bNr",
+          "yesMint": "E7VtgFfxQ3UjtXAvifeW6war9GmnzBVXH7kn59nc8ceY",
+          "noMint": "9rwQRK6tPPuPDuxykWmQzsZZJz5HgZJnPK75ysRzJiss",
+          "isInitialized": false,
+          "redemptionStatus": null
+        }
+      }
+    }
+  ],
+  "cursor": 10
+}

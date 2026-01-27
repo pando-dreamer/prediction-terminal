@@ -1,0 +1,380 @@
+{
+  "filtersBySports": {
+    "All sports": {
+      "competitions": {},
+      "scopes": [
+        "Games",
+        "Futures",
+        "1st Half Total",
+        "1st Quarter Spread",
+        "1st Quarter Total",
+        "1st Quarter Winner",
+        "Awards",
+        "Championship",
+        "Conference",
+        "Divisions",
+        "Draft",
+        "Exact Match Score",
+        "Group Qualifiers",
+        "Group Winner",
+        "League Leader",
+        "Map Winner",
+        "Total Maps",
+        "Wins",
+        "Events"
+      ]
+    },
+    "Baseball": {
+      "competitions": {
+        "Pro Baseball": {
+          "scopes": ["Futures", "Win totals", "Divisions", "Events"]
+        }
+      },
+      "scopes": ["Futures", "Divisions", "Wins", "Events"]
+    },
+    "Basketball": {
+      "competitions": {
+        "BRP x TNC | Who Your King": {
+          "scopes": ["Games"]
+        },
+        "Chinese Basketball Association": {
+          "scopes": ["Games"]
+        },
+        "College Basketball (M)": {
+          "scopes": ["Games", "Futures", "Awards", "Conference"]
+        },
+        "College Basketball (W)": {
+          "scopes": ["Games", "Futures"]
+        },
+        "EuroCup": {
+          "scopes": ["Games"]
+        },
+        "Euroleague": {
+          "scopes": ["Games"]
+        },
+        "FIBA Champions League": {
+          "scopes": ["Games"]
+        },
+        "FIBA Europe Cup": {
+          "scopes": ["Games"]
+        },
+        "LNB Elite": {
+          "scopes": ["Games"]
+        },
+        "Liga Nacional de Basquetbol": {
+          "scopes": ["Games"]
+        },
+        "NBL Australia": {
+          "scopes": ["Games"]
+        },
+        "Pro Basketball (M)": {
+          "scopes": [
+            "Games",
+            "Futures",
+            "Win totals",
+            "Awards",
+            "Divisions",
+            "Draft",
+            "League Leader",
+            "Events"
+          ]
+        },
+        "South Korea KBL": {
+          "scopes": ["Games"]
+        }
+      },
+      "scopes": [
+        "Games",
+        "Futures",
+        "Awards",
+        "Conference",
+        "Divisions",
+        "Draft",
+        "League Leader",
+        "Wins",
+        "Events"
+      ]
+    },
+    "Boxing": {
+      "competitions": {
+        "Boxing": {
+          "scopes": ["Games"]
+        }
+      },
+      "scopes": ["Games"]
+    },
+    "Chess": {
+      "competitions": {},
+      "scopes": ["Futures"]
+    },
+    "Cricket": {
+      "competitions": {
+        "Men's T20 World Cup": {
+          "scopes": ["Futures"]
+        },
+        "ODI": {
+          "scopes": ["Games"]
+        },
+        "T20 International": {
+          "scopes": ["Games"]
+        },
+        "Women's Premier League": {
+          "scopes": ["Futures"]
+        }
+      },
+      "scopes": ["Games", "Futures"]
+    },
+    "Esports": {
+      "competitions": {
+        "Call of Duty": {
+          "scopes": ["Games"]
+        },
+        "Dota 2": {
+          "scopes": ["Games"]
+        },
+        "League of Legends": {
+          "scopes": [
+            "Games",
+            "Map 1 Winner",
+            "Map 2 Winner",
+            "Map 3 Winner",
+            "Total Maps"
+          ]
+        },
+        "Valorant": {
+          "scopes": ["Games"]
+        }
+      },
+      "scopes": ["Games", "Map Winner", "Total Maps"]
+    },
+    "Football": {
+      "competitions": {
+        "College Football": {
+          "scopes": [
+            "Futures",
+            "Awards",
+            "Championship",
+            "Conferences",
+            "Events"
+          ]
+        },
+        "Pro Football": {
+          "scopes": [
+            "Games",
+            "Futures",
+            "1st Half Total",
+            "1st Quarter Spread",
+            "1st Quarter Total",
+            "1st Quarter Winner",
+            "Awards",
+            "Draft",
+            "Events"
+          ]
+        }
+      },
+      "scopes": [
+        "Games",
+        "Futures",
+        "1st Half Total",
+        "1st Quarter Spread",
+        "1st Quarter Total",
+        "1st Quarter Winner",
+        "Awards",
+        "Championship",
+        "Draft",
+        "Events"
+      ]
+    },
+    "Golf": {
+      "competitions": {
+        "The American Express": {
+          "scopes": ["Games"]
+        },
+        "Tomorrow's Golf League (TGL)": {
+          "scopes": ["Games", "Futures"]
+        }
+      },
+      "scopes": ["Games", "Futures", "Events"]
+    },
+    "Hockey": {
+      "competitions": {
+        "AHL": {
+          "scopes": ["Games"]
+        },
+        "KHL": {
+          "scopes": ["Games"]
+        },
+        "Pro Hockey": {
+          "scopes": ["Games", "Futures", "Awards", "Divisions"]
+        },
+        "SHL": {
+          "scopes": ["Games"]
+        }
+      },
+      "scopes": ["Games", "Futures", "Divisions", "Events"]
+    },
+    "MMA": {
+      "competitions": {
+        "UFC": {
+          "scopes": ["Futures"]
+        }
+      },
+      "scopes": ["Futures"]
+    },
+    "Motorsport": {
+      "competitions": {
+        "Daytona 24 Hour": {
+          "scopes": ["Events"]
+        },
+        "F1": {
+          "scopes": ["Futures"]
+        }
+      },
+      "scopes": ["Games", "Futures"]
+    },
+    "Olympics": {
+      "competitions": {
+        "Winter Olympics": {
+          "scopes": ["Futures"]
+        }
+      },
+      "scopes": ["Futures"]
+    },
+    "Soccer": {
+      "competitions": {
+        "Argentina Primera Division": {
+          "scopes": ["Games"]
+        },
+        "Australia A League": {
+          "scopes": ["Games"]
+        },
+        "Belgian Pro League": {
+          "scopes": ["Games", "Futures"]
+        },
+        "Brasileiro Serie A": {
+          "scopes": ["Games", "Futures"]
+        },
+        "Bundesliga": {
+          "scopes": ["Games", "Futures"]
+        },
+        "Copa del Rey": {
+          "scopes": ["Futures"]
+        },
+        "Coppa Italia": {
+          "scopes": ["Games", "Futures"]
+        },
+        "Croatia HNL": {
+          "scopes": ["Games"]
+        },
+        "DFB Pokal": {
+          "scopes": ["Futures"]
+        },
+        "EFL Championship": {
+          "scopes": ["Games", "Futures"]
+        },
+        "EFL Cup": {
+          "scopes": ["Futures"]
+        },
+        "EPL": {
+          "scopes": ["Games", "Futures", "Events"]
+        },
+        "Eredivisie": {
+          "scopes": ["Futures"]
+        },
+        "Europa League": {
+          "scopes": ["Games"]
+        },
+        "FA Cup": {
+          "scopes": ["Futures"]
+        },
+        "FIFA World Cup": {
+          "scopes": ["Futures", "Group Qualifiers", "Group Winner", "Events"]
+        },
+        "Greece Super League": {
+          "scopes": ["Games", "Futures"]
+        },
+        "Intl Friendlies": {
+          "scopes": ["Games"]
+        },
+        "KNVB": {
+          "scopes": ["Futures"]
+        },
+        "La Liga": {
+          "scopes": ["Games", "Futures", "Events"]
+        },
+        "Liga MX": {
+          "scopes": ["Futures"]
+        },
+        "Liga Portugal": {
+          "scopes": ["Games", "Futures"]
+        },
+        "Ligue 1": {
+          "scopes": ["Games", "Futures"]
+        },
+        "NWSL": {
+          "scopes": ["Events"]
+        },
+        "Saudi Pro League": {
+          "scopes": ["Games"]
+        },
+        "Scottish Premiership": {
+          "scopes": ["Games"]
+        },
+        "Serie A": {
+          "scopes": ["Games", "Futures"]
+        },
+        "Super Lig": {
+          "scopes": ["Games", "Futures"]
+        },
+        "Swiss Super League": {
+          "scopes": ["Games"]
+        },
+        "UCL": {
+          "scopes": ["Games", "Futures"]
+        }
+      },
+      "scopes": [
+        "Games",
+        "Futures",
+        "Awards",
+        "Group Qualifiers",
+        "Group Winner",
+        "Events"
+      ]
+    },
+    "Tennis": {
+      "competitions": {
+        "ATP Challenger Oeiras 2": {
+          "scopes": ["Games"]
+        },
+        "ATP Challenger Phan Thiet 2": {
+          "scopes": ["Games"]
+        },
+        "Australian Open Men Singles": {
+          "scopes": ["Games", "Futures", "Exact Match Score"]
+        },
+        "Australian Open Women Singles": {
+          "scopes": ["Games", "Futures"]
+        }
+      },
+      "scopes": ["Games", "Futures", "Exact Match Score", "Events"]
+    }
+  },
+  "sportOrdering": [
+    "All sports",
+    "Football",
+    "Basketball",
+    "Hockey",
+    "Soccer",
+    "Tennis",
+    "Golf",
+    "MMA",
+    "Baseball",
+    "Boxing",
+    "Chess",
+    "Cricket",
+    "Esports",
+    "Motorsport",
+    "Olympics"
+  ]
+}

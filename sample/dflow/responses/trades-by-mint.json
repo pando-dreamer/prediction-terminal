@@ -1,0 +1,125 @@
+{
+  "trades": [
+    {
+      "tradeId": "cf87b94e-4b63-7cbd-ef40-32aea79e79df",
+      "ticker": "KXBOXING-25DEC19JPAUAJOS-JPAU",
+      "price": 1,
+      "count": 1000,
+      "yesPrice": 100,
+      "noPrice": 9900,
+      "yesPriceDollars": "0.0100",
+      "noPriceDollars": "0.9900",
+      "takerSide": "yes",
+      "createdTime": 1766207101
+    },
+    {
+      "tradeId": "3cea8a36-6b0f-4fb1-5d04-9ebc868de163",
+      "ticker": "KXBOXING-25DEC19JPAUAJOS-JPAU",
+      "price": 1,
+      "count": 5040,
+      "yesPrice": 100,
+      "noPrice": 9900,
+      "yesPriceDollars": "0.0100",
+      "noPriceDollars": "0.9900",
+      "takerSide": "yes",
+      "createdTime": 1766207101
+    },
+    {
+      "tradeId": "afd85cc2-ebef-55d5-5c4f-36a4280b9757",
+      "ticker": "KXBOXING-25DEC19JPAUAJOS-JPAU",
+      "price": 1,
+      "count": 333,
+      "yesPrice": 100,
+      "noPrice": 9900,
+      "yesPriceDollars": "0.0100",
+      "noPriceDollars": "0.9900",
+      "takerSide": "yes",
+      "createdTime": 1766207099
+    },
+    {
+      "tradeId": "cbd9276e-62b7-458d-9d99-7ed1b43b5f17",
+      "ticker": "KXBOXING-25DEC19JPAUAJOS-JPAU",
+      "price": 1,
+      "count": 666,
+      "yesPrice": 100,
+      "noPrice": 9900,
+      "yesPriceDollars": "0.0100",
+      "noPriceDollars": "0.9900",
+      "takerSide": "yes",
+      "createdTime": 1766207097
+    },
+    {
+      "tradeId": "00a67e62-ddc3-617d-f5a8-daf9ad6fb2fb",
+      "ticker": "KXBOXING-25DEC19JPAUAJOS-JPAU",
+      "price": 1,
+      "count": 93,
+      "yesPrice": 100,
+      "noPrice": 9900,
+      "yesPriceDollars": "0.0100",
+      "noPriceDollars": "0.9900",
+      "takerSide": "yes",
+      "createdTime": 1766207096
+    },
+    {
+      "tradeId": "18dd064a-618f-79d9-c2d3-f5d726dfd28b",
+      "ticker": "KXBOXING-25DEC19JPAUAJOS-JPAU",
+      "price": 1,
+      "count": 10000,
+      "yesPrice": 100,
+      "noPrice": 9900,
+      "yesPriceDollars": "0.0100",
+      "noPriceDollars": "0.9900",
+      "takerSide": "yes",
+      "createdTime": 1766207091
+    },
+    {
+      "tradeId": "d0c7e063-34b7-53c1-24a1-2543e024aabb",
+      "ticker": "KXBOXING-25DEC19JPAUAJOS-JPAU",
+      "price": 1,
+      "count": 93,
+      "yesPrice": 100,
+      "noPrice": 9900,
+      "yesPriceDollars": "0.0100",
+      "noPriceDollars": "0.9900",
+      "takerSide": "yes",
+      "createdTime": 1766207091
+    },
+    {
+      "tradeId": "e78d0a8f-cc03-781d-76d8-7e15dacd80cb",
+      "ticker": "KXBOXING-25DEC19JPAUAJOS-JPAU",
+      "price": 1,
+      "count": 4956,
+      "yesPrice": 100,
+      "noPrice": 9900,
+      "yesPriceDollars": "0.0100",
+      "noPriceDollars": "0.9900",
+      "takerSide": "yes",
+      "createdTime": 1766207090
+    },
+    {
+      "tradeId": "b146bb62-329f-6bad-1626-6ec71ab70ef7",
+      "ticker": "KXBOXING-25DEC19JPAUAJOS-JPAU",
+      "price": 1,
+      "count": 333,
+      "yesPrice": 100,
+      "noPrice": 9900,
+      "yesPriceDollars": "0.0100",
+      "noPriceDollars": "0.9900",
+      "takerSide": "yes",
+      "createdTime": 1766207089
+    },
+    {
+      "tradeId": "563cf843-f38f-73f1-4444-9f97ca8f3167",
+      "ticker": "KXBOXING-25DEC19JPAUAJOS-JPAU",
+      "price": 1,
+      "count": 935,
+      "yesPrice": 100,
+      "noPrice": 9900,
+      "yesPriceDollars": "0.0100",
+      "noPriceDollars": "0.9900",
+      "takerSide": "yes",
+      "createdTime": 1766207086
+    }
+  ],
+  "cursor": "EhIKEFY8-EPzj3PxRESfl8qPMWcaDAju3JjKBhDw-f3CAw"
+}

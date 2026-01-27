@@ -8,6 +8,7 @@ import { join } from 'path';
 import { MarketsModule } from './markets/markets.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { DFlowModule } from './dflow/dflow.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AuthModule } from './auth/auth.module';
     MarketsModule,
     UsersModule,
     AuthModule,
+    DFlowModule,
   ],
 })
 export class AppModule {}

@@ -1,0 +1,25 @@
+{
+  "inputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  "inAmount": "999904794",
+  "outputMint": "GNr3UXmnwokHCBwpe2QWC9qr3M8v3mTjoAUQj6TVTbyP",
+  "outAmount": "1454000000",
+  "otherAmountThreshold": "1393222800",
+  "minOutAmount": "1393222800",
+  "slippageBps": 418,
+  "predictionMarketSlippageBps": 418,
+  "platformFee": null,
+  "priceImpactPct": "0.003344303570360624364571497",
+  "contextSlot": 396107381,
+  "executionMode": "async",
+  "revertMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  "transaction": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAHC/+99Yr/ti4DwdPA+G/BkqqqYHyQWzYMnhy7dtFWpIwwA2d7efT+AQIyuqIJGow857YGi0s5o2LVoC2NA1O03KDB1aQypLXsEwkrE9b15B7iPLMDVBg9Nv+p9wlvWTJRa/BA4wFmOMzI60njSA06sRa1bfrLy6qGeHVgr6JBh65zAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpDCYpFm6FJZWj8aHwjmse2FCqMK9iOjIKtXxoPG++WgyMhuv/FuhWX8b0Pxhd1GRtfkCYg199FW1sg22jSqOe6Mb6evO+2606PWXzaqvJdDGxu+TC0vbg5HymAgNFL11h3g67QiSoMrOi6T3ajmQzqL7H4untwepjl3z0sRWC7flmfVq/l5M+9T1gwOUbJmf52lDvIAI7a1T+PN1XwmW1XwMFAAUCMHUAAAUACQMQJwAAAAAAAAcMBwgKAwIJAQAAAAYEUEAAAAAAAAAAXo7Q6ddXmGNZAFEAAACiARpWmTsAAAAAgEeqVgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+  "lastValidBlockHeight": 374231603,
+  "prioritizationFeeLamports": 300,
+  "computeUnitLimit": 30000,
+  "prioritizationType": {
+    "computeBudget": {
+      "microLamports": 10000,
+      "estimatedMicroLamports": 10000
+    }
+  }
+}

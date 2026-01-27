@@ -1,0 +1,83 @@
+{
+  "tagsByCategories": {
+    "Climate and Weather": [
+      "Daily temperature",
+      "Snow and rain",
+      "Climate change",
+      "High temp",
+      "Natural disasters",
+      "Hurricanes"
+    ],
+    "Companies": ["KPIs", "Product launches", "Elon Musk", "CEOs", "Layoffs"],
+    "Crypto": [
+      "BTC",
+      "15 min",
+      "Hourly",
+      "ETH",
+      "SOL",
+      "Pre-Market",
+      "Dogecoin",
+      "SHIBA"
+    ],
+    "Economics": [
+      "Fed",
+      "Oil and energy",
+      "Inflation",
+      "Growth",
+      "Employment",
+      "Housing",
+      "Mortgages"
+    ],
+    "Elections": ["International elections"],
+    "Entertainment": [
+      "Awards",
+      "Music",
+      "Movies",
+      "Music charts",
+      "Television",
+      "Video games",
+      "Rotten Tomatoes"
+    ],
+    "Financials": [
+      "S&P",
+      "Nasdaq",
+      "Daily",
+      "EUR/USD",
+      "Treasuries",
+      "USD/JPY",
+      "WTI"
+    ],
+    "Mentions": null,
+    "Politics": [
+      "US Elections",
+      "Primaries",
+      "Trump",
+      "Foreign Elections",
+      "International",
+      "House",
+      "Congress",
+      "SCOTUS & courts",
+      "Local",
+      "Recurring"
+    ],
+    "Science and Technology": ["AI", "Space", "Energy"],
+    "Social": null,
+    "Sports": [
+      "Soccer",
+      "Basketball",
+      "Football",
+      "Baseball",
+      "Hockey",
+      "Golf",
+      "Tennis",
+      "Esports",
+      "UFC",
+      "Cricket",
+      "Olympics",
+      "MMA",
+      "Motorsport",
+      "Boxing",
+      "Chess"
+    ]
+  }
+}
