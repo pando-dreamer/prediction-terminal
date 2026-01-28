@@ -103,9 +103,69 @@ enum DFlowMarketType {
   CATEGORICAL
 }
 
+type DFlowOrderFill {
+  inAmount: String!
+  inputMint: String!
+  outAmount: String!
+  outputMint: String!
+  signature: String!
+}
+
+type DFlowOrderStatus {
+  fills: [DFlowOrderFill!]!
+  inAmount: String
+  outAmount: String
+  status: String!
+}
+
+type DFlowOrderbookGraphQL {
+  lastPrice: Float!
+  noBids: [OrderbookLevel!]!
+  sequence: Int!
+  spread: Float!
+  yesBids: [OrderbookLevel!]!
+}
+
+input DFlowQuoteRequestInput {
+  amount: String!
+  inputMint: String!
+  outputMint: String!
+  slippageBps: Int!
+  userPublicKey: String!
+}
+
+type DFlowQuoteResponse {
+  computeUnitLimit: Int!
+  contextSlot: Int!
+  executionMode: String!
+  inAmount: String!
+  inputMint: String!
+  lastValidBlockHeight: Int!
+  minOutAmount: String!
+  otherAmountThreshold: String!
+  outAmount: String!
+  outputMint: String!
+  platformFee: String
+  predictionMarketSlippageBps: Int!
+  priceImpactPct: String!
+  prioritizationFeeLamports: Int!
+  revertMint: String!
+  slippageBps: Int!
+  transaction: String!
+}
+
 type DFlowSettlementSource {
   name: String!
   url: String!
+}
+
+input DFlowTradeRequestInput {
+  amount: Float!
+  direction: String!
+  market: String!
+  outcome: String!
+  slippageBps: Int!
+  userPublicKey: String!
 }
 
 """
@@ -142,6 +202,22 @@ enum MarketCategory {
   SPORTS
 }
 
+type MarketMints {
+  baseMint: String!
+  marketId: String!
+  noMint: String!
+  yesMint: String!
+}
+
+type MarketQuote {
+  lastUpdate: String!
+  liquidity: Float!
+  marketId: String!
+  noPrice: Float!
+  volume24h: Float!
+  yesPrice: Float!
+}
+
 enum MarketStatus {
   ACTIVE
   CLOSED
@@ -149,10 +225,18 @@ enum MarketStatus {
 }
 
 type Mutation {
+  cancelDFlowOrder(signature: String!): Boolean!
   createMarket(createMarketInput: CreateMarketInput!): Market!
+  executeDFlowTrade(request: DFlowTradeRequestInput!): TradeResponse!
   login(loginInput: LoginInput!): User!
   register(registerInput: RegisterInput!): User!
   resolveMarket(id: ID!, outcome: Boolean!): Market!
+}
+
+type OrderbookLevel {
+  price: Float!
+  shares: Float!
+  total: Float!
 }
 
 type Query {
@@ -162,7 +246,12 @@ type Query {
   dflowEvent(ticker: ID!): DFlowEvent
   dflowEvents(limit: Float, offset: Float, search: String, sort: DFlowEventSort, status: DFlowMarketStatus, withNestedMarkets: Boolean): [DFlowEvent!]!
   dflowMarket(ticker: ID!): DFlowMarketGraphQL
+  dflowMarketMints(marketId: String!): MarketMints!
+  dflowMarketQuote(marketId: String!): MarketQuote!
   dflowMarkets(category: String, limit: Float, search: String): [DFlowMarketGraphQL!]!
+  dflowOrderStatus(signature: String!): DFlowOrderStatus
+  dflowOrderbook(ticker: ID!): DFlowOrderbookGraphQL
+  getDFlowQuote(request: DFlowQuoteRequestInput!): DFlowQuoteResponse!
   market(id: ID!): Market!
   markets: [Market!]!
   searchDFlow(limit: Float, offset: Float, query: String!, withNestedAccounts: Boolean, withNestedMarkets: Boolean): [DFlowEvent!]!
@@ -174,6 +263,21 @@ input RegisterInput {
   email: String!
   password: String!
   username: String!
+}
+
+type TradeResponse {
+  error: TradingError
+  estimatedGas: Int
+  quote: DFlowQuoteResponse
+  signature: String
+  success: Boolean!
+}
+
+type TradingError {
+  code: String!
+  details: String
+  message: String!
+  timestamp: String!
 }
 
 type User {

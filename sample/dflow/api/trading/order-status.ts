@@ -14,7 +14,7 @@ const getOrderStatus = async (signature: string): Promise<any> => {
   queryParams.append('signature', signature);
   try {
     const response = await fetch(
-      `${API_BASE_URL}/api/v1/order-status?${queryParams.toString()}`,
+      `${API_BASE_URL}/order-status?${queryParams.toString()}`,
       {
         method: 'GET',
         headers: {
@@ -51,7 +51,9 @@ const getOrderStatus = async (signature: string): Promise<any> => {
 
 // Example usage
 const main = async () => {
-  await getOrderStatus('');
+  await getOrderStatus(
+    '5zCL2w2TBLgXFaX36iAGmQXgMF7yLKYXHdB8sW9fDksJ4gytj8X17cuaexNpUCt2MmXjESEuZGr449HLMybS6s7A'
+  );
 };
 
 if (require.main === module) {

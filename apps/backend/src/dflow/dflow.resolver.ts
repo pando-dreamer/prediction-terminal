@@ -8,6 +8,7 @@ import {
   DFlowEvent,
   DFlowEventSortGraphQL,
 } from './entities/dflow-event.entity';
+import { DFlowOrderbookGraphQL } from './entities/orderbook.entity';
 import { DFlowMarket } from './interfaces/dflow-market.interface';
 import {
   DFlowEvent as IDFlowEvent,
@@ -121,6 +122,16 @@ export class DFlowResolver {
       offset || 0
     );
     return response.events.map(event => this.transformEventToGraphQL(event));
+  }
+
+  @Query(() => DFlowOrderbookGraphQL, {
+    name: 'dflowOrderbook',
+    nullable: true,
+  })
+  async getDFlowOrderbook(
+    @Args('ticker', { type: () => ID }) ticker: string
+  ): Promise<DFlowOrderbookGraphQL | null> {
+    return this.dflowService.getOrderbook(ticker);
   }
 
   private transformToGraphQL(market: DFlowMarket): DFlowMarketGraphQL {

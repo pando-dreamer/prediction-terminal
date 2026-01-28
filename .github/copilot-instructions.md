@@ -34,6 +34,28 @@ prediction-terminal/
 3. **Build project**: `pnpm build`
 4. **Commit changes**
 
+### Sprint Startup Process ⚠️ **NEW RULE**
+
+**Before ANY implementation work begins in any sprint:**
+
+1. **Reference Analysis Phase** (Day 1)
+   - Review all provided references, examples, API responses
+   - Analyze existing patterns and established code structures
+   - Document current capabilities and limitations
+
+2. **Data Design Phase** (Day 1-2)
+   - Design TypeScript interfaces for all data structures
+   - Define GraphQL schema extensions
+   - Create API endpoint specifications
+   - Validate data flows end-to-end
+
+3. **Implementation Phase** (Day 3+)
+   - Begin coding ONLY after data types and APIs are approved
+   - Follow established patterns from previous sprints
+   - Maintain consistent error handling and caching patterns
+
+**This rule applies to ALL future sprints - no coding without proper design phase.**
+
 ### Starting Development
 
 ```bash

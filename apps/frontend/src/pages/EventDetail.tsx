@@ -1,6 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
+import { useWallet, useConnection } from '../contexts/WalletContext';
+import { VersionedTransaction, PublicKey } from '@solana/web3.js';
+import {
+  getAssociatedTokenAddress,
+  getAccount,
+  getMint,
+  TOKEN_2022_PROGRAM_ID,
+} from '@solana/spl-token';
 import {
   Card,
   CardContent,
@@ -10,7 +18,7 @@ import {
 } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
-import { ArrowLeft, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronUp } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -19,6 +27,8 @@ import {
   SelectValue,
 } from '../components/ui/select';
 import { Input } from '../components/ui/input';
+import { Alert, AlertDescription } from '../components/ui/alert';
+import { AlertCircle, CheckCircle } from 'lucide-react';
 
 const GET_DFLOW_EVENT = gql`
   query GetDFlowEvent($ticker: ID!) {
@@ -61,28 +71,214 @@ const GET_DFLOW_EVENT = gql`
   }
 `;
 
+const GET_ORDERBOOK = gql`
+  query GetDFlowOrderbook($ticker: ID!) {
+    dflowOrderbook(ticker: $ticker) {
+      yesBids {
+        price
+        shares
+        total
+      }
+      noBids {
+        price
+        shares
+        total
+      }
+      spread
+      lastPrice
+      sequence
+    }
+  }
+`;
+
+const EXECUTE_TRADE = gql`
+  mutation ExecuteDFlowTrade($request: DFlowTradeRequestInput!) {
+    executeDFlowTrade(request: $request) {
+      success
+      signature
+      quote {
+        inputMint
+        inAmount
+        outputMint
+        outAmount
+        slippageBps
+        priceImpactPct
+        executionMode
+        transaction
+      }
+      error {
+        code
+        message
+      }
+    }
+  }
+`;
+
+const GET_ORDER_STATUS = gql`
+  query GetOrderStatus($signature: String!) {
+    dflowOrderStatus(signature: $signature) {
+      status
+      inAmount
+      outAmount
+      fills {
+        signature
+        inputMint
+        inAmount
+        outputMint
+        outAmount
+      }
+    }
+  }
+`;
+
+const GET_MARKET_MINTS = gql`
+  query GetMarketMints($marketId: String!) {
+    dflowMarketMints(marketId: $marketId) {
+      baseMint
+      yesMint
+      noMint
+      marketId
+    }
+  }
+`;
+
 export function EventDetail() {
   const { ticker } = useParams<{ ticker: string }>();
+  const { publicKey, connected, signTransaction } = useWallet();
+  const { connection } = useConnection();
 
   const { loading, error, data } = useQuery(GET_DFLOW_EVENT, {
     variables: { ticker },
     errorPolicy: 'ignore',
   });
 
+  const [getOrderbook] = useLazyQuery(GET_ORDERBOOK, {
+    fetchPolicy: 'network-only',
+  });
+
+  const [executeTradeMutation] = useMutation(EXECUTE_TRADE);
+  const [getOrderStatus] = useLazyQuery(GET_ORDER_STATUS, {
+    fetchPolicy: 'network-only',
+  });
+  const [getMarketMints] = useLazyQuery(GET_MARKET_MINTS);
+
   // Trading component state - must be at top level before any early returns
   const [selectedMarket, setSelectedMarket] = useState<any>(null);
   const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
   const [side, setSide] = useState<'yes' | 'no'>('yes');
   const [amount, setAmount] = useState<number>(0);
+  const [showCompletedMarkets, setShowCompletedMarkets] =
+    useState<boolean>(false);
+  const [orderbook, setOrderbook] = useState<any>(null);
+  const [loadingOrderbook, setLoadingOrderbook] = useState<boolean>(false);
+  const [isTrading, setIsTrading] = useState<boolean>(false);
+  const [tradeError, setTradeError] = useState<string>('');
+  const [tradeSuccess, setTradeSuccess] = useState<string>('');
+  const [balances, setBalances] = useState({
+    usdc: 0,
+    yes: 0,
+    no: 0,
+  });
+  const [isLoadingBalances, setIsLoadingBalances] = useState<boolean>(false);
+  const [marketMints, setMarketMints] = useState<{
+    yesMint: string;
+    noMint: string;
+  } | null>(null);
+
+  // USDC mint address
+  const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 
   // Derived data
   const event = data?.dflowEvent;
   const activeMarkets =
     event?.markets
       ?.filter((m: any) => m.isActive)
-      ?.sort((a: any, b: any) => (b.volume || 0) - (a.volume || 0)) || [];
+      ?.sort((a: any, b: any) => (b.yesPrice || 0) - (a.yesPrice || 0)) || [];
   const completedMarkets =
     event?.markets?.filter((m: any) => !m.isActive) || [];
+
+  // Fetch user's token balances
+  const fetchBalances = async () => {
+    if (!publicKey || !connected) {
+      setBalances({ usdc: 0, yes: 0, no: 0 });
+      return;
+    }
+
+    setIsLoadingBalances(true);
+    try {
+      const usdcMint = new PublicKey(USDC_MINT);
+      const usdcTokenAccount = await getAssociatedTokenAddress(
+        usdcMint,
+        publicKey
+      );
+
+      const newBalances = { usdc: 0, yes: 0, no: 0 };
+
+      try {
+        const usdcBalance =
+          await connection.getTokenAccountBalance(usdcTokenAccount);
+        newBalances.usdc = parseFloat(
+          usdcBalance.value.uiAmount?.toString() || '0'
+        );
+        console.log('USDC balance:', newBalances.usdc);
+      } catch (err) {
+        console.log('USDC account not found');
+      }
+
+      // Fetch YES/NO token balances if we have market mints
+      if (marketMints) {
+        try {
+          const yesMint = new PublicKey(marketMints.yesMint);
+          const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
+            publicKey,
+            { mint: yesMint, programId: TOKEN_2022_PROGRAM_ID }
+          );
+          const yesBalance = tokenAccounts.value
+            .map(acc => acc.account.data.parsed.info.tokenAmount)
+            .reduce(
+              (pre, cur) =>
+                Number(pre?.uiAmount || 0) + Number(cur?.uiAmount || 0),
+              0
+            );
+          newBalances.yes = yesBalance;
+          console.log('YES balance:', newBalances.yes);
+        } catch (err) {
+          console.error('Error fetching YES token balance:', err);
+        }
+
+        try {
+          const noMint = new PublicKey(marketMints.noMint);
+          const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
+            publicKey,
+            { mint: noMint, programId: TOKEN_2022_PROGRAM_ID }
+          );
+          const noBalance = tokenAccounts.value
+            .map(acc => acc.account.data.parsed.info.tokenAmount)
+            .reduce(
+              (pre, cur) =>
+                Number(pre?.uiAmount || 0) + Number(cur?.uiAmount || 0),
+              0
+            );
+          newBalances.no = noBalance;
+          console.log('NO balance:', newBalances.no);
+        } catch (err) {
+          console.error('Error fetching NO token balance:', err);
+        }
+      }
+
+      setBalances(newBalances);
+    } catch (err) {
+      console.error('Error fetching balances:', err);
+    } finally {
+      setIsLoadingBalances(false);
+    }
+  };
+
+  const isInsufficientBalance = useMemo(() => {
+    if (tradeType === 'buy' && balances.usdc < amount) return true;
+    if (tradeType === 'sell' && balances[side] < amount) return true;
+    return false;
+  }, [balances, tradeType, amount, side]);
 
   // Set initial selected market when activeMarkets are available
   useEffect(() => {
@@ -90,6 +286,214 @@ export function EventDetail() {
       setSelectedMarket(activeMarkets[0]);
     }
   }, [activeMarkets, selectedMarket]);
+
+  // Fetch market mints when selectedMarket changes
+  useEffect(() => {
+    const fetchMints = async () => {
+      if (!selectedMarket?.ticker) return;
+
+      try {
+        const result = await getMarketMints({
+          variables: { marketId: selectedMarket.ticker },
+        });
+        if (result.data?.dflowMarketMints) {
+          setMarketMints({
+            yesMint: result.data.dflowMarketMints.yesMint,
+            noMint: result.data.dflowMarketMints.noMint,
+          });
+          console.log('Market mints fetched:', result.data.dflowMarketMints);
+        }
+      } catch (err) {
+        console.error('Error fetching market mints:', err);
+      }
+    };
+    fetchMints();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedMarket]);
+
+  // Fetch balances when wallet connects or market mints change
+  useEffect(() => {
+    fetchBalances();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [publicKey, connected, marketMints]);
+
+  // Fetch orderbook when market is selected
+  useEffect(() => {
+    if (selectedMarket?.ticker) {
+      setLoadingOrderbook(true);
+      getOrderbook({ variables: { ticker: selectedMarket.ticker } })
+        .then(result => {
+          if (result.data?.dflowOrderbook) {
+            setOrderbook(result.data.dflowOrderbook);
+          }
+        })
+        .catch(err => {
+          console.error('Failed to fetch orderbook:', err);
+        })
+        .finally(() => {
+          setLoadingOrderbook(false);
+        });
+    }
+  }, [selectedMarket, getOrderbook]);
+
+  // Monitor transaction for sync mode
+  const monitorSyncTransaction = async (signature: string) => {
+    let retries = 0;
+    const maxRetries = 60;
+
+    while (retries < maxRetries) {
+      const statusResult = await connection.getSignatureStatuses([signature]);
+      const status = statusResult.value[0];
+
+      if (!status) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        retries++;
+        continue;
+      }
+
+      if (status.confirmationStatus === 'finalized') {
+        if (status.err) {
+          throw new Error('Transaction failed on blockchain');
+        }
+        return true;
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      retries++;
+    }
+
+    throw new Error('Transaction confirmation timeout');
+  };
+
+  // Monitor order for async mode
+  const monitorAsyncOrder = async (signature: string) => {
+    let retries = 0;
+    const maxRetries = 30;
+
+    while (retries < maxRetries) {
+      try {
+        const { data } = await getOrderStatus({
+          variables: { signature },
+        });
+
+        const orderStatus = data?.dflowOrderStatus;
+
+        if (!orderStatus) {
+          console.log('Waiting for order status...');
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          retries++;
+          continue;
+        }
+
+        console.log(`Order status: ${orderStatus.status}`);
+
+        if (orderStatus.status === 'closed') {
+          if (orderStatus.fills && orderStatus.fills.length > 0) {
+            return true;
+          }
+          throw new Error('Order closed without fills');
+        }
+
+        if (orderStatus.status === 'failed') {
+          throw new Error('Order failed to execute');
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        retries++;
+      } catch (err) {
+        console.error('Error monitoring order:', err);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        retries++;
+      }
+    }
+
+    throw new Error('Order monitoring timeout');
+  };
+
+  // Execute trade
+  const handleExecuteTrade = async () => {
+    if (!connected || !publicKey) {
+      setTradeError('Please connect your wallet first');
+      return;
+    }
+
+    if (!amount || amount <= 0) {
+      setTradeError('Please enter a valid amount');
+      return;
+    }
+
+    if (!signTransaction) {
+      setTradeError('Wallet does not support transaction signing');
+      return;
+    }
+
+    if (!selectedMarket) {
+      setTradeError('Please select a market');
+      return;
+    }
+
+    setIsTrading(true);
+    setTradeError('');
+    setTradeSuccess('');
+
+    try {
+      // Get order from backend
+      const { data } = await executeTradeMutation({
+        variables: {
+          request: {
+            market: selectedMarket.ticker,
+            outcome: side.toUpperCase(),
+            direction: tradeType.toUpperCase(),
+            amount,
+            slippageBps: 100,
+            userPublicKey: publicKey.toBase58(),
+          },
+        },
+      });
+
+      if (!data?.executeDFlowTrade?.success) {
+        throw new Error(
+          data?.executeDFlowTrade?.error?.message || 'Trade failed'
+        );
+      }
+
+      const { quote } = data.executeDFlowTrade;
+
+      // Deserialize and sign transaction
+      setTradeSuccess('Signing transaction...');
+      const transactionBuffer = Buffer.from(quote.transaction, 'base64');
+      const transaction = VersionedTransaction.deserialize(transactionBuffer);
+      const signedTransaction = await signTransaction(transaction);
+
+      // Submit transaction
+      setTradeSuccess('Submitting transaction...');
+      const signature = await connection.sendRawTransaction(
+        signedTransaction.serialize(),
+        { skipPreflight: false, maxRetries: 3 }
+      );
+
+      setTradeSuccess(`Transaction submitted: ${signature.substring(0, 8)}...`);
+
+      // Monitor based on execution mode
+      if (quote.executionMode === 'sync') {
+        setTradeSuccess('Monitoring transaction...');
+        await monitorSyncTransaction(signature);
+      } else {
+        setTradeSuccess('Monitoring order execution...');
+        await monitorAsyncOrder(signature);
+      }
+
+      setTradeSuccess(
+        `✅ Trade successful! ${tradeType.toUpperCase()} ${amount} USDC for ${side.toUpperCase()} tokens`
+      );
+      setAmount(0);
+    } catch (err: any) {
+      console.error('Trade error:', err);
+      setTradeError(err.message || 'Trade failed');
+    } finally {
+      setIsTrading(false);
+    }
+  };
 
   const formatVolume = (volume: number) => {
     if (volume >= 1000000) {
@@ -146,10 +550,10 @@ export function EventDetail() {
       {/* Header */}
       <div className="flex items-center gap-4">
         <Link to="/">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="w-4 h-4 mr-2" />
+          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors border border-slate-700">
+            <ArrowLeft className="w-4 h-4" />
             Back to Events
-          </Button>
+          </button>
         </Link>
       </div>
 
@@ -255,9 +659,14 @@ export function EventDetail() {
             {/* Active Markets */}
             {activeMarkets.length > 0 && (
               <div>
-                <h2 className="text-xl font-semibold mb-4 mt-6">
-                  Active Markets ({activeMarkets.length})
-                </h2>
+                <div className="flex items-center justify-between px-4 py-3 bg-slate-800 rounded-lg border border-slate-700 mb-4 mt-4">
+                  <h2 className="text-xl font-bold text-white">
+                    Active Markets
+                  </h2>
+                  <span className="px-3 py-1 bg-blue-600 text-white text-sm font-semibold rounded-full">
+                    {activeMarkets.length}
+                  </span>
+                </div>
                 <div className="space-y-3">
                   {activeMarkets.map((market: any) => {
                     // Calculate probability from YES price (assuming 0-1 range maps to 0-100%)
@@ -270,31 +679,30 @@ export function EventDetail() {
                     return (
                       <div
                         key={market.ticker}
-                        className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors"
+                        className={`flex items-center justify-between p-4 border rounded-lg transition-all cursor-pointer ${
+                          selectedMarket?.ticker === market.ticker
+                            ? 'bg-blue-600/20 border-blue-500 shadow-lg shadow-blue-500/20'
+                            : 'bg-slate-800/50 border-slate-700 hover:bg-slate-800 hover:border-slate-600'
+                        }`}
                       >
                         {/* Left: Market Title & Volume - Clickable area */}
                         <div
                           className="flex-1 min-w-0 cursor-pointer"
                           onClick={() => {
                             setSelectedMarket(market);
-                            // Also route to market detail page
-                            window.open(
-                              `/markets/dflow/${market.ticker}`,
-                              '_blank'
-                            );
                           }}
                         >
-                          <h3 className="font-semibold text-base truncate">
+                          <h3 className="font-semibold text-base truncate text-white">
                             {market.title}
                           </h3>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm text-slate-400">
                             {formatVolume(market.volume)} Vol.
                           </p>
                         </div>
 
                         {/* Center: Probability */}
                         <div className="flex items-center justify-center min-w-[80px] mx-6">
-                          <span className="text-2xl font-bold">
+                          <span className="text-2xl font-bold text-white">
                             {probabilityDisplay}
                           </span>
                           {probability > 1 && probability < 99 && (
@@ -321,11 +729,6 @@ export function EventDetail() {
                               e.preventDefault();
                               setSelectedMarket(market);
                               setSide('yes');
-                              // Navigate to market detail page with yes side selected
-                              window.open(
-                                `/markets/dflow/${market.ticker}?side=yes`,
-                                '_blank'
-                              );
                             }}
                           >
                             Buy Yes{' '}
@@ -342,11 +745,6 @@ export function EventDetail() {
                               e.preventDefault();
                               setSelectedMarket(market);
                               setSide('no');
-                              // Navigate to market detail page with no side selected
-                              window.open(
-                                `/markets/dflow/${market.ticker}?side=no`,
-                                '_blank'
-                              );
                             }}
                           >
                             Buy No{' '}
@@ -364,45 +762,62 @@ export function EventDetail() {
 
             {/* Completed Markets */}
             {completedMarkets.length > 0 && (
-              <div>
-                <h2 className="text-xl font-semibold mb-4">
-                  Completed Markets ({completedMarkets.length})
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {completedMarkets.map((market: any) => (
-                    <Card key={market.ticker} className="opacity-75">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-base">
-                          {market.title}
-                        </CardTitle>
-                        <div className="flex gap-2">
-                          <Badge variant="secondary">{market.status}</Badge>
-                          {market.result && (
-                            <Badge variant="outline">
-                              Result: {market.result.toUpperCase()}
-                            </Badge>
-                          )}
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">
-                              Final Volume:
-                            </span>
-                            <span>{formatVolume(market.volume)}</span>
+              <div className="mt-6">
+                <button
+                  onClick={() => setShowCompletedMarkets(!showCompletedMarkets)}
+                  className="w-full flex items-center justify-between px-4 py-3 bg-slate-800 rounded-lg border border-slate-700 mb-4 hover:bg-slate-700 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-xl font-bold text-white">
+                      Completed Markets
+                    </h2>
+                    <span className="px-3 py-1 bg-slate-600 text-white text-sm font-semibold rounded-full">
+                      {completedMarkets.length}
+                    </span>
+                  </div>
+                  {showCompletedMarkets ? (
+                    <ChevronUp className="h-5 w-5 text-slate-300" />
+                  ) : (
+                    <ChevronDown className="h-5 w-5 text-slate-300" />
+                  )}
+                </button>
+                {showCompletedMarkets && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {completedMarkets.map((market: any) => (
+                      <Card key={market.ticker} className="opacity-75">
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-base">
+                            {market.title}
+                          </CardTitle>
+                          <div className="flex gap-2">
+                            <Badge variant="secondary">{market.status}</Badge>
+                            {market.result && (
+                              <Badge variant="outline">
+                                Result: {market.result.toUpperCase()}
+                              </Badge>
+                            )}
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">
-                              Closed:
-                            </span>
-                            <span>{formatDate(market.closeTime)}</span>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">
+                                Final Volume:
+                              </span>
+                              <span>{formatVolume(market.volume)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">
+                                Closed:
+                              </span>
+                              <span>{formatDate(market.closeTime)}</span>
+                            </div>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -517,13 +932,128 @@ export function EventDetail() {
                     </button>
                   </div>
 
+                  {/* Orderbook Display */}
+                  {orderbook && !loadingOrderbook && (
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center text-xs text-slate-300 border-b border-slate-600 pb-1 font-semibold">
+                        <span>PRICE</span>
+                        <span>SHARES</span>
+                        <span>TOTAL</span>
+                      </div>
+
+                      {/* NO Orders (Asks - people selling YES) */}
+                      <div>
+                        <div className="text-xs font-semibold text-red-400 mb-2">
+                          NO (Sell YES)
+                        </div>
+                        <div className="max-h-32 overflow-y-auto space-y-1 pr-1">
+                          {[...orderbook.noBids]
+                            .sort((a, b) => b.price - a.price)
+                            .map((level: any, i: number) => {
+                              const maxTotal = Math.max(
+                                ...orderbook.noBids.map((l: any) => l.total),
+                                ...orderbook.yesBids.map((l: any) => l.total)
+                              );
+                              const depth = (level.total / maxTotal) * 100;
+                              return (
+                                <div
+                                  key={i}
+                                  className="relative flex justify-between items-center text-xs py-1.5 px-1"
+                                >
+                                  <div
+                                    className="absolute inset-0 bg-red-900/20"
+                                    style={{ width: `${depth}%` }}
+                                  />
+                                  <span className="relative z-10 text-red-400 font-medium">
+                                    {(level.price * 100).toFixed(0)}¢
+                                  </span>
+                                  <span className="relative z-10 text-slate-200">
+                                    {level.shares.toLocaleString()}
+                                  </span>
+                                  <span className="relative z-10 text-slate-200">
+                                    ${level.total.toFixed(0)}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                        </div>
+                      </div>
+
+                      {/* Spread */}
+                      <div className="flex justify-between items-center text-xs py-2 bg-slate-700 px-3 rounded">
+                        <span className="text-slate-200 font-medium">
+                          Last: {(orderbook.lastPrice * 100).toFixed(0)}¢
+                        </span>
+                        <span className="text-slate-200 font-medium">
+                          Spread: {(orderbook.spread * 100).toFixed(0)}¢
+                        </span>
+                      </div>
+
+                      {/* YES Orders (Bids - people buying YES) */}
+                      <div>
+                        <div className="text-xs font-semibold text-green-400 mb-2">
+                          YES (Buy YES)
+                        </div>
+                        <div className="max-h-32 overflow-y-auto space-y-1 pr-1">
+                          {[...orderbook.yesBids]
+                            .sort((a, b) => b.price - a.price)
+                            .map((level: any, i: number) => {
+                              const maxTotal = Math.max(
+                                ...orderbook.noBids.map((l: any) => l.total),
+                                ...orderbook.yesBids.map((l: any) => l.total)
+                              );
+                              const depth = (level.total / maxTotal) * 100;
+                              return (
+                                <div
+                                  key={i}
+                                  className="relative flex justify-between items-center text-xs py-1.5 px-1"
+                                >
+                                  <div
+                                    className="absolute inset-0 bg-green-900/20"
+                                    style={{ width: `${depth}%` }}
+                                  />
+                                  <span className="relative z-10 text-green-400 font-medium">
+                                    {(level.price * 100).toFixed(0)}¢
+                                  </span>
+                                  <span className="relative z-10 text-slate-200">
+                                    {level.shares.toLocaleString()}
+                                  </span>
+                                  <span className="relative z-10 text-slate-200">
+                                    ${level.total.toFixed(0)}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {loadingOrderbook && (
+                    <div className="text-center py-4 text-slate-400 text-sm">
+                      Loading orderbook...
+                    </div>
+                  )}
+
                   {/* Amount Input */}
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <span className="text-white font-medium">Amount</span>
-                      <span className="text-slate-400 text-sm">
-                        Balance $9.63
-                      </span>
+                      {isLoadingBalances ? (
+                        <span className="text-slate-400 text-sm">
+                          Loading...
+                        </span>
+                      ) : (
+                        <span className="text-slate-400 text-sm">
+                          {tradeType === 'buy'
+                            ? `${balances.usdc.toFixed(2)} USDC`
+                            : marketMints
+                              ? side === 'yes'
+                                ? `${balances.yes.toFixed(1)} YES`
+                                : `${balances.no.toFixed(1)} NO`
+                              : `${balances.usdc.toFixed(2)} USDC`}
+                        </span>
+                      )}
                     </div>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-3xl font-bold text-slate-300">
@@ -556,11 +1086,35 @@ export function EventDetail() {
                       variant="secondary"
                       size="sm"
                       className="bg-slate-600 hover:bg-slate-500 text-white"
-                      onClick={() => setAmount(9.63)} // Max balance
+                      onClick={() =>
+                        setAmount(
+                          tradeType === 'buy' ? balances.usdc : balances[side]
+                        )
+                      } // Max balance
                     >
                       Max
                     </Button>
                   </div>
+
+                  {/* Error Display */}
+                  {tradeError && (
+                    <Alert className="bg-red-900/20 border-red-500">
+                      <AlertCircle className="h-4 w-4 text-red-400" />
+                      <AlertDescription className="text-red-200">
+                        {tradeError}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {/* Success Display */}
+                  {tradeSuccess && (
+                    <Alert className="bg-green-900/20 border-green-500">
+                      <CheckCircle className="h-4 w-4 text-green-400" />
+                      <AlertDescription className="text-green-200">
+                        {tradeSuccess}
+                      </AlertDescription>
+                    </Alert>
+                  )}
 
                   {/* Trade Button */}
                   <Button
@@ -569,18 +1123,17 @@ export function EventDetail() {
                         ? 'bg-green-600 hover:bg-green-700'
                         : 'bg-red-600 hover:bg-red-700'
                     }`}
-                    onClick={() => {
-                      // Handle trade execution
-                      console.log('Execute trade:', {
-                        market: selectedMarket.ticker,
-                        type: tradeType,
-                        side,
-                        amount,
-                      });
-                    }}
+                    onClick={handleExecuteTrade}
+                    disabled={
+                      isTrading ||
+                      !connected ||
+                      !amount ||
+                      isInsufficientBalance
+                    }
                   >
-                    {tradeType === 'buy' ? 'Buy' : 'Sell'}{' '}
-                    {side === 'yes' ? 'Yes' : 'No'}
+                    {isTrading
+                      ? 'Processing...'
+                      : `${tradeType === 'buy' ? 'Buy' : 'Sell'} ${side === 'yes' ? 'Yes' : 'No'}`}
                   </Button>
                 </CardContent>
               </Card>

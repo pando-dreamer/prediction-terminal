@@ -30,13 +30,13 @@
 **Sprint Target**: Sprint 2-3  
 **Value**: Enable users to execute real trades on DFlow markets
 
-| Story ID | Title                               | Story Points | Priority | Status |
-| -------- | ----------------------------------- | ------------ | -------- | ------ |
-| US-007   | Implement DFlow quote fetching      | 5            | High     | Draft  |
-| US-008   | Execute buy orders via DFlow API    | 8            | High     | Draft  |
-| US-009   | Execute sell orders via DFlow API   | 8            | High     | Draft  |
-| US-010   | Handle synchronous trade execution  | 5            | High     | Draft  |
-| US-011   | Handle asynchronous trade execution | 8            | Medium   | Draft  |
+| Story ID | Title                               | Story Points | Priority | Status  |
+| -------- | ----------------------------------- | ------------ | -------- | ------- |
+| US-007   | Implement DFlow quote fetching      | 5            | High     | ✅ Done |
+| US-008   | Execute buy orders via DFlow API    | 8            | High     | ✅ Done |
+| US-009   | Execute sell orders via DFlow API   | 8            | High     | ✅ Done |
+| US-010   | Handle synchronous trade execution  | 5            | High     | ✅ Done |
+| US-011   | Handle asynchronous trade execution | 8            | Medium   | ✅ Done |
 
 ### Epic 3: Position Tracking Integration
 

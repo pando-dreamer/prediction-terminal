@@ -1,0 +1,14 @@
+{
+  "status": "closed",
+  "inAmount": "1597497",
+  "outAmount": "3000000",
+  "fills": [
+    {
+      "signature": "63QvZmuMK5HFFvBXD8EqLuG4zjUr2KqWGcN3JhF4hSwoLcpLHj3LYHmi7K6WksjkfToE1Mv5bdARjWhUtidLhZkW",
+      "inputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "inAmount": "1597497",
+      "outputMint": "D9BNepC4uEHHtZLY6wzmNYvgdm8BQcCLByFsjHydwm5Q",
+      "outAmount": "3000000"
+    }
+  ]
+}
