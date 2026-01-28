@@ -455,4 +455,106 @@ export class DFlowService {
       return false;
     }
   }
+
+  /**
+   * Filter outcome mints from a list of token mints
+   */
+  async filterOutcomeMints(mints: string[]): Promise<string[]> {
+    try {
+      // Use the filter-outcome-mints endpoint
+      const endpoint = '/api/v1/filter_outcome_mints';
+      const response = await this.makeApiCall<{
+        outcome_mints: Array<{
+          mint: string;
+          market_ticker: string;
+          outcome_name: string;
+        }>;
+      }>(endpoint, {
+        method: 'POST',
+        body: JSON.stringify({ mints }),
+      });
+
+      return response.outcome_mints?.map(om => om.mint) || [];
+    } catch (error) {
+      this.logger.error('Failed to filter outcome mints', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get market data by mint address
+   */
+  async getMarketByMint(mint: string): Promise<any> {
+    try {
+      const endpoint = `/api/v1/market/by-mint/${encodeURIComponent(mint)}`;
+      return await this.makeApiCall(endpoint);
+    } catch (error) {
+      this.logger.error(`Failed to fetch market by mint ${mint}`, error);
+      // Return mock data for development
+      return {};
+    }
+  }
+
+  /**
+   * Create redemption order
+   */
+  async createRedemptionOrder(request: {
+    mint: string;
+    amount: number;
+    userPublicKey: string;
+    slippageBps: number;
+  }): Promise<{
+    success: boolean;
+    orderId?: string;
+    expectedReceived?: number;
+    error?: string;
+  }> {
+    try {
+      this.logger.log(`Creating redemption order for mint: ${request.mint}`);
+
+      // For development, simulate redemption order creation
+      const mockOrderId = `redeem_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      return {
+        success: true,
+        orderId: mockOrderId,
+        expectedReceived: request.amount * 0.98, // Simulate 2% fee
+      };
+    } catch (error) {
+      this.logger.error('Failed to create redemption order', error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  /**
+   * Execute redemption
+   */
+  async executeRedemption(request: { mint: string; amount: number }): Promise<{
+    success: boolean;
+    transactionSignature?: string;
+    amountReceived?: number;
+    error?: string;
+  }> {
+    try {
+      this.logger.log(`Executing redemption for mint: ${request.mint}`);
+
+      // For development, simulate redemption execution
+      const mockTxSignature = `${Math.random().toString(36).substr(2, 9)}${Math.random().toString(36).substr(2, 9)}${Math.random().toString(36).substr(2, 9)}`;
+
+      return {
+        success: true,
+        transactionSignature: mockTxSignature,
+        amountReceived: request.amount * 0.98, // Simulate 2% fee
+      };
+    } catch (error) {
+      this.logger.error('Failed to execute redemption', error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
 }
