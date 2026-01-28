@@ -418,8 +418,6 @@ export function Events() {
     );
   };
 
-  if (currentLoading) return <div>Loading events...</div>;
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -469,9 +467,20 @@ export function Events() {
       )}
 
       {/* Events grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {currentEvents.map(renderEventCard)}
-      </div>
+      {currentLoading ? (
+        <div className="flex items-center justify-center py-12">
+          <div className="flex items-center gap-3">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span className="text-lg text-muted-foreground">
+              Loading events...
+            </span>
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {currentEvents.map(renderEventCard)}
+        </div>
+      )}
 
       {/* Infinite scroll loading indicator */}
       {hasMore && !currentLoading && currentEvents.length > 0 && (

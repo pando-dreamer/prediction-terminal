@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { TrendingUp, BarChart3, User, Calendar, Wallet } from 'lucide-react';
+import { TrendingUp, BarChart3, Calendar } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
@@ -18,14 +18,6 @@ function WalletConnectionSection() {
 
   return (
     <div className="space-y-4">
-      <Link
-        to="/portfolio"
-        className="flex items-center gap-2 px-2 text-slate-300 hover:text-white transition-colors"
-      >
-        <User className="h-5 w-5" />
-        <span className="text-sm font-medium">Profile</span>
-      </Link>
-
       <div className="space-y-2">
         <div className="text-xs font-semibold text-slate-500 px-2 uppercase tracking-wider">
           Connected Wallet
