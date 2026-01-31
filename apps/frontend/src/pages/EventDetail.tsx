@@ -183,9 +183,23 @@ export function EventDetail() {
     yesMint: string;
     noMint: string;
   } | null>(null);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [touchStartY, setTouchStartY] = useState<number>(0);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
 
   // USDC mint address
   const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+
+  // Detect mobile
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
 
   // Derived data
   const event = data?.dflowEvent;
@@ -282,9 +296,12 @@ export function EventDetail() {
   // Set initial selected market when activeMarkets are available
   useEffect(() => {
     if (activeMarkets.length > 0 && !selectedMarket && !hasOpenedPanel) {
-      setSelectedMarket(activeMarkets[0]);
+      // On mobile, don't auto-select a market initially
+      if (!isMobile) {
+        setSelectedMarket(activeMarkets[0]);
+      }
     }
-  }, [activeMarkets, selectedMarket, hasOpenedPanel]);
+  }, [activeMarkets, selectedMarket, hasOpenedPanel, isMobile]);
 
   // Fetch market mints when selectedMarket changes
   useEffect(() => {
@@ -1172,7 +1189,28 @@ export function EventDetail() {
       {selectedMarket && (
         <div className="fixed bottom-16 left-0 right-0 lg:hidden z-30 safe-bottom">
           {/* Trade Sheet */}
-          <div className="bg-slate-800 rounded-t-2xl border-t border-slate-700 shadow-2xl relative">
+          <div
+            className="bg-slate-800 rounded-t-2xl border-t border-slate-700 shadow-2xl relative"
+            onTouchStart={e => {
+              setTouchStartY(e.touches[0].clientY);
+              setIsDragging(true);
+            }}
+            onTouchMove={e => {
+              if (!isDragging) return;
+              const currentY = e.touches[0].clientY;
+              const deltaY = currentY - touchStartY;
+
+              // If scrolled down more than 100px, close the panel
+              if (deltaY > 100) {
+                setSelectedMarket(null);
+                setHasOpenedPanel(true);
+                setIsDragging(false);
+              }
+            }}
+            onTouchEnd={() => {
+              setIsDragging(false);
+            }}
+          >
             {/* Close button - top right */}
             <button
               onClick={e => {
@@ -1181,7 +1219,7 @@ export function EventDetail() {
                 setSelectedMarket(null);
                 setHasOpenedPanel(true);
               }}
-              className="absolute right-3 top-3 z-10 p-2 text-slate-400 hover:text-white active:bg-slate-700 rounded-full"
+              className="absolute right-3 top-1 z-10 p-2 text-slate-400 hover:text-white active:bg-slate-700 rounded-full"
             >
               <X className="w-5 h-5" />
             </button>
@@ -1192,7 +1230,7 @@ export function EventDetail() {
             </div>
 
             {/* Buy/Sell Dropdown */}
-            <div className="flex items-center justify-between px-4 pb-3 pr-14">
+            <div className="flex items-center justify-between px-4 pb-3">
               <Select
                 value={tradeType}
                 onValueChange={(value: 'buy' | 'sell') => setTradeType(value)}
@@ -1215,7 +1253,6 @@ export function EventDetail() {
                   </SelectItem>
                 </SelectContent>
               </Select>
-              <div className="text-xs text-slate-400">Market</div>
             </div>
 
             {/* Market Info */}
