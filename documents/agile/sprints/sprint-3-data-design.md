@@ -1,13 +1,13 @@
-# Sprint 3: Data Design - Position Tracking & Portfolio Management
+# Sprint 3: Data Design - Position Tracking & Portfolio Management + Events Discovery
 
 ## Overview
 
 **Date**: January 28, 2026 (Sprint 3 Day 1-2)  
 **Phase**: Data Design  
-**Sprint Goal**: Enable users to track their prediction market positions and portfolio performance  
+**Sprint Goal**: Enable users to track their prediction market positions and portfolio performance, plus discover events through category filtering  
 **Status**: **IN PROGRESS** 📋
 
-Based on reference analysis findings, this document defines all data structures, APIs, and schemas required for position tracking implementation.
+Based on reference analysis findings, this document defines all data structures, APIs, and schemas required for position tracking and events discovery implementation.
 
 ## Core Data Interfaces
 
@@ -229,6 +229,45 @@ enum TradeType {
   SELL = 'SELL',
   REDEMPTION = 'REDEMPTION',
 }
+
+// ==============================================================================
+// EVENTS DISCOVERY INTERFACES
+// ==============================================================================
+
+interface TagsByCategoriesResponse {
+  tagsByCategories: Record<string, string[]>;
+}
+
+interface SeriesTemplate {
+  ticker: string;
+  title: string;
+  category: string;
+  tags: string[];
+  frequency: string;
+  description?: string;
+}
+
+interface SeriesFilter {
+  tags?: string[];
+  categories?: string[];
+  limit?: number;
+  offset?: number;
+}
+
+interface EventsBySeriesFilter {
+  seriesTickers: string[]; // Comma-separated series tickers
+  limit?: number;
+  offset?: number;
+  sort?: DFlowEventSort;
+  status?: DFlowMarketStatus[];
+  withNestedMarkets?: boolean;
+}
+
+interface CategoryFilterState {
+  selectedCategories: string[];
+  selectedTags: string[];
+  appliedSeriesTickers: string[];
+}
 ```
 
 ## GraphQL Schema Extensions
@@ -254,6 +293,23 @@ extend type Query {
   # Price & Market Data
   positionPrices(mints: [String!]!): [PriceData!]!
   marketPriceHistory(marketId: String!, days: Int): [PriceData!]!
+
+  # Events Discovery Queries
+  tagsByCategories: TagsByCategoriesResponse!
+  seriesByTags(
+    tags: [String!]
+    categories: [String!]
+    limit: Float
+    offset: Float
+  ): [SeriesTemplate!]!
+  dflowEventsBySeries(
+    seriesTickers: [String!]!
+    limit: Float
+    offset: Float
+    sort: DFlowEventSort
+    status: DFlowMarketStatus
+    withNestedMarkets: Boolean
+  ): [DFlowEvent!]!
 }
 
 extend type Mutation {
@@ -393,6 +449,23 @@ input PortfolioSettingsInput {
   autoRefreshInterval: Int
   priceAlerts: Boolean
   emailNotifications: Boolean
+}
+
+# ==============================================================================
+# EVENTS DISCOVERY TYPES
+# ==============================================================================
+
+type TagsByCategoriesResponse {
+  tagsByCategories: JSONObject!
+}
+
+type SeriesTemplate {
+  ticker: String!
+  title: String!
+  category: String!
+  tags: [String!]!
+  frequency: String!
+  description: String
 }
 
 # ==============================================================================

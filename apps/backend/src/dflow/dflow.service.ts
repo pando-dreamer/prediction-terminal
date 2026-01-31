@@ -496,8 +496,90 @@ export class DFlowService {
   }
 
   /**
-   * Create redemption order
+   * Get tags organized by categories
    */
+  async getTagsByCategories(): Promise<Record<string, string[]>> {
+    try {
+      const endpoint = '/api/v1/tags_by_categories';
+      const response = await this.makeApiCall<{
+        tagsByCategories: Record<string, string[]>;
+      }>(endpoint);
+      return response.tagsByCategories || {};
+    } catch (error) {
+      this.logger.error('Failed to fetch tags by categories from DFlow', error);
+      return {};
+    }
+  }
+
+  /**
+   * Get series filtered by tags and categories
+   */
+  async getSeriesByTags(
+    filter: {
+      tags?: string[];
+      categories?: string[];
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<any[]> {
+    try {
+      const params = new URLSearchParams();
+
+      if (filter.tags && filter.tags.length > 0) {
+        params.append('tags', filter.tags.join(','));
+      }
+      if (filter.categories && filter.categories.length > 0) {
+        params.append('categories', filter.categories.join(','));
+      }
+      if (filter.limit) params.append('limit', filter.limit.toString());
+      if (filter.offset) params.append('offset', filter.offset.toString());
+
+      const endpoint = `/api/v1/series${params.toString() ? `?${params.toString()}` : ''}`;
+      const response = await this.makeApiCall<{ series: any[] }>(endpoint);
+      return response.series || [];
+    } catch (error) {
+      this.logger.error('Failed to fetch series by tags from DFlow', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get events filtered by series tickers
+   */
+  async getEventsBySeries(
+    seriesTickers: string[],
+    filter: {
+      limit?: number;
+      offset?: number;
+      sort?: DFlowEventSort;
+      status?: DFlowMarketStatus[];
+      withNestedMarkets?: boolean;
+    } = {}
+  ): Promise<DFlowEvent[]> {
+    try {
+      const params = new URLSearchParams();
+
+      if (seriesTickers.length > 0) {
+        params.append('series', seriesTickers.join(','));
+      }
+      if (filter.limit) params.append('limit', filter.limit.toString());
+      if (filter.offset) params.append('offset', filter.offset.toString());
+      if (filter.sort) params.append('sort', filter.sort);
+      if (filter.status && filter.status.length > 0) {
+        filter.status.forEach(status => params.append('status', status));
+      }
+      if (filter.withNestedMarkets) {
+        params.append('withNestedMarkets', filter.withNestedMarkets.toString());
+      }
+
+      const endpoint = `/api/v1/events${params.toString() ? `?${params.toString()}` : ''}`;
+      const response = await this.makeApiCall<DFlowEventsResponse>(endpoint);
+      return response.events || [];
+    } catch (error) {
+      this.logger.error('Failed to fetch events by series from DFlow', error);
+      return [];
+    }
+  }
   async createRedemptionOrder(request: {
     mint: string;
     amount: number;

@@ -1,10 +1,10 @@
-# Sprint 3: Position Tracking & Portfolio Management - PLANNING
+# Sprint 3: Position Tracking & Portfolio Management + Events Discovery - PLANNING
 
 ## Sprint Information
 
 **Sprint Number**: Sprint 3
 **Duration**: February 10, 2026 to February 23, 2026 (2 weeks)
-**Sprint Goal**: Enable users to track their prediction market positions and portfolio performance
+**Sprint Goal**: Enable users to track their prediction market positions and portfolio performance, plus discover events through category filtering
 **Status**: **PLANNING** 📋
 
 ## Sprint Startup Rules ⚠️ **APPLYING SPRINT 2 LESSONS**
@@ -12,7 +12,7 @@
 **Before any implementation work begins:**
 
 1. **Reference Analysis Phase** (Day 1)
-   - Review all provided references (position data, portfolio calculations)
+   - Review all provided references (position data, portfolio calculations, events discovery APIs)
    - Analyze existing position tracking patterns and data structures
    - Document current capabilities and limitations
 
@@ -20,6 +20,7 @@
    - Design TypeScript interfaces for all position and portfolio data structures
    - Define GraphQL schema extensions for position tracking operations
    - Create API endpoint specifications for position management
+   - Design events discovery interfaces and category filtering
    - Validate data flows end-to-end
 
 3. **Implementation Phase** (Day 3+)
@@ -32,7 +33,7 @@
 
 ## Sprint Goal Alignment
 
-> **Primary Goal**: Implement comprehensive position tracking and portfolio management to show users their prediction market holdings, P&L, and performance metrics.
+> **Primary Goal**: Implement comprehensive position tracking and portfolio management to show users their prediction market holdings, P&L, and performance metrics. **Secondary Goal**: Add events discovery with category filtering to help users find relevant prediction markets.
 
 **Success Criteria:**
 
@@ -43,29 +44,36 @@
 - [ ] Users can close/settle positions when markets resolve
 - [ ] Portfolio performance analytics and charts
 - [ ] Foundation set for settlement and redemption in Sprint 4
+- [ ] **NEW**: Users can filter events by categories (Sports, Crypto, Politics, etc.)
+- [ ] **NEW**: Events discovery follows DFlow API patterns for tags and series filtering
+- [ ] **NEW**: Category filter UI integrated into events page
 
 ## Team Capacity
 
 **Available Working Days**: 10 days (2 weeks)
-**Estimated Velocity**: 26 story points (4% increase from Sprint 2 - more conservative and realistic)
+**Estimated Velocity**: 32 story points (23% increase from Sprint 2 - adding events discovery features)
 **Focus Factor**: 0.9 (higher due to experience gained and improved process)
 
 ## Sprint Backlog
 
 ### Selected User Stories
 
-| Story ID | Title                                  | Story Points | Priority | Status      | Epic              |
-| -------- | -------------------------------------- | ------------ | -------- | ----------- | ----------------- |
-| US-012   | Fetch user positions from DFlow        | 5            | High     | 📋 Planning | Position Tracking |
-| US-013   | Display position values and P&L        | 5            | High     | 📋 Planning | Position Tracking |
-| US-014A  | Design position database schema        | 3            | High     | 📋 Planning | Position Tracking |
-| US-014B  | Implement basic position sync          | 3            | High     | 📋 Planning | Position Tracking |
-| US-014C  | Add conflict resolution and validation | 2            | High     | 📋 Planning | Position Tracking |
-| US-015   | Real-time position value updates       | 5            | High     | 📋 Planning | Position Tracking |
-| US-016   | Position history and analytics         | 3            | Medium   | 📋 Planning | Position Tracking |
+| Story ID   | Title                                     | Story Points | Priority | Status          | Epic                 |
+| ---------- | ----------------------------------------- | ------------ | -------- | --------------- | -------------------- |
+| US-012     | Fetch user positions from DFlow           | 5            | High     | 📋 Planning     | Position Tracking    |
+| US-013     | Display position values and P&L           | 5            | High     | 📋 Planning     | Position Tracking    |
+| US-014A    | Design position database schema           | 3            | High     | 📋 Planning     | Position Tracking    |
+| US-014B    | Implement basic position sync             | 3            | High     | 📋 Planning     | Position Tracking    |
+| US-014C    | Add conflict resolution and validation    | 2            | High     | 📋 Planning     | Position Tracking    |
+| US-015     | Real-time position value updates          | 5            | High     | 📋 Planning     | Position Tracking    |
+| US-016     | Position history and analytics            | 3            | Medium   | 📋 Planning     | Position Tracking    |
+| **US-017** | **Fetch tags by categories from DFlow**   | **3**        | **High** | **📋 Planning** | **Events Discovery** |
+| **US-018** | **Filter series by tags/categories**      | **3**        | **High** | **📋 Planning** | **Events Discovery** |
+| **US-019** | **Filter events by series tickers**       | **3**        | **High** | **📋 Planning** | **Events Discovery** |
+| **US-020** | **Add category filter UI to events page** | **2**        | **High** | **📋 Planning** | **Events Discovery** |
 
-**Total Story Points**: 26
-**Velocity Alignment**: Conservative increase, highly achievable with proven process ✅
+**Total Story Points**: 32
+**Velocity Alignment**: Increased scope to include events discovery features ✅
 
 ## Sprint 2 Lessons Applied
 
@@ -121,6 +129,9 @@
 - [ ] How should we calculate positions from trade history as fallback?
 - [ ] What are the performance characteristics of position calculation?
 - [ ] How do other prediction markets handle portfolio aggregation?
+- [ ] **NEW**: What is the structure of DFlow's tags_by_categories API?
+- [ ] **NEW**: How does series filtering work with tags?
+- [ ] **NEW**: What are the performance characteristics of events filtering?
 
 **Research Deliverables:**
 
@@ -128,6 +139,8 @@
 - Position calculation algorithm specification
 - Performance benchmarks and requirements
 - Data flow diagrams for position sync
+- **NEW**: Events discovery API analysis document
+- **NEW**: Category filtering implementation specification
 
 ### Position Tracking Flow Analysis
 
@@ -166,6 +179,52 @@ Based on DFlow position data and trading history:
 - Local trade history and position calculations
 - Real-time price feeds from markets
 - Wallet balance monitoring
+
+### Events Discovery Flow Analysis
+
+Based on DFlow events discovery documentation: https://pond.dflow.net/quickstart/discover-prediction-tokens
+
+#### Key Events Discovery Components Identified:
+
+1. **Tags by Categories API**:
+
+   ```typescript
+   interface TagsByCategoriesResponse {
+     tagsByCategories: Record<string, string[]>;
+   }
+
+   // Example response:
+   {
+     "tagsByCategories": {
+       "Sports": ["Football", "Soccer", "Basketball"],
+       "Crypto": ["BTC", "ETH", "Pre-Market"],
+       "Politics": ["US Elections", "Trump", "Congress"]
+     }
+   }
+   ```
+
+2. **Series Filtering**:
+   - Get series templates with category and tags
+   - Filter series by selected tags/categories
+   - Use series tickers to filter events
+
+3. **Events Filtering by Series**:
+   - Filter events using comma-separated series tickers
+   - Maintain existing sorting and pagination
+   - Support nested markets for trading data
+
+#### Discovery Flow:
+
+1. **Fetch Categories**: `GET /api/v1/tags_by_categories`
+2. **Get Series by Tags**: `GET /api/v1/series?tags=football,soccer`
+3. **Filter Events**: `GET /api/v1/events?series=serie1,serie2&withNestedMarkets=true`
+
+#### UI Components:
+
+- Category filter dropdown/buttons
+- Tag-based filtering within categories
+- Clear filter options
+- Filter state persistence
 
 ## Data Type Design (Required Before Implementation)
 
@@ -228,6 +287,38 @@ interface PositionTrade {
   timestamp: Date;
   transactionSignature: string;
 }
+
+// ==============================================================================
+// EVENTS DISCOVERY INTERFACES
+// ==============================================================================
+
+interface TagsByCategoriesResponse {
+  tagsByCategories: Record<string, string[]>;
+}
+
+interface SeriesTemplate {
+  ticker: string;
+  title: string;
+  category: string;
+  tags: string[];
+  frequency: string;
+}
+
+interface SeriesFilter {
+  tags?: string[];
+  categories?: string[];
+  limit?: number;
+  offset?: number;
+}
+
+interface EventsBySeriesFilter {
+  seriesTickers: string[]; // Comma-separated series tickers
+  limit?: number;
+  offset?: number;
+  sort?: DFlowEventSort;
+  status?: DFlowMarketStatus[];
+  withNestedMarkets?: boolean;
+}
 ```
 
 ### GraphQL Schema Extensions
@@ -239,6 +330,23 @@ type Query {
   portfolioSummary(userId: String!): PortfolioSummary!
   positionHistory(positionId: ID!): [PositionTrade!]!
   portfolioHistory(userId: String!, days: Int): [PortfolioHistory!]!
+
+  # Events discovery queries
+  tagsByCategories: TagsByCategoriesResponse!
+  seriesByTags(
+    tags: [String!]
+    categories: [String!]
+    limit: Float
+    offset: Float
+  ): [SeriesTemplate!]!
+  dflowEventsBySeries(
+    seriesTickers: [String!]!
+    limit: Float
+    offset: Float
+    sort: DFlowEventSort
+    status: DFlowMarketStatus
+    withNestedMarkets: Boolean
+  ): [DFlowEvent!]!
 }
 
 type Mutation {
@@ -250,6 +358,19 @@ type Mutation {
 type Subscription {
   positionUpdates(userId: String!): UserPosition
   portfolioUpdates(userId: String!): PortfolioSummary
+}
+
+# Events discovery types
+type TagsByCategoriesResponse {
+  tagsByCategories: JSONObject!
+}
+
+type SeriesTemplate {
+  ticker: String!
+  title: String!
+  category: String!
+  tags: [String!]!
+  frequency: String!
 }
 
 # Position types

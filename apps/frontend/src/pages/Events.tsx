@@ -12,6 +12,16 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
 import { DFlowEventSort, DFlowMarketStatus } from '../lib/dflow-types';
+import {
+  SlidersHorizontal,
+  Search,
+  ChevronRight,
+  TrendingUp,
+  Clock,
+  Zap,
+  Filter,
+  X,
+} from 'lucide-react';
 
 // Events query with pagination and filtering support
 const GET_DFLOW_EVENTS = gql`
@@ -27,6 +37,81 @@ const GET_DFLOW_EVENTS = gql`
       limit: $limit
       offset: $offset
       search: $search
+      sort: $sort
+      status: $status
+      withNestedMarkets: $withNestedMarkets
+    ) {
+      ticker
+      seriesTicker
+      title
+      subtitle
+      imageUrl
+      competition
+      volume
+      volume24h
+      openInterest
+      markets {
+        ticker
+        title
+        yesSubTitle
+        noSubTitle
+        status
+        yesPrice
+        noPrice
+        volume
+        closeTime
+        isActive
+      }
+    }
+  }
+`;
+
+// Get tags by categories
+const GET_TAGS_BY_CATEGORIES = gql`
+  query GetTagsByCategories {
+    tagsByCategories {
+      tagsByCategories
+    }
+  }
+`;
+
+// Get series by tags
+const GET_SERIES_BY_TAGS = gql`
+  query GetSeriesByTags(
+    $tags: [String!]
+    $categories: [String!]
+    $limit: Float
+    $offset: Float
+  ) {
+    seriesByTags(
+      tags: $tags
+      categories: $categories
+      limit: $limit
+      offset: $offset
+    ) {
+      ticker
+      title
+      category
+      tags
+      frequency
+    }
+  }
+`;
+
+// Get events by series
+const GET_EVENTS_BY_SERIES = gql`
+  query GetEventsBySeries(
+    $seriesTickers: [String!]!
+    $limit: Float
+    $offset: Float
+    $sort: DFlowEventSort
+    $status: DFlowMarketStatus
+    $withNestedMarkets: Boolean
+  ) {
+    dflowEventsBySeries(
+      seriesTickers: $seriesTickers
+      limit: $limit
+      offset: $offset
       sort: $sort
       status: $status
       withNestedMarkets: $withNestedMarkets
@@ -122,11 +207,111 @@ export function Events() {
   const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms debounce
   const loadingRef = useRef<HTMLDivElement>(null);
 
+  // Filter state
+  const [activeTab, setActiveTab] = useState<string>('Trending');
+  const [currentSort, setCurrentSort] = useState<DFlowEventSort>(
+    DFlowEventSort.VOLUME_24H
+  );
+
+  // Category filtering state - Managed mostly by activeTab now
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [appliedSeriesTickers, setAppliedSeriesTickers] = useState<string[]>(
+    []
+  );
+
+  // Update filter/sort state when tab changes
+  useEffect(() => {
+    // Clear current events to show loading state
+    setAllEvents([]);
+    setHasMore(true);
+
+    if (activeTab === 'Trending') {
+      setSelectedCategories([]);
+      setSelectedTags([]);
+      setAppliedSeriesTickers([]);
+      setCurrentSort(DFlowEventSort.VOLUME_24H);
+    } else if (activeTab === 'New') {
+      setSelectedCategories([]);
+      setSelectedTags([]);
+      setAppliedSeriesTickers([]);
+      setCurrentSort(DFlowEventSort.START_DATE);
+    } else if (activeTab === 'Breaking') {
+      setSelectedCategories([]);
+      setSelectedTags([]);
+      setAppliedSeriesTickers([]);
+      setCurrentSort(DFlowEventSort.LIQUIDITY);
+    } else {
+      // Category selected
+      setSelectedCategories([activeTab]);
+      setSelectedTags([]);
+      setAppliedSeriesTickers([]);
+      setCurrentSort(DFlowEventSort.VOLUME_24H);
+    }
+  }, [activeTab]);
+
   // Constants for pagination
   const EVENTS_PER_PAGE = 20;
 
-  // Use search query if there's a search term, otherwise get all events
-  const shouldSearch = debouncedSearchTerm.trim().length > 0;
+  // Derive search query from inputs OR active filters
+  const getEffectiveSearchQuery = () => {
+    if (debouncedSearchTerm.trim().length > 0) return debouncedSearchTerm;
+
+    // If filtering by category/tag, use that as search query
+    if (
+      activeTab !== 'Trending' &&
+      activeTab !== 'New' &&
+      activeTab !== 'Breaking'
+    ) {
+      if (selectedTags.length > 0) return selectedTags.join(' ');
+      return activeTab;
+    }
+
+    return '';
+  };
+
+  const effectiveSearchQuery = getEffectiveSearchQuery();
+  const shouldSearch = effectiveSearchQuery.length > 0;
+
+  // Only use series filter if explicitly set AND not searching (to avoid conflict, though search takes precedence)
+  // We largely rely on Search for categories now to avoid 413 Payload Too Large errors with series lists
+  const shouldFilterBySeries = appliedSeriesTickers.length > 0 && !shouldSearch;
+
+  // Get tags by categories
+  const { data: categoriesData, loading: categoriesLoading } = useQuery(
+    GET_TAGS_BY_CATEGORIES
+  );
+
+  // Get series by selected tags/categories
+  const { data: seriesData, loading: seriesLoading } = useQuery(
+    GET_SERIES_BY_TAGS,
+    {
+      variables: {
+        tags: selectedTags.length > 0 ? selectedTags : undefined,
+        categories:
+          selectedCategories.length > 0 ? selectedCategories : undefined,
+        limit: 50,
+        offset: 0,
+      },
+      skip: selectedTags.length === 0 && selectedCategories.length === 0,
+    }
+  );
+
+  // Auto-apply series filters when series data is loaded for a category/tag
+  useEffect(() => {
+    if (seriesData?.seriesByTags) {
+      // Only trigger if we are in category mode (not search, not just generic trending unless appropriate)
+      if (selectedCategories.length > 0 || selectedTags.length > 0) {
+        const tickers = seriesData.seriesByTags.map((s: any) => s.ticker);
+        setAppliedSeriesTickers(prev => {
+          const isSame =
+            prev.length === tickers.length &&
+            prev.every((val: any, index: any) => val === tickers[index]);
+          return isSame ? prev : tickers;
+        });
+      }
+    }
+  }, [seriesData, selectedCategories, selectedTags]);
 
   // Initial events query
   const {
@@ -138,16 +323,41 @@ export function Events() {
     variables: {
       limit: EVENTS_PER_PAGE,
       offset: 0,
-      sort: DFlowEventSort.VOLUME_24H,
+      sort: currentSort,
       status: DFlowMarketStatus.ACTIVE,
       withNestedMarkets: true,
     },
-    skip: shouldSearch,
+    skip: shouldSearch || shouldFilterBySeries,
     errorPolicy: 'ignore',
     onCompleted: data => {
       if (data?.dflowEvents) {
         setAllEvents(data.dflowEvents);
         setHasMore(data.dflowEvents.length === EVENTS_PER_PAGE);
+      }
+    },
+  });
+
+  // Events by series query
+  const {
+    loading: seriesEventsLoading,
+    error: seriesEventsError,
+    data: seriesEventsData,
+    fetchMore: fetchMoreSeriesEvents,
+  } = useQuery(GET_EVENTS_BY_SERIES, {
+    variables: {
+      seriesTickers: appliedSeriesTickers,
+      limit: EVENTS_PER_PAGE,
+      offset: 0,
+      sort: currentSort,
+      status: DFlowMarketStatus.ACTIVE,
+      withNestedMarkets: true,
+    },
+    skip: !shouldFilterBySeries,
+    errorPolicy: 'ignore',
+    onCompleted: data => {
+      if (data?.dflowEventsBySeries) {
+        setAllEvents(data.dflowEventsBySeries);
+        setHasMore(data.dflowEventsBySeries.length === EVENTS_PER_PAGE);
       }
     },
   });
@@ -160,7 +370,7 @@ export function Events() {
     fetchMore: fetchMoreSearch,
   } = useQuery(SEARCH_DFLOW, {
     variables: {
-      query: debouncedSearchTerm,
+      query: effectiveSearchQuery,
       limit: EVENTS_PER_PAGE,
       offset: 0,
       withNestedMarkets: true,
@@ -197,6 +407,18 @@ export function Events() {
           setAllEvents(prev => [...prev, ...newEvents]);
           setHasMore(newEvents.length === EVENTS_PER_PAGE);
         }
+      } else if (shouldFilterBySeries) {
+        const { data } = await fetchMoreSeriesEvents({
+          variables: {
+            offset: currentOffset,
+          },
+        });
+
+        if (data?.dflowEventsBySeries) {
+          const newEvents = data.dflowEventsBySeries;
+          setAllEvents(prev => [...prev, ...newEvents]);
+          setHasMore(newEvents.length === EVENTS_PER_PAGE);
+        }
       } else {
         const { data } = await fetchMoreEvents({
           variables: {
@@ -218,8 +440,10 @@ export function Events() {
   }, [
     allEvents.length,
     shouldSearch,
+    shouldFilterBySeries,
     fetchMoreEvents,
     fetchMoreSearch,
+    fetchMoreSeriesEvents,
     loadingMore,
     hasMore,
   ]);
@@ -242,16 +466,35 @@ export function Events() {
     return () => observer.disconnect();
   }, [loadMore, loadingMore, hasMore]);
 
-  // Reset events when search changes
+  // Reset events when search/filter changes
   useEffect(() => {
-    setAllEvents([]);
-    setHasMore(true);
-  }, [debouncedSearchTerm]);
+    // Only reset if we are switching search queries (to avoid double reset with tab change)
+    if (shouldSearch) {
+      setAllEvents([]);
+      setHasMore(true);
+    }
+  }, [effectiveSearchQuery, shouldSearch]);
+
+  // Reset events when series filter changes
+  useEffect(() => {
+    if (shouldFilterBySeries) {
+      setAllEvents([]);
+      setHasMore(true);
+    }
+  }, [appliedSeriesTickers]);
 
   // Determine current loading and error states
   const currentLoading =
-    (shouldSearch ? searchLoading : eventsLoading) && allEvents.length === 0;
-  const currentError = shouldSearch ? searchError : eventsError;
+    (shouldSearch
+      ? searchLoading
+      : shouldFilterBySeries
+        ? seriesEventsLoading
+        : eventsLoading) && allEvents.length === 0;
+  const currentError = shouldSearch
+    ? searchError
+    : shouldFilterBySeries
+      ? seriesEventsError
+      : eventsError;
 
   // Get current events from state
   const currentEvents = allEvents;
@@ -364,7 +607,7 @@ export function Events() {
                               {market.noSubTitle}
                             </p>
                             {market.volume && (
-                              <p className="text-xs text-blue-600 mt-1">
+                              <p className="text-xs text-primary mt-1">
                                 Vol: {formatVolume(market.volume)}
                               </p>
                             )}
@@ -423,12 +666,154 @@ export function Events() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-white">Prediction Events</h1>
-          {!shouldSearch && (
-            <p className="text-slate-400 mt-1 text-sm">
+          {!shouldSearch && !shouldFilterBySeries && (
+            <p className="text-muted-foreground mt-1 text-sm">
               Active events sorted by 24h volume
             </p>
           )}
+          {shouldFilterBySeries && (
+            <p className="text-muted-foreground mt-1 text-sm">
+              Filtered by {appliedSeriesTickers.length} series
+            </p>
+          )}
         </div>
+      </div>
+
+      {/* Category Navigation */}
+      <div className="flex flex-col space-y-4">
+        {/* Top Tab Bar */}
+        <div className="flex items-center gap-6 overflow-x-auto no-scrollbar border-b border-border/40 pb-2">
+          {[
+            { id: 'Trending', icon: TrendingUp },
+            { id: 'Breaking', icon: Zap },
+            { id: 'New', icon: Clock },
+          ].map(tab => (
+            <Button
+              key={tab.id}
+              variant="ghost"
+              className={`flex items-center gap-2 rounded-none border-b-2 px-1 pb-2 hover:bg-transparent transition-colors ${
+                activeTab === tab.id
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              <tab.icon className="h-4 w-4" />
+              {tab.id}
+            </Button>
+          ))}
+
+          <div className="h-4 w-[1px] bg-border/50 shrink-0" />
+
+          {categoriesLoading ? (
+            <div className="flex gap-4 animate-pulse">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="h-6 w-20 bg-muted rounded" />
+              ))}
+            </div>
+          ) : (
+            (() => {
+              try {
+                const parsed = JSON.parse(
+                  categoriesData?.tagsByCategories?.tagsByCategories || '{}'
+                );
+                return Object.keys(parsed)
+                  .sort()
+                  .map(cat => (
+                    <Button
+                      key={cat}
+                      variant="ghost"
+                      className={`flex items-center gap-2 rounded-none border-b-2 px-1 pb-2 hover:bg-transparent whitespace-nowrap transition-colors ${
+                        activeTab === cat
+                          ? 'border-primary text-primary'
+                          : 'border-transparent text-muted-foreground hover:text-foreground'
+                      }`}
+                      onClick={() => setActiveTab(cat)}
+                    >
+                      {cat}
+                    </Button>
+                  ));
+              } catch (e) {
+                return null;
+              }
+            })()
+          )}
+        </div>
+
+        {/* Secondary Filter Bar */}
+        {activeTab !== 'Trending' &&
+          activeTab !== 'Breaking' &&
+          activeTab !== 'New' && (
+            <div className="flex flex-col md:flex-row gap-6 items-start md:items-center py-2 animate-in fade-in slide-in-from-top-2 duration-300">
+              <h2 className="text-2xl font-bold text-foreground min-w-[120px] tracking-tight">
+                {activeTab}
+              </h2>
+
+              <div className="flex-1 overflow-hidden w-full">
+                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar w-full pb-2 md:pb-0 mask-gradient-right">
+                  <Button
+                    variant={selectedTags.length === 0 ? 'secondary' : 'ghost'}
+                    size="sm"
+                    className={`rounded-full transition-all font-medium ${selectedTags.length === 0 ? 'bg-secondary text-secondary-foreground hover:bg-secondary/80' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}`}
+                    onClick={() => setSelectedTags([])}
+                  >
+                    All
+                  </Button>
+                  {(() => {
+                    try {
+                      const parsed = JSON.parse(
+                        categoriesData?.tagsByCategories?.tagsByCategories ||
+                          '{}'
+                      );
+                      const tags = parsed[activeTab] || [];
+                      return tags.map((tag: string) => (
+                        <Button
+                          key={tag}
+                          variant={
+                            selectedTags.includes(tag) ? 'secondary' : 'ghost'
+                          }
+                          size="sm"
+                          className={`rounded-full whitespace-nowrap transition-all font-medium ${
+                            selectedTags.includes(tag)
+                              ? 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                              : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                          }`}
+                          onClick={() =>
+                            setSelectedTags(prev =>
+                              prev.includes(tag)
+                                ? prev.filter(t => t !== tag)
+                                : [...prev, tag]
+                            )
+                          }
+                        >
+                          {tag}
+                        </Button>
+                      ));
+                    } catch (e) {
+                      return null;
+                    }
+                  })()}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <Search className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <Filter className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
       </div>
 
       {/* Search */}
@@ -449,20 +834,25 @@ export function Events() {
 
       {/* Search info */}
       {shouldSearch && (
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm text-muted-foreground animate-in fade-in slide-in-from-left-2">
           {currentLoading
             ? 'Searching...'
-            : `Found ${currentEvents.length} events matching "${debouncedSearchTerm}"`}
+            : `Found ${currentEvents.length} events matching "${effectiveSearchQuery}"`}
+        </div>
+      )}
+      {shouldFilterBySeries && !shouldSearch && (
+        <div className="text-sm text-muted-foreground">
+          {currentLoading
+            ? 'Filtering events...'
+            : `Found ${currentEvents.length} events in selected series`}
         </div>
       )}
 
       {/* Error handling */}
       {currentError && (
-        <div className="text-yellow-600 bg-yellow-50 p-4 rounded-md">
-          Events unavailable: {currentError.message}
-          <div className="text-xs mt-1 text-yellow-500">
-            Debug: {JSON.stringify({ shouldSearch, debouncedSearchTerm })}
-          </div>
+        <div className="text-red-500 bg-red-500/10 p-4 rounded-md border border-red-500/20">
+          <p className="font-medium">Unable to load events</p>
+          <p className="text-sm opacity-90">{currentError.message}</p>
         </div>
       )}
 
@@ -470,7 +860,7 @@ export function Events() {
       {currentLoading ? (
         <div className="flex items-center justify-center py-12">
           <div className="flex items-center gap-3">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             <span className="text-lg text-muted-foreground">
               Loading events...
             </span>
@@ -515,7 +905,9 @@ export function Events() {
           <p className="text-muted-foreground">
             {shouldSearch
               ? `No events found for "${debouncedSearchTerm}"`
-              : 'No active events found.'}
+              : shouldFilterBySeries
+                ? 'No events found for the selected series. Try adjusting your filters.'
+                : 'No active events found.'}
           </p>
         </div>
       )}

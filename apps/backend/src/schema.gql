@@ -355,6 +355,7 @@ type Query {
   activeMarkets: [Market!]!
   dflowEvent(ticker: ID!): DFlowEvent
   dflowEvents(limit: Float, offset: Float, search: String, sort: DFlowEventSort, status: DFlowMarketStatus, withNestedMarkets: Boolean): [DFlowEvent!]!
+  dflowEventsBySeries(limit: Float, offset: Float, seriesTickers: [String!]!, sort: DFlowEventSort, status: DFlowMarketStatus, withNestedMarkets: Boolean): [DFlowEvent!]!
   dflowMarket(ticker: ID!): DFlowMarketGraphQL
   dflowMarketMints(marketId: String!): MarketMints!
   dflowMarketQuote(marketId: String!): MarketQuote!
@@ -373,6 +374,8 @@ type Query {
   redemptionHistory(walletAddress: String!): [RedemptionHistory!]!
   searchDFlow(limit: Float, offset: Float, query: String!, withNestedAccounts: Boolean, withNestedMarkets: Boolean): [DFlowEvent!]!
   searchDFlowMarkets(limit: Float, query: String!): [DFlowMarketGraphQL!]!
+  seriesByTags(categories: [String!], limit: Float, offset: Float, tags: [String!]): [SeriesTemplate!]!
+  tagsByCategories: TagsByCategoriesResponse!
   user(id: ID!): User!
   userPositions(filters: PositionFiltersInput, walletAddress: String!): [UserPosition!]!
 }
@@ -425,11 +428,24 @@ enum RiskLevel {
   MEDIUM
 }
 
+type SeriesTemplate {
+  category: String!
+  description: String
+  frequency: String!
+  tags: [String!]!
+  ticker: String!
+  title: String!
+}
+
 type Subscription {
   portfolioUpdates(walletAddress: String!): PortfolioSummary!
   positionUpdates(walletAddress: String!): UserPosition!
   priceUpdates(mints: [String!]!): PriceData!
   redemptionUpdates(walletAddress: String!): RedemptionResult!
+}
+
+type TagsByCategoriesResponse {
+  tagsByCategories: String!
 }
 
 type TradeResponse {
