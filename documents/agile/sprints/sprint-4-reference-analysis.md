@@ -9,6 +9,7 @@
 ### Layout Component ([Layout.tsx](apps/frontend/src/components/Layout.tsx))
 
 **Current Implementation:**
+
 - Fixed-width desktop sidebar (w-64 = 256px)
 - No responsive breakpoints
 - Wallet section positioned with `absolute bottom-4`
@@ -24,6 +25,7 @@
 | Safe area handling | Low | No notch/home indicator support |
 
 **Required Changes:**
+
 - Hide sidebar on mobile (`hidden lg:flex`)
 - Add MobileBottomNav component
 - Adjust main content padding for mobile
@@ -34,6 +36,7 @@
 ### Events Page ([Events.tsx](apps/frontend/src/pages/Events.tsx))
 
 **Current Implementation:**
+
 - Complex filtering with tabs and search
 - Grid-based event card layout
 - Infinite scroll with intersection observer
@@ -49,6 +52,7 @@
 | Touch scrolling | Low | Horizontal scroll tabs need optimization |
 
 **Lines of Interest:**
+
 - Lines 200-280: Filter state management
 - Lines 310-380: Query hooks
 - Lines 400+: Rendering logic (need to review)
@@ -58,6 +62,7 @@
 ### Portfolio Page ([Portfolio.tsx](apps/frontend/src/pages/Portfolio.tsx))
 
 **Current Implementation:**
+
 - Tab-based navigation (overview, positions)
 - Summary cards with metrics
 - Position list with action buttons
@@ -76,6 +81,7 @@
 ### TradingPanel Component ([TradingPanel.tsx](apps/frontend/src/components/TradingPanel.tsx))
 
 **Current Implementation:**
+
 - Full trading flow with buy/sell toggle
 - Amount input with manual entry
 - Market selector dropdown
@@ -98,23 +104,27 @@
 #### Button Component ([button.tsx](apps/frontend/src/components/ui/button.tsx))
 
 **Current Sizes:**
+
 - `default`: h-10 (40px) - NEEDS INCREASE for mobile
 - `sm`: h-9 (36px) - TOO SMALL for touch
 - `lg`: h-11 (44px) - ACCEPTABLE
 - `icon`: h-10 w-10 - NEEDS to be 44x44
 
 **Recommendation:**
+
 - Add `touch` size variant: h-12 (48px) minimum
 - Update `icon` to h-11 w-11 (44px)
 
 #### Card Component ([card.tsx](apps/frontend/src/components/ui/card.tsx))
 
 **Current Issues:**
+
 - Padding (p-6) may be too large on mobile
 - CardHeader p-6 should reduce to p-4 on mobile
 - CardTitle text-2xl may overflow
 
 **Recommendation:**
+
 - Use responsive padding: `p-4 md:p-6`
 - Responsive typography: `text-xl md:text-2xl`
 
@@ -126,6 +136,7 @@
 
 **Current Breakpoints:**
 Only custom container config, using default Tailwind breakpoints:
+
 - `sm`: 640px
 - `md`: 768px
 - `lg`: 1024px
@@ -133,6 +144,7 @@ Only custom container config, using default Tailwind breakpoints:
 - `2xl`: 1536px
 
 **Missing:**
+
 - `xs`: 375px (iPhone SE)
 - Safe area utilities
 - Touch target utilities
@@ -145,11 +157,13 @@ Only custom container config, using default Tailwind breakpoints:
 ### Current CSS ([index.css](apps/frontend/src/index.css))
 
 **What Exists:**
+
 - CSS variables for theming (light/dark)
 - Solana wallet adapter overrides
 - Basic reset styles
 
 **Missing Utilities:**
+
 ```css
 /* Safe area handling */
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
@@ -170,6 +184,7 @@ Only custom container config, using default Tailwind breakpoints:
 ## 4. Mobile dApp UI Pattern Research
 
 ### Jupiter Exchange (Reference)
+
 - Bottom navigation with 4 main tabs
 - Swap interface takes full screen
 - Large touch-friendly buttons
@@ -177,6 +192,7 @@ Only custom container config, using default Tailwind breakpoints:
 - Swipe gestures for confirmation
 
 ### Phantom Wallet (Reference)
+
 - Clean bottom navigation
 - Card-based transaction list
 - Pull-to-refresh on lists
@@ -184,6 +200,7 @@ Only custom container config, using default Tailwind breakpoints:
 - Clear visual hierarchy
 
 ### Polymarket (Reference)
+
 - Event cards in single column
 - Horizontal category scrolling
 - Search prominent at top
@@ -195,19 +212,20 @@ Only custom container config, using default Tailwind breakpoints:
 ## 5. Touch Target Analysis
 
 ### Apple HIG Guidelines
+
 - Minimum: 44x44pt
 - Recommended: 48x48pt for primary actions
 
 ### Current Component Measurements
 
-| Component | Current Size | Required | Status |
-|-----------|--------------|----------|--------|
-| Button (default) | 40px | 44px | ❌ Needs fix |
-| Button (sm) | 36px | 44px | ❌ Too small |
-| Button (lg) | 44px | 44px | ✅ OK |
-| Nav links | ~40px | 44px | ❌ Needs fix |
-| Tab triggers | Variable | 44px | ❌ Check needed |
-| Input fields | 40px | 44px | ❌ Needs fix |
+| Component        | Current Size | Required | Status          |
+| ---------------- | ------------ | -------- | --------------- |
+| Button (default) | 40px         | 44px     | ❌ Needs fix    |
+| Button (sm)      | 36px         | 44px     | ❌ Too small    |
+| Button (lg)      | 44px         | 44px     | ✅ OK           |
+| Nav links        | ~40px        | 44px     | ❌ Needs fix    |
+| Tab triggers     | Variable     | 44px     | ❌ Check needed |
+| Input fields     | 40px         | 44px     | ❌ Needs fix    |
 
 ---
 
@@ -233,11 +251,11 @@ src/components/
 ### Component Responsiveness Strategy
 
 | Component | Mobile (< 768px) | Tablet (768-1023px) | Desktop (1024px+) |
-|-----------|------------------|---------------------|-------------------|
-| Layout | Bottom nav | Bottom nav | Sidebar |
-| Events | Single column | 2 columns | 3 columns |
-| Portfolio | Stacked cards | 2-col grid | Dashboard |
-| Trading | Full sheet | Half sheet | Side panel |
+| --------- | ---------------- | ------------------- | ----------------- |
+| Layout    | Bottom nav       | Bottom nav          | Sidebar           |
+| Events    | Single column    | 2 columns           | 3 columns         |
+| Portfolio | Stacked cards    | 2-col grid          | Dashboard         |
+| Trading   | Full sheet       | Half sheet          | Side panel        |
 
 ---
 
@@ -264,12 +282,12 @@ src/components/
 
 ### Current Bundle Analysis (Estimated)
 
-| Metric | Current | Target | Action |
-|--------|---------|--------|--------|
-| Initial JS | ~400KB | <300KB | Code split routes |
-| LCP | ~3.0s | <2.5s | Optimize critical path |
-| FID | ~150ms | <100ms | Reduce JS execution |
-| CLS | ~0.15 | <0.1 | Add image dimensions |
+| Metric     | Current | Target | Action                 |
+| ---------- | ------- | ------ | ---------------------- |
+| Initial JS | ~400KB  | <300KB | Code split routes      |
+| LCP        | ~3.0s   | <2.5s  | Optimize critical path |
+| FID        | ~150ms  | <100ms | Reduce JS execution    |
+| CLS        | ~0.15   | <0.1   | Add image dimensions   |
 
 ### Optimization Opportunities
 
@@ -285,6 +303,7 @@ src/components/
 ### Current Breakpoint Usage in Codebase
 
 After searching the codebase:
+
 - `sm:` - Minimal usage
 - `md:` - Some usage in grids
 - `lg:` - Used in Layout for sidebar
@@ -294,16 +313,18 @@ After searching the codebase:
 ### Mobile-First Strategy Required
 
 **Change from:**
+
 ```tsx
 // Desktop-first (current pattern)
-className="flex hidden lg:flex"
+className = 'flex hidden lg:flex';
 ```
 
 **Change to:**
+
 ```tsx
 // Mobile-first (required pattern)
-className="hidden lg:flex"  // Only show on large screens
-className="flex lg:hidden"  // Only show on mobile
+className = 'hidden lg:flex'; // Only show on large screens
+className = 'flex lg:hidden'; // Only show on mobile
 ```
 
 ---

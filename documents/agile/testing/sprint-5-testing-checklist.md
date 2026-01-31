@@ -15,6 +15,7 @@
 ### Day 1 (Monday, Mar 10) - Infrastructure Setup
 
 #### Morning: Backend Testing Setup
+
 - [ ] Install Jest and dependencies
   ```bash
   cd apps/backend
@@ -27,6 +28,7 @@
 - [ ] Verify tests run: `pnpm test`
 
 #### Afternoon: Frontend Testing Setup
+
 - [ ] Install React Testing Library
   ```bash
   cd apps/frontend
@@ -39,6 +41,7 @@
 - [ ] Verify tests run: `pnpm test`
 
 #### Evening: CI/CD Setup
+
 - [ ] Create `.github/workflows/test.yml`
 - [ ] Configure test database service in workflow
 - [ ] Add unit test job
@@ -53,6 +56,7 @@
 ### Day 2 (Tuesday, Mar 11) - Test Fixtures & Position Tests (Part 1)
 
 #### Morning: Test Fixtures
+
 - [ ] Create `apps/backend/src/__tests__/fixtures/` directory
 - [ ] Implement `position.fixture.ts` with builder pattern
 - [ ] Implement `market.fixture.ts`
@@ -62,6 +66,7 @@
 - [ ] Document fixture usage in README
 
 #### Afternoon: Position Tracking Tests (Discovery)
+
 - [ ] Create `position-tracking.service.spec.ts`
 - [ ] Test suite setup with mocks
 - [ ] Tests for `discoverNewPositions()`
@@ -79,6 +84,7 @@
 ### Day 3 (Wednesday, Mar 12) - Position Tests (Part 2)
 
 #### Morning: Position Calculation Tests
+
 - [ ] Tests for `calculatePosition()`
   - [ ] Should calculate entry price from trades
   - [ ] Should compute unrealized P&L correctly
@@ -89,6 +95,7 @@
 - [ ] Run tests and verify coverage: `pnpm test:coverage`
 
 #### Afternoon: Portfolio Summary Tests
+
 - [ ] Tests for `calculatePortfolioSummary()`
   - [ ] Should sum total portfolio value
   - [ ] Should calculate total P&L
@@ -106,6 +113,7 @@
 ### Day 4 (Thursday, Mar 13) - Redemption & DFlow Tests
 
 #### Morning: Redemption Service Tests
+
 - [ ] Create `redemption.service.spec.ts`
 - [ ] Tests for `createRedemptionOrder()`
   - [ ] Should validate position is redeemable
@@ -117,6 +125,7 @@
 - [ ] Run tests: `pnpm test redemption`
 
 #### Afternoon: DFlow Service Tests
+
 - [ ] Create `dflow.service.spec.ts`
 - [ ] Tests for `getDFlowEvents()`
   - [ ] Should fetch events with pagination
@@ -134,6 +143,7 @@
 ### Day 5 (Friday, Mar 14) - Frontend Tests & Review
 
 #### Morning: Portfolio Component Tests
+
 - [ ] Create `PortfolioOverview.spec.tsx`
   - [ ] Should render portfolio value
   - [ ] Should display P&L with color coding
@@ -148,6 +158,7 @@
 - [ ] Run tests: `pnpm test`
 
 #### Afternoon: Review & Coverage Check
+
 - [ ] Run full test suite (backend + frontend)
 - [ ] Generate coverage report
 - [ ] Review coverage gaps
@@ -164,6 +175,7 @@
 ### Day 6 (Monday, Mar 17) - Backend Integration Setup
 
 #### Morning: Test Database Setup
+
 - [ ] Create test database docker-compose service
 - [ ] Implement database seeding utilities
 - [ ] Create `TestDatabase` helper class
@@ -171,6 +183,7 @@
 - [ ] Document database testing approach
 
 #### Afternoon: Position Tracking Integration
+
 - [ ] Create `position-tracking.integration.spec.ts`
 - [ ] Test full position discovery flow
   - [ ] Should discover → calculate → persist
@@ -186,11 +199,13 @@
 ### Day 7 (Tuesday, Mar 18) - GraphQL Integration Tests
 
 #### Morning: GraphQL Test Setup
+
 - [ ] Configure supertest for NestJS
 - [ ] Create GraphQL test utilities
 - [ ] Implement mock DFlow responses
 
 #### Afternoon: GraphQL Query Tests
+
 - [ ] Create `graphql.integration.spec.ts`
 - [ ] Test position queries
   - [ ] userPositions with filters
@@ -209,6 +224,7 @@
 ### Day 8 (Wednesday, Mar 19) - GraphQL Mutations & Frontend
 
 #### Morning: Mutation Tests
+
 - [ ] Test `refreshUserPositions`
   - [ ] Should trigger position sync
   - [ ] Should update database
@@ -220,6 +236,7 @@
 - [ ] Run integration tests
 
 #### Afternoon: Frontend Integration
+
 - [ ] Create `apollo.integration.spec.tsx`
 - [ ] Test query execution and caching
 - [ ] Test mutation updates
@@ -234,6 +251,7 @@
 ### Day 9 (Thursday, Mar 20) - E2E Setup & Critical Flows
 
 #### Morning: Playwright Setup
+
 - [ ] Install Playwright
   ```bash
   pnpm add -D playwright @playwright/test
@@ -244,6 +262,7 @@
 - [ ] Create first E2E test (smoke test)
 
 #### Afternoon: Critical E2E Tests
+
 - [ ] Create `e2e/position-discovery.spec.ts`
   - [ ] Should connect wallet
   - [ ] Should load positions
@@ -260,6 +279,7 @@
 ### Day 10 (Friday, Mar 21) - Coverage & Documentation
 
 #### Morning: Coverage Review
+
 - [ ] Run full test suite
 - [ ] Generate coverage reports
 - [ ] Identify gaps in coverage
@@ -267,6 +287,7 @@
 - [ ] Verify coverage thresholds met
 
 #### Afternoon: Documentation & Sprint Review
+
 - [ ] Update testing documentation
 - [ ] Create developer testing guide
 - [ ] Document CI/CD pipeline
@@ -281,6 +302,7 @@
 ## Success Criteria Verification
 
 ### At End of Week 1
+
 - [ ] ✅ Testing infrastructure fully configured
 - [ ] ✅ All test commands working
 - [ ] ✅ CI/CD pipeline running tests
@@ -288,6 +310,7 @@
 - [ ] ✅ 50%+ unit test coverage (frontend)
 
 ### At End of Week 2
+
 - [ ] ✅ 70%+ unit test coverage (backend)
 - [ ] ✅ 60%+ unit test coverage (frontend)
 - [ ] ✅ 50%+ integration test coverage
@@ -300,14 +323,17 @@
 ## Daily Standup Questions
 
 **What did I test yesterday?**
+
 - List test suites implemented
 - Coverage achieved
 
 **What am I testing today?**
+
 - Target test files
 - Expected coverage increase
 
 **Any testing blockers?**
+
 - Infrastructure issues
 - Mocking challenges
 - Coverage gaps
@@ -360,15 +386,15 @@ open coverage/lcov-report/index.html
 
 ### Coverage Targets by File
 
-| File | Target | Status |
-|------|--------|--------|
-| position-tracking.service.ts | 80% | ⏳ In Progress |
-| redemption.service.ts | 80% | ⏳ In Progress |
-| dflow.service.ts | 75% | ⏳ In Progress |
-| positions.resolver.ts | 70% | ⏳ In Progress |
-| PortfolioOverview.tsx | 75% | ⏳ In Progress |
-| PositionCard.tsx | 75% | ⏳ In Progress |
-| Portfolio.tsx | 70% | ⏳ In Progress |
+| File                         | Target | Status         |
+| ---------------------------- | ------ | -------------- |
+| position-tracking.service.ts | 80%    | ⏳ In Progress |
+| redemption.service.ts        | 80%    | ⏳ In Progress |
+| dflow.service.ts             | 75%    | ⏳ In Progress |
+| positions.resolver.ts        | 70%    | ⏳ In Progress |
+| PortfolioOverview.tsx        | 75%    | ⏳ In Progress |
+| PositionCard.tsx             | 75%    | ⏳ In Progress |
+| Portfolio.tsx                | 70%    | ⏳ In Progress |
 
 ---
 
@@ -377,16 +403,19 @@ open coverage/lcov-report/index.html
 ### Common Issues
 
 **Tests timeout:**
+
 ```typescript
 jest.setTimeout(30000); // Increase timeout
 ```
 
 **Database connection errors:**
+
 ```bash
 docker-compose -f docker-compose.test.yml up -d
 ```
 
 **Module resolution errors:**
+
 ```typescript
 // Add to jest.config.js
 moduleNameMapper: {
@@ -395,6 +424,7 @@ moduleNameMapper: {
 ```
 
 **React Testing Library errors:**
+
 ```typescript
 // Add to setupTests.ts
 import '@testing-library/jest-dom';
@@ -405,17 +435,20 @@ import '@testing-library/jest-dom';
 ## Sprint 4 End Goals
 
 ### Code Coverage
+
 - [x] Backend: 60%+ unit, 50%+ integration
 - [x] Frontend: 50%+ unit, 40%+ integration
 - [x] E2E: 5+ critical flows
 
 ### Infrastructure
+
 - [x] Jest configured and working
 - [x] Playwright configured and working
 - [x] CI/CD running all tests
 - [x] Coverage reports generated
 
 ### Documentation
+
 - [x] Testing quick start guide
 - [x] Developer testing documentation
 - [x] CI/CD troubleshooting guide

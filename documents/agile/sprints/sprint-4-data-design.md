@@ -24,10 +24,10 @@ screens: {
 
 ```tsx
 // ❌ Desktop-first (AVOID)
-className="flex lg:block"
+className = 'flex lg:block';
 
 // ✅ Mobile-first (USE)
-className="block lg:flex"
+className = 'block lg:flex';
 
 // Default styles = mobile
 // Add breakpoint modifiers to enhance for larger screens
@@ -137,6 +137,7 @@ interface MobileBottomNavProps {
 ```
 
 **Visual Specs:**
+
 - Height: 64px + safe-area-inset-bottom
 - Background: slate-800 with backdrop blur
 - Border-top: 1px slate-700
@@ -146,6 +147,7 @@ interface MobileBottomNavProps {
 - Active state: blue-500 color
 
 **Layout:**
+
 ```
 ┌─────────────────────────────────────────┐
 │  [Icon]   [Icon]   [Icon]   [Icon]      │ 64px
@@ -169,6 +171,7 @@ interface MobileHeaderProps {
 ```
 
 **Visual Specs:**
+
 - Height: 56px + safe-area-inset-top
 - Background: slate-900/95 with backdrop blur
 - Title: 18px, semibold, center-aligned
@@ -222,11 +225,12 @@ interface MobileSheetProps {
   onOpenChange: (open: boolean) => void;
   children: React.ReactNode;
   title?: string;
-  snapPoints?: number[];  // e.g., [0.5, 0.9] for 50% and 90%
+  snapPoints?: number[]; // e.g., [0.5, 0.9] for 50% and 90%
 }
 ```
 
 **Visual Specs:**
+
 - Backdrop: black/50 opacity
 - Sheet: slate-800, rounded-t-2xl
 - Handle: 32px wide, 4px tall, slate-600
@@ -259,6 +263,7 @@ interface TradeFormState {
 ```
 
 **Visual Specs:**
+
 ```
 ┌─────────────────────────────────────────┐
 │ ─────          (handle)                 │
@@ -292,6 +297,7 @@ interface TradeFormState {
 ```
 
 **Interactions:**
+
 - YES/NO buttons: 48px height, full width each half
 - Amount presets: 44px height buttons
 - Slider: 44px touch target
@@ -317,6 +323,7 @@ interface MobileEventCardProps {
 ```
 
 **Visual Specs:**
+
 ```
 ┌───────────────────────────────────────────┐
 │ ┌────┐                                    │
@@ -330,6 +337,7 @@ interface MobileEventCardProps {
 ```
 
 **Touch Specs:**
+
 - Card: Full-width, minimum height 100px
 - Market rows: 44px height each
 - Tap anywhere to navigate
@@ -356,6 +364,7 @@ interface MobilePositionCardProps {
 ```
 
 **Swipe Actions:**
+
 - Swipe right: View details (blue)
 - Swipe left: Redeem (green, if redeemable)
 
@@ -369,7 +378,7 @@ interface MobilePositionCardProps {
 // Mobile: single column
 // Tablet: 2 columns
 // Desktop: 3 columns
-className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4';
 ```
 
 ### Portfolio Summary Cards
@@ -377,7 +386,7 @@ className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
 ```tsx
 // Mobile: stacked
 // Tablet+: side by side
-className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4';
 ```
 
 ---
@@ -386,14 +395,14 @@ className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
 
 ### Heading Sizes
 
-| Element | Mobile | Tablet+ | Class |
-|---------|--------|---------|-------|
-| Page Title | 24px | 30px | `text-2xl lg:text-3xl` |
-| Section Title | 20px | 24px | `text-xl lg:text-2xl` |
-| Card Title | 16px | 18px | `text-base lg:text-lg` |
-| Subtitle | 14px | 14px | `text-sm` |
-| Body | 16px | 16px | `text-base` |
-| Caption | 12px | 12px | `text-xs` |
+| Element       | Mobile | Tablet+ | Class                  |
+| ------------- | ------ | ------- | ---------------------- |
+| Page Title    | 24px   | 30px    | `text-2xl lg:text-3xl` |
+| Section Title | 20px   | 24px    | `text-xl lg:text-2xl`  |
+| Card Title    | 16px   | 18px    | `text-base lg:text-lg` |
+| Subtitle      | 14px   | 14px    | `text-sm`              |
+| Body          | 16px   | 16px    | `text-base`            |
+| Caption       | 12px   | 12px    | `text-xs`              |
 
 ### Line Height for Readability
 
@@ -410,7 +419,7 @@ className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
 ```tsx
 // Mobile: 16px padding
 // Tablet+: 24px padding
-className="p-4 md:p-6"
+className = 'p-4 md:p-6';
 ```
 
 ### Card Padding
@@ -418,7 +427,7 @@ className="p-4 md:p-6"
 ```tsx
 // Mobile: 12px padding
 // Tablet+: 16-24px padding
-className="p-3 md:p-4 lg:p-6"
+className = 'p-3 md:p-4 lg:p-6';
 ```
 
 ### Gap Between Elements
@@ -426,7 +435,7 @@ className="p-3 md:p-4 lg:p-6"
 ```tsx
 // Mobile: 12px gap
 // Tablet+: 16-24px gap
-className="space-y-3 md:space-y-4 lg:space-y-6"
+className = 'space-y-3 md:space-y-4 lg:space-y-6';
 ```
 
 ---
@@ -472,7 +481,7 @@ const navItems = [
   { name: 'Events', href: '/', icon: Calendar },
   { name: 'Markets', href: '/markets', icon: TrendingUp },
   { name: 'Portfolio', href: '/portfolio', icon: BarChart3 },
-  { name: 'More', href: '#more', icon: MoreHorizontal },  // Opens menu
+  { name: 'More', href: '#more', icon: MoreHorizontal }, // Opens menu
 ];
 ```
 
@@ -485,8 +494,12 @@ const navItems = [
 ```css
 /* Bottom sheet slide up */
 @keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 /* Timing: spring-like */
@@ -526,7 +539,9 @@ const EventDetail = lazy(() => import('./pages/EventDetail'));
 
 // Component-based splitting
 const TradingPanel = lazy(() => import('./components/TradingPanel'));
-const MobileTradingSheet = lazy(() => import('./components/trading/MobileTradingSheet'));
+const MobileTradingSheet = lazy(
+  () => import('./components/trading/MobileTradingSheet')
+);
 ```
 
 ### Image Loading
@@ -549,15 +564,15 @@ const MobileTradingSheet = lazy(() => import('./components/trading/MobileTrading
 
 ### Required Test Viewports
 
-| Device | Width | Height | Priority |
-|--------|-------|--------|----------|
-| iPhone SE | 375px | 667px | Critical |
-| iPhone 14 | 390px | 844px | Critical |
-| iPhone 14 Pro Max | 430px | 932px | High |
-| Samsung Galaxy S21 | 360px | 800px | High |
-| iPad Mini | 744px | 1133px | Medium |
-| iPad Pro | 1024px | 1366px | Medium |
-| Desktop | 1440px | 900px | High |
+| Device             | Width  | Height | Priority |
+| ------------------ | ------ | ------ | -------- |
+| iPhone SE          | 375px  | 667px  | Critical |
+| iPhone 14          | 390px  | 844px  | Critical |
+| iPhone 14 Pro Max  | 430px  | 932px  | High     |
+| Samsung Galaxy S21 | 360px  | 800px  | High     |
+| iPad Mini          | 744px  | 1133px | Medium   |
+| iPad Pro           | 1024px | 1366px | Medium   |
+| Desktop            | 1440px | 900px  | High     |
 
 ---
 
@@ -610,26 +625,31 @@ apps/frontend/
 ## 13. Implementation Order
 
 ### Day 1-2: Foundation
+
 1. Update tailwind.config.js with breakpoints
 2. Add CSS utilities to index.css
 3. Create MobileBottomNav component
 4. Refactor Layout.tsx for responsive
 
 ### Day 3-4: Pages
+
 5. Mobile Events page layout
 6. Mobile Portfolio page layout
 7. Mobile Markets page layout
 
 ### Day 5-6: Trading
+
 8. Create MobileTradingSheet
 9. Update TradingPanel for responsive
 
 ### Day 7-8: Polish
+
 10. Event/Market detail pages
 11. Swipe gestures and animations
 12. Performance optimization
 
 ### Day 9-10: Testing
+
 13. Device testing
 14. Bug fixes
 15. Final polish
@@ -639,18 +659,21 @@ apps/frontend/
 ## 14. Success Validation Checklist
 
 ### Visual Validation
+
 - [ ] No horizontal scroll at 375px
 - [ ] All text readable without zoom
 - [ ] Touch targets >= 44px
 - [ ] Proper spacing on mobile
 
 ### Functional Validation
+
 - [ ] Navigation works on mobile
 - [ ] Trading flow completes on mobile
 - [ ] Wallet connects on mobile
 - [ ] Lists scroll smoothly
 
 ### Performance Validation
+
 - [ ] LCP < 2.5s on 4G
 - [ ] No layout shift during load
 - [ ] Bundle < 300KB initial

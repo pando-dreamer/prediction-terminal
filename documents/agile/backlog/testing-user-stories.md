@@ -21,6 +21,7 @@ User stories for implementing comprehensive automated testing across the Predict
 **So that** I can write and run tests efficiently
 
 **Acceptance Criteria:**
+
 - [ ] Jest configured for backend with TypeScript support
 - [ ] Jest configured for frontend with React Testing Library
 - [ ] Playwright configured for E2E tests
@@ -31,12 +32,14 @@ User stories for implementing comprehensive automated testing across the Predict
 - [ ] Package scripts for test commands
 
 **Technical Notes:**
+
 - Use ts-jest for TypeScript compilation
 - Configure separate test environments (node, jsdom)
 - Set coverage thresholds in Jest config
 - Use PostgreSQL test database with docker-compose
 
 **Tasks:**
+
 - [ ] Install testing dependencies (2h)
 - [ ] Configure Jest for backend (2h)
 - [ ] Configure Jest for frontend (2h)
@@ -57,6 +60,7 @@ User stories for implementing comprehensive automated testing across the Predict
 **So that** I can write tests quickly with realistic data
 
 **Acceptance Criteria:**
+
 - [ ] Position fixtures with various scenarios
 - [ ] Market fixtures with different statuses
 - [ ] Wallet fixtures with test addresses
@@ -66,11 +70,13 @@ User stories for implementing comprehensive automated testing across the Predict
 - [ ] Documentation for using fixtures
 
 **Technical Notes:**
+
 - Create fixtures in `__tests__/fixtures/` directories
 - Use factory pattern for flexible test data creation
 - Include edge cases (empty, zero, negative values)
 
 **Tasks:**
+
 - [ ] Create position fixtures (2h)
 - [ ] Create market fixtures (2h)
 - [ ] Create wallet fixtures (1h)
@@ -91,6 +97,7 @@ User stories for implementing comprehensive automated testing across the Predict
 **So that** position calculations are always accurate
 
 **Acceptance Criteria:**
+
 - [ ] Test position discovery from Token 2022 accounts
 - [ ] Test outcome mint filtering
 - [ ] Test P&L calculations (unrealized/realized)
@@ -100,12 +107,14 @@ User stories for implementing comprehensive automated testing across the Predict
 - [ ] 80%+ code coverage achieved
 
 **Technical Notes:**
+
 - Mock Solana RPC calls
 - Mock DFlow API responses
 - Test decimal precision for financial calculations
 - Include performance tests for large portfolios
 
 **Tasks:**
+
 - [ ] Test discoverNewPositions (4h)
 - [ ] Test calculatePosition (4h)
 - [ ] Test calculatePortfolioSummary (6h)
@@ -124,6 +133,7 @@ User stories for implementing comprehensive automated testing across the Predict
 **So that** users can safely redeem winning positions
 
 **Acceptance Criteria:**
+
 - [ ] Test redemption order creation
 - [ ] Test transaction tracking
 - [ ] Test status updates (PENDING → COMPLETED)
@@ -132,11 +142,13 @@ User stories for implementing comprehensive automated testing across the Predict
 - [ ] 80%+ code coverage achieved
 
 **Technical Notes:**
+
 - Mock DFlow trading API
 - Test transaction signature validation
 - Include timeout scenarios
 
 **Tasks:**
+
 - [ ] Test createRedemptionOrder (3h)
 - [ ] Test transaction tracking (2h)
 - [ ] Test status management (2h)
@@ -154,6 +166,7 @@ User stories for implementing comprehensive automated testing across the Predict
 **So that** API calls are reliable and handle errors
 
 **Acceptance Criteria:**
+
 - [ ] Test events API with pagination
 - [ ] Test markets API with filters
 - [ ] Test trading API order creation
@@ -163,11 +176,13 @@ User stories for implementing comprehensive automated testing across the Predict
 - [ ] 75%+ code coverage achieved
 
 **Technical Notes:**
+
 - Mock HTTP requests with axios
 - Test cache hit/miss scenarios
 - Include rate limit testing
 
 **Tasks:**
+
 - [ ] Test events endpoints (3h)
 - [ ] Test markets endpoints (3h)
 - [ ] Test trading endpoints (2h)
@@ -185,6 +200,7 @@ User stories for implementing comprehensive automated testing across the Predict
 **So that** API contracts are validated
 
 **Acceptance Criteria:**
+
 - [ ] Test position queries with filters
 - [ ] Test portfolio summary query
 - [ ] Test mutation responses
@@ -193,11 +209,13 @@ User stories for implementing comprehensive automated testing across the Predict
 - [ ] 70%+ code coverage achieved
 
 **Technical Notes:**
+
 - Use @nestjs/testing for resolver tests
 - Mock service dependencies
 - Test GraphQL schema validation
 
 **Tasks:**
+
 - [ ] Test position queries (2h)
 - [ ] Test portfolio queries (2h)
 - [ ] Test mutations (2h)
@@ -216,6 +234,7 @@ User stories for implementing comprehensive automated testing across the Predict
 **So that** the full flow is validated
 
 **Acceptance Criteria:**
+
 - [ ] Test full position discovery → calculation → storage flow
 - [ ] Test position refresh with concurrent updates
 - [ ] Test database consistency
@@ -224,11 +243,13 @@ User stories for implementing comprehensive automated testing across the Predict
 - [ ] 70%+ integration coverage achieved
 
 **Technical Notes:**
+
 - Set up test database before each suite
 - Use real TypeORM repositories
 - Mock only external APIs (DFlow, Solana)
 
 **Tasks:**
+
 - [ ] Set up test database helpers (2h)
 - [ ] Test position discovery flow (3h)
 - [ ] Test position refresh flow (3h)
@@ -246,6 +267,7 @@ User stories for implementing comprehensive automated testing across the Predict
 **So that** GraphQL endpoints work end-to-end
 
 **Acceptance Criteria:**
+
 - [ ] Test queries with real database
 - [ ] Test mutations with database updates
 - [ ] Test error responses
@@ -254,11 +276,13 @@ User stories for implementing comprehensive automated testing across the Predict
 - [ ] 70%+ integration coverage achieved
 
 **Technical Notes:**
+
 - Use NestJS TestingModule
 - Start test server with supertest
 - Seed test data before each test
 
 **Tasks:**
+
 - [ ] Test position queries (2h)
 - [ ] Test portfolio queries (2h)
 - [ ] Test events queries (2h)
@@ -278,6 +302,7 @@ User stories for implementing comprehensive automated testing across the Predict
 **So that** users see correct position data
 
 **Acceptance Criteria:**
+
 - [ ] Test PortfolioOverview rendering
 - [ ] Test PositionCard with different states
 - [ ] Test user interactions (clicks, filters)
@@ -286,11 +311,13 @@ User stories for implementing comprehensive automated testing across the Predict
 - [ ] 75%+ component coverage achieved
 
 **Technical Notes:**
+
 - Use React Testing Library
 - Mock Apollo Client queries
 - Test accessibility (a11y)
 
 **Tasks:**
+
 - [ ] Test PortfolioOverview (3h)
 - [ ] Test PositionCard (3h)
 - [ ] Test Portfolio page (4h)
@@ -307,6 +334,7 @@ User stories for implementing comprehensive automated testing across the Predict
 **So that** data fetching is reliable
 
 **Acceptance Criteria:**
+
 - [ ] Test query execution and caching
 - [ ] Test mutation updates
 - [ ] Test optimistic updates
@@ -315,11 +343,13 @@ User stories for implementing comprehensive automated testing across the Predict
 - [ ] 70%+ coverage achieved
 
 **Technical Notes:**
+
 - Use MockedProvider from Apollo
 - Test cache updates after mutations
 - Include network error scenarios
 
 **Tasks:**
+
 - [ ] Test position queries (2h)
 - [ ] Test mutations (2h)
 - [ ] Test cache behavior (3h)
@@ -331,13 +361,13 @@ User stories for implementing comprehensive automated testing across the Predict
 
 ## Sprint 4 Backlog Summary
 
-| Epic | Stories | Story Points |
-|------|---------|--------------|
-| Testing Infrastructure | 2 | 8 |
-| Backend Unit Tests | 4 | 13 |
-| Backend Integration | 2 | 7 |
-| Frontend Tests | 2 | 6 |
-| **TOTAL** | **10** | **34** |
+| Epic                   | Stories | Story Points |
+| ---------------------- | ------- | ------------ |
+| Testing Infrastructure | 2       | 8            |
+| Backend Unit Tests     | 4       | 13           |
+| Backend Integration    | 2       | 7            |
+| Frontend Tests         | 2       | 6            |
+| **TOTAL**              | **10**  | **34**       |
 
 ---
 
@@ -356,9 +386,11 @@ User stories for implementing comprehensive automated testing across the Predict
 ## Dependencies
 
 **Blockers:**
+
 - None (can start immediately)
 
 **Dependencies:**
+
 - US-TEST-001 must complete before other stories can start
 - US-TEST-002 should complete early to support all test development
 
@@ -366,18 +398,19 @@ User stories for implementing comprehensive automated testing across the Predict
 
 ## Risks & Mitigation
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| Time investment | High | Incremental approach, prioritize critical paths |
-| Learning curve | Medium | Pair programming, code reviews |
-| Flaky tests | Medium | Proper waits, stable selectors, retry logic |
-| Test maintenance | Low | Regular reviews, clear ownership |
+| Risk             | Impact | Mitigation                                      |
+| ---------------- | ------ | ----------------------------------------------- |
+| Time investment  | High   | Incremental approach, prioritize critical paths |
+| Learning curve   | Medium | Pair programming, code reviews                  |
+| Flaky tests      | Medium | Proper waits, stable selectors, retry logic     |
+| Test maintenance | Low    | Regular reviews, clear ownership                |
 
 ---
 
 ## Success Metrics
 
 **Sprint 4 Goals:**
+
 - ✅ 60%+ unit test coverage
 - ✅ 50%+ integration test coverage
 - ✅ All critical paths tested
@@ -385,6 +418,7 @@ User stories for implementing comprehensive automated testing across the Predict
 - ✅ Zero flaky tests
 
 **Long-term Goals (Sprint 5+):**
+
 - ✅ 80%+ unit test coverage
 - ✅ 70%+ integration test coverage
 - ✅ 20+ E2E tests

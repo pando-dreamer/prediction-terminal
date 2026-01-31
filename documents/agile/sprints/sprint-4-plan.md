@@ -24,6 +24,7 @@
 5. **Progressive Enhancement**: Build for mobile, enhance for desktop
 
 **Design Philosophy**:
+
 - Design for 375px width first (iPhone SE)
 - Progressive enhancement to tablet (768px) and desktop (1024px+)
 - Touch-first interactions (44px minimum tap targets)
@@ -91,18 +92,18 @@
 
 ### User Stories
 
-| Story ID | Title | Story Points | Priority | Status | Epic |
-|----------|-------|--------------|----------|--------|------|
-| US-M001 | Implement mobile-first Layout with bottom navigation | 5 | Critical | 📋 Planning | Mobile Navigation |
-| US-M002 | Refactor Events page for mobile | 5 | Critical | 📋 Planning | Mobile Pages |
-| US-M003 | Refactor Portfolio page for mobile | 5 | Critical | 📋 Planning | Mobile Pages |
-| US-M004 | Refactor Markets page for mobile | 3 | High | 📋 Planning | Mobile Pages |
-| US-M005 | Mobile-optimize Trading Panel component | 5 | Critical | 📋 Planning | Mobile Components |
-| US-M006 | Create responsive Card components | 3 | High | 📋 Planning | Mobile Components |
-| US-M007 | Mobile-optimize Event/Market Detail pages | 5 | High | 📋 Planning | Mobile Pages |
-| US-M008 | Implement mobile wallet connection UX | 3 | High | 📋 Planning | Mobile Wallet |
-| US-M009 | Add pull-to-refresh and mobile gestures | 2 | Medium | 📋 Planning | Mobile UX |
-| US-M010 | Performance optimization for mobile | 3 | Medium | 📋 Planning | Mobile Performance |
+| Story ID | Title                                                | Story Points | Priority | Status      | Epic               |
+| -------- | ---------------------------------------------------- | ------------ | -------- | ----------- | ------------------ |
+| US-M001  | Implement mobile-first Layout with bottom navigation | 5            | Critical | 📋 Planning | Mobile Navigation  |
+| US-M002  | Refactor Events page for mobile                      | 5            | Critical | 📋 Planning | Mobile Pages       |
+| US-M003  | Refactor Portfolio page for mobile                   | 5            | Critical | 📋 Planning | Mobile Pages       |
+| US-M004  | Refactor Markets page for mobile                     | 3            | High     | 📋 Planning | Mobile Pages       |
+| US-M005  | Mobile-optimize Trading Panel component              | 5            | Critical | 📋 Planning | Mobile Components  |
+| US-M006  | Create responsive Card components                    | 3            | High     | 📋 Planning | Mobile Components  |
+| US-M007  | Mobile-optimize Event/Market Detail pages            | 5            | High     | 📋 Planning | Mobile Pages       |
+| US-M008  | Implement mobile wallet connection UX                | 3            | High     | 📋 Planning | Mobile Wallet      |
+| US-M009  | Add pull-to-refresh and mobile gestures              | 2            | Medium   | 📋 Planning | Mobile UX          |
+| US-M010  | Performance optimization for mobile                  | 3            | Medium   | 📋 Planning | Mobile Performance |
 
 **Total Story Points**: 39 (adjusted for complexity)
 
@@ -117,8 +118,9 @@
 **So that** I can access all sections with my thumb
 
 **Acceptance Criteria**:
+
 - [ ] Bottom navigation bar on mobile (< 768px)
-- [ ] 4 main tabs: Events, Markets, Portfolio, Settings
+- [ ] 3 main tabs: Events, Portfolio, Settings
 - [ ] Active state clearly visible
 - [ ] Icons + labels on bottom nav
 - [ ] Smooth transitions between views
@@ -126,6 +128,7 @@
 - [ ] Hamburger menu alternative for secondary items
 
 **Technical Implementation**:
+
 ```typescript
 // Responsive layout approach
 <div className="min-h-screen bg-slate-900">
@@ -133,12 +136,12 @@
   <aside className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64">
     <DesktopSidebar />
   </aside>
-  
+
   {/* Main content - full width mobile, offset on desktop */}
   <main className="lg:pl-64 pb-16 lg:pb-0">
     {children}
   </main>
-  
+
   {/* Mobile bottom nav - visible only on mobile */}
   <nav className="fixed bottom-0 inset-x-0 lg:hidden">
     <MobileBottomNav />
@@ -147,6 +150,7 @@
 ```
 
 **Tasks**:
+
 - [ ] Create MobileBottomNav component (3h)
 - [ ] Refactor Layout.tsx for responsive behavior (2h)
 - [ ] Add safe area insets for notched devices (1h)
@@ -162,6 +166,7 @@
 **So that** I can quickly find markets to trade
 
 **Acceptance Criteria**:
+
 - [ ] Single-column card layout on mobile
 - [ ] Category filter tabs horizontally scrollable
 - [ ] Search bar sticky at top
@@ -171,6 +176,7 @@
 - [ ] Pull-to-refresh support
 
 **Mobile Design Specs**:
+
 ```
 ┌─────────────────────────┐
 │  🔍 Search...          │ <- Sticky header
@@ -193,6 +199,7 @@
 ```
 
 **Tasks**:
+
 - [ ] Create MobileEventCard component (3h)
 - [ ] Implement horizontal scrollable filter tabs (2h)
 - [ ] Add sticky search header (1h)
@@ -208,6 +215,7 @@
 **So that** I can monitor my portfolio anywhere
 
 **Acceptance Criteria**:
+
 - [ ] Portfolio summary cards stack vertically
 - [ ] Key metrics prominent (Total Value, P&L, Win Rate)
 - [ ] Position list is scrollable with clear hierarchy
@@ -217,6 +225,7 @@
 - [ ] Quick actions prominent (Redeem winning positions)
 
 **Mobile Design Specs**:
+
 ```
 ┌─────────────────────────┐
 │ Portfolio      [Refresh]│
@@ -242,6 +251,7 @@
 ```
 
 **Tasks**:
+
 - [ ] Create MobilePortfolioSummary component (2h)
 - [ ] Create MobilePositionCard with swipe actions (3h)
 - [ ] Implement collapsible sections (Active/Closed) (2h)
@@ -257,6 +267,7 @@
 **So that** I can find specific trading opportunities
 
 **Acceptance Criteria**:
+
 - [ ] Market list in compact cards
 - [ ] Filter/sort options in bottom sheet
 - [ ] Search functionality
@@ -264,6 +275,7 @@
 - [ ] Quick stats (price, volume, time remaining)
 
 **Tasks**:
+
 - [ ] Create MobileMarketCard component (2h)
 - [ ] Implement filter bottom sheet (2h)
 - [ ] Add market search (1h)
@@ -278,6 +290,7 @@
 **So that** I can act quickly on market movements
 
 **Acceptance Criteria**:
+
 - [ ] Full-screen or bottom sheet trading modal
 - [ ] Large, touch-friendly YES/NO buttons
 - [ ] Amount input with quick preset buttons ($10, $50, $100)
@@ -288,6 +301,7 @@
 - [ ] Success/error feedback with haptics
 
 **Mobile Design Specs**:
+
 ```
 ┌─────────────────────────┐
 │ Trade: BTC > $100K?   X │
@@ -315,6 +329,7 @@
 ```
 
 **Tasks**:
+
 - [ ] Create MobileTradingSheet component (3h)
 - [ ] Implement swipe-to-confirm gesture (2h)
 - [ ] Add haptic feedback integration (1h)
@@ -330,6 +345,7 @@
 **So that** I can build consistent mobile UIs
 
 **Acceptance Criteria**:
+
 - [ ] Card component scales properly at all breakpoints
 - [ ] Touch targets minimum 44x44px
 - [ ] Text remains readable (min 16px on mobile)
@@ -337,6 +353,7 @@
 - [ ] Dark theme optimized for OLED screens
 
 **Tasks**:
+
 - [ ] Audit and update Card component (2h)
 - [ ] Update Button component touch targets (1h)
 - [ ] Create responsive typography scale (2h)
@@ -351,6 +368,7 @@
 **So that** I can make informed trading decisions
 
 **Acceptance Criteria**:
+
 - [ ] Full-screen detail view
 - [ ] Back navigation prominent
 - [ ] Key info above fold (prices, status, time)
@@ -360,6 +378,7 @@
 - [ ] Share functionality
 
 **Tasks**:
+
 - [ ] Refactor EventDetail.tsx for mobile (3h)
 - [ ] Refactor MarketDetail.tsx for mobile (3h)
 - [ ] Add fixed bottom trade CTA (1h)
@@ -375,6 +394,7 @@
 **So that** I can start trading quickly
 
 **Acceptance Criteria**:
+
 - [ ] Deep link to Phantom/Solflare mobile apps
 - [ ] Clear connection status
 - [ ] Easy disconnect option
@@ -382,6 +402,7 @@
 - [ ] Connection persists across sessions
 
 **Tasks**:
+
 - [ ] Update WalletButton for mobile (2h)
 - [ ] Test deep linking with mobile wallets (2h)
 - [ ] Add connection state indicators (1h)
@@ -396,6 +417,7 @@
 **So that** the app feels natural on my phone
 
 **Acceptance Criteria**:
+
 - [ ] Pull-to-refresh on lists
 - [ ] Swipe gestures on cards (where appropriate)
 - [ ] Haptic feedback on actions
@@ -403,6 +425,7 @@
 - [ ] Prevent accidental actions
 
 **Tasks**:
+
 - [ ] Implement pull-to-refresh hook (2h)
 - [ ] Add swipe gesture handlers (2h)
 - [ ] Integrate haptic feedback API (1h)
@@ -417,6 +440,7 @@
 **So that** I can trade quickly on mobile networks
 
 **Acceptance Criteria**:
+
 - [ ] LCP < 2.5s on 4G
 - [ ] Bundle size optimized (code splitting)
 - [ ] Images lazy loaded and optimized
@@ -424,6 +448,7 @@
 - [ ] Cache GraphQL queries appropriately
 
 **Tasks**:
+
 - [ ] Implement route-based code splitting (2h)
 - [ ] Add image optimization (1h)
 - [ ] Audit and reduce bundle size (2h)
@@ -509,14 +534,14 @@ src/components/
 
 ### Device Testing Matrix
 
-| Device | Screen Size | Priority | Test Method |
-|--------|-------------|----------|-------------|
-| iPhone SE | 375x667 | Critical | Physical device |
-| iPhone 14 | 390x844 | Critical | Physical device |
-| iPhone 14 Pro Max | 430x932 | High | Simulator |
-| Samsung Galaxy S21 | 360x800 | High | Physical device |
-| iPad Mini | 744x1133 | Medium | Simulator |
-| iPad Pro | 1024x1366 | Medium | Simulator |
+| Device             | Screen Size | Priority | Test Method     |
+| ------------------ | ----------- | -------- | --------------- |
+| iPhone SE          | 375x667     | Critical | Physical device |
+| iPhone 14          | 390x844     | Critical | Physical device |
+| iPhone 14 Pro Max  | 430x932     | High     | Simulator       |
+| Samsung Galaxy S21 | 360x800     | High     | Physical device |
+| iPad Mini          | 744x1133    | Medium   | Simulator       |
+| iPad Pro           | 1024x1366   | Medium   | Simulator       |
 
 ### Testing Checklist
 
@@ -539,7 +564,6 @@ src/components/
 1. **Wallet Connection on Mobile Browsers**
    - Risk: Some mobile browsers restrict wallet deep links
    - Mitigation: Test extensively, provide fallback instructions
-   
 2. **Performance on Low-End Devices**
    - Risk: Complex UI may be slow on older phones
    - Mitigation: Performance budget, code splitting, lazy loading
@@ -566,23 +590,23 @@ src/components/
 
 ### Week 1 (Feb 24-28)
 
-| Day | Focus | Stories | Deliverables |
-|-----|-------|---------|--------------|
-| Mon | Analysis & Design | - | Mobile audit, wireframes |
+| Day | Focus               | Stories | Deliverables                       |
+| --- | ------------------- | ------- | ---------------------------------- |
+| Mon | Analysis & Design   | -       | Mobile audit, wireframes           |
 | Tue | Layout & Navigation | US-M001 | MobileBottomNav, responsive Layout |
-| Wed | Events Page | US-M002 | Mobile events list |
-| Thu | Portfolio Page | US-M003 | Mobile portfolio view |
-| Fri | Review & Testing | - | Week 1 review, device testing |
+| Wed | Events Page         | US-M002 | Mobile events list                 |
+| Thu | Portfolio Page      | US-M003 | Mobile portfolio view              |
+| Fri | Review & Testing    | -       | Week 1 review, device testing      |
 
 ### Week 2 (Mar 3-7)
 
-| Day | Focus | Stories | Deliverables |
-|-----|-------|---------|--------------|
-| Mon | Markets & Cards | US-M004, US-M006 | Markets page, card components |
-| Tue | Trading Panel | US-M005 | Mobile trading sheet |
-| Wed | Detail Pages | US-M007 | Event/Market detail mobile |
-| Thu | Wallet & Polish | US-M008, US-M009 | Wallet UX, gestures |
-| Fri | Performance & QA | US-M010 | Optimization, final testing |
+| Day | Focus            | Stories          | Deliverables                  |
+| --- | ---------------- | ---------------- | ----------------------------- |
+| Mon | Markets & Cards  | US-M004, US-M006 | Markets page, card components |
+| Tue | Trading Panel    | US-M005          | Mobile trading sheet          |
+| Wed | Detail Pages     | US-M007          | Event/Market detail mobile    |
+| Thu | Wallet & Polish  | US-M008, US-M009 | Wallet UX, gestures           |
+| Fri | Performance & QA | US-M010          | Optimization, final testing   |
 
 ---
 
