@@ -761,6 +761,7 @@ export function EventDetail() {
                         {/* Bottom row on mobile: Buy Buttons */}
                         <div className="flex gap-2 w-full sm:w-auto sm:min-w-0">
                           <Button
+                            data-testid={`market-yes-${market.ticker}`}
                             size="sm"
                             className="flex-1 sm:flex-initial bg-green-600 hover:bg-green-700 active:bg-green-800 h-10 sm:h-9 text-xs sm:text-sm sm:min-w-[100px] touch-target"
                             onClick={e => {
@@ -777,6 +778,7 @@ export function EventDetail() {
                               : 'N/A'}
                           </Button>
                           <Button
+                            data-testid={`market-no-${market.ticker}`}
                             size="sm"
                             variant="destructive"
                             className="flex-1 sm:flex-initial h-10 sm:h-9 text-xs sm:text-sm sm:min-w-[100px] touch-target"
@@ -1190,6 +1192,7 @@ export function EventDetail() {
         <div className="fixed bottom-16 left-0 right-0 lg:hidden z-30 safe-bottom">
           {/* Trade Sheet */}
           <div
+            data-testid="trade-sheet"
             className="bg-slate-800 rounded-t-2xl border-t border-slate-700 shadow-2xl relative"
             onTouchStart={e => {
               setTouchStartY(e.touches[0].clientY);
@@ -1213,6 +1216,8 @@ export function EventDetail() {
           >
             {/* Close button - top right */}
             <button
+              aria-label="Close trade panel"
+              data-testid="close-trade-panel"
               onClick={e => {
                 e.stopPropagation();
                 e.preventDefault();
