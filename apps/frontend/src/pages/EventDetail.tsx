@@ -1167,69 +1167,172 @@ export function EventDetail() {
 
       {/* Mobile Fixed Bottom Trade CTA */}
       {selectedMarket && (
-        <div className="fixed bottom-16 left-0 right-0 lg:hidden z-30 px-4 pb-4 pt-2 bg-gradient-to-t from-slate-900 via-slate-900 to-transparent safe-bottom">
-          <div className="bg-slate-800 rounded-lg p-3 border border-slate-700 shadow-lg">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex-1 min-w-0 mr-3">
-                <p className="text-xs text-slate-400 truncate">
-                  {selectedMarket.title}
-                </p>
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="text-green-400 font-medium">
-                    Yes{' '}
-                    {selectedMarket.yesPrice
-                      ? `${(selectedMarket.yesPrice * 100).toFixed(0)}¢`
-                      : '-'}
+        <div className="fixed bottom-16 left-0 right-0 lg:hidden z-30 safe-bottom">
+          {/* Trade Sheet */}
+          <div className="bg-slate-800 rounded-t-2xl border-t border-slate-700 shadow-2xl">
+            {/* Handle indicator */}
+            <div className="flex justify-center py-2">
+              <div className="w-10 h-1 rounded-full bg-slate-600" />
+            </div>
+
+            {/* Buy/Sell Toggle */}
+            <div className="flex items-center justify-between px-4 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-white font-semibold">
+                  {tradeType === 'buy' ? 'Buy' : 'Sell'}
+                </span>
+                <ChevronDown className="w-4 h-4 text-slate-400" />
+              </div>
+              <div className="text-xs text-slate-400">Market</div>
+            </div>
+
+            {/* Market Info */}
+            <div className="flex items-center gap-3 px-4 pb-3 border-b border-slate-700">
+              {event?.imageUrl && (
+                <img
+                  src={event.imageUrl}
+                  alt={selectedMarket.title}
+                  className="w-10 h-10 rounded-lg object-cover"
+                />
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-white truncate">{event?.title}</p>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-300 truncate">
+                    {selectedMarket.yesSubTitle || 'Yes'}
                   </span>
-                  <span className="text-slate-500">|</span>
-                  <span className="text-red-400 font-medium">
-                    No{' '}
-                    {selectedMarket.noPrice
-                      ? `${(selectedMarket.noPrice * 100).toFixed(0)}¢`
-                      : '-'}
+                  <Badge
+                    className={`text-[10px] px-1.5 py-0.5 ${
+                      side === 'yes'
+                        ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                        : 'bg-red-500/20 text-red-400 border-red-500/30'
+                    }`}
+                  >
+                    {side === 'yes' ? 'Yes' : 'No'} 💬
+                  </Badge>
+                </div>
+              </div>
+            </div>
+
+            {/* Amount Input */}
+            <div className="p-4 space-y-3">
+              {/* Amount with +/- buttons */}
+              <div className="flex items-center justify-center gap-4">
+                <button
+                  onClick={() => setAmount(Math.max(0, amount - 1))}
+                  className="w-11 h-11 rounded-full bg-slate-700 text-white text-xl font-medium flex items-center justify-center active:bg-slate-600"
+                >
+                  −
+                </button>
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-white">
+                    ${amount || 0}
+                  </div>
+                </div>
+                <button
+                  onClick={() => setAmount(amount + 1)}
+                  className="w-11 h-11 rounded-full bg-slate-700 text-white text-xl font-medium flex items-center justify-center active:bg-slate-600"
+                >
+                  +
+                </button>
+              </div>
+
+              {/* Quick Amount Buttons */}
+              <div className="flex justify-center gap-2">
+                {[1, 20, 100].map(value => (
+                  <button
+                    key={value}
+                    onClick={() => setAmount(amount + value)}
+                    className="px-4 py-2 rounded-full bg-slate-700 text-slate-300 text-sm font-medium active:bg-slate-600"
+                  >
+                    +${value}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setAmount(balances.usdc)}
+                  className="px-4 py-2 rounded-full bg-slate-700 text-slate-300 text-sm font-medium active:bg-slate-600"
+                >
+                  Max
+                </button>
+              </div>
+
+              {/* Summary */}
+              <div className="space-y-1 pt-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-400">Total</span>
+                  <span className="text-white font-medium">
+                    ${amount.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-400">To win</span>
+                  <span className="text-green-400 font-medium">
+                    🍀 $
+                    {(
+                      amount /
+                      (side === 'yes'
+                        ? selectedMarket.yesPrice || 0.5
+                        : selectedMarket.noPrice || 0.5)
+                    ).toFixed(2)}
                   </span>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  className={`h-10 px-4 text-sm font-semibold ${
-                    side === 'yes'
-                      ? 'bg-green-600 hover:bg-green-700'
-                      : 'bg-slate-600 hover:bg-slate-500'
-                  }`}
+
+              {/* Yes/No Toggle */}
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <button
                   onClick={() => setSide('yes')}
-                >
-                  Yes
-                </Button>
-                <Button
-                  size="sm"
-                  className={`h-10 px-4 text-sm font-semibold ${
-                    side === 'no'
-                      ? 'bg-red-600 hover:bg-red-700'
-                      : 'bg-slate-600 hover:bg-slate-500'
+                  className={`h-12 rounded-xl font-semibold text-base transition-all ${
+                    side === 'yes'
+                      ? 'bg-green-600 text-white'
+                      : 'bg-slate-700 text-slate-300'
                   }`}
-                  onClick={() => setSide('no')}
                 >
-                  No
-                </Button>
+                  Yes{' '}
+                  {selectedMarket.yesPrice
+                    ? `${(selectedMarket.yesPrice * 100).toFixed(0)}¢`
+                    : '-'}
+                </button>
+                <button
+                  onClick={() => setSide('no')}
+                  className={`h-12 rounded-xl font-semibold text-base transition-all ${
+                    side === 'no'
+                      ? 'bg-red-600 text-white'
+                      : 'bg-slate-700 text-slate-300'
+                  }`}
+                >
+                  No{' '}
+                  {selectedMarket.noPrice
+                    ? `${(selectedMarket.noPrice * 100).toFixed(0)}¢`
+                    : '-'}
+                </button>
               </div>
+
+              {/* Trade Button */}
+              <Button
+                className={`w-full h-14 text-lg font-bold rounded-xl ${
+                  side === 'yes'
+                    ? 'bg-green-600 hover:bg-green-700 active:bg-green-800'
+                    : 'bg-red-600 hover:bg-red-700 active:bg-red-800'
+                }`}
+                onClick={handleExecuteTrade}
+                disabled={isTrading || !connected || amount <= 0}
+              >
+                {!connected
+                  ? 'Connect Wallet'
+                  : isTrading
+                    ? 'Processing...'
+                    : amount <= 0
+                      ? 'Enter Amount'
+                      : `${tradeType === 'buy' ? 'Buy' : 'Sell'} ${side === 'yes' ? 'Yes' : 'No'}`}
+              </Button>
+
+              {/* Terms */}
+              <p className="text-center text-[10px] text-slate-500">
+                By trading, you agree to the{' '}
+                <span className="text-blue-400 underline">Terms of Use</span>
+              </p>
             </div>
-            <Button
-              className={`w-full h-12 text-base font-bold ${
-                side === 'yes'
-                  ? 'bg-green-600 hover:bg-green-700 active:bg-green-800'
-                  : 'bg-red-600 hover:bg-red-700 active:bg-red-800'
-              }`}
-              onClick={handleExecuteTrade}
-              disabled={isTrading || !connected}
-            >
-              {!connected
-                ? 'Connect Wallet to Trade'
-                : isTrading
-                  ? 'Processing...'
-                  : `${tradeType === 'buy' ? 'Buy' : 'Sell'} ${side === 'yes' ? 'Yes' : 'No'}`}
-            </Button>
           </div>
         </div>
       )}

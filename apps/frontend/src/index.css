@@ -147,6 +147,15 @@
   word-wrap: break-word !important;
 }
 
+/* Hide the "Select Wallet" button that appears in the modal */
+.wallet-adapter-modal-middle {
+  display: none !important;
+}
+
+.wallet-adapter-modal-middle-button {
+  display: none !important;
+}
+
 .wallet-adapter-modal-list {
   padding: 1rem !important;
   margin: 0 !important;
