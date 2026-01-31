@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Mobile Navigation', () => {
   test.describe.configure({ mode: 'serial' });
 
-  test('should display mobile header and bottom navigation on mobile viewport', async ({
+  test('should display mobile header and bottom navigation on mobile viewport @smoke', async ({
     page,
     isMobile,
   }) => {
