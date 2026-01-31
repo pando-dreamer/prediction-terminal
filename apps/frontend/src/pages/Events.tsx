@@ -514,13 +514,19 @@ export function Events() {
     const totalMarkets = event.markets?.length || 0;
 
     return (
-      <Link to={`/events/${event.ticker}`} key={event.ticker}>
-        <Card className="cursor-pointer hover:shadow-md transition-shadow h-full flex flex-col">
+      <Link
+        to={`/events/${event.ticker}`}
+        key={event.ticker}
+        className="block touch-target"
+      >
+        <Card className="cursor-pointer hover:shadow-md active:scale-[0.99] transition-all h-full flex flex-col tap-highlight-none">
           <CardHeader>
-            <div className="flex justify-between items-start">
-              <div className="flex-1">
-                <CardTitle className="text-lg mb-2">{event.title}</CardTitle>
-                <CardDescription className="line-clamp-2">
+            <div className="flex justify-between items-start gap-3">
+              <div className="flex-1 min-w-0">
+                <CardTitle className="text-base md:text-lg mb-2 line-clamp-2">
+                  {event.title}
+                </CardTitle>
+                <CardDescription className="line-clamp-2 text-xs md:text-sm">
                   {event.subtitle}
                 </CardDescription>
               </div>
@@ -528,19 +534,19 @@ export function Events() {
                 <img
                   src={event.imageUrl}
                   alt={event.title}
-                  className="w-16 h-16 object-cover rounded-md ml-4"
+                  className="w-12 h-12 md:w-16 md:h-16 object-cover rounded-md flex-shrink-0"
                 />
               )}
             </div>
-            <div className="flex gap-2 mt-2">
-              <Badge variant="secondary">
+            <div className="flex flex-wrap gap-1.5 md:gap-2 mt-2">
+              <Badge variant="secondary" className="text-xs">
                 {event.competition || 'General'}
               </Badge>
-              <Badge variant="outline">
+              <Badge variant="outline" className="text-xs">
                 {totalMarkets} market{totalMarkets !== 1 ? 's' : ''}
               </Badge>
               {activeMarkets.length > 0 && (
-                <Badge variant="default" className="bg-green-500">
+                <Badge variant="default" className="bg-green-500 text-xs">
                   {activeMarkets.length} active
                 </Badge>
               )}
@@ -653,7 +659,9 @@ export function Events() {
             )}
 
             <div className="mt-4">
-              <Button className="w-full">View Event & Markets</Button>
+              <Button className="w-full h-11 md:h-10 text-sm md:text-base">
+                View Event & Markets
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -662,27 +670,30 @@ export function Events() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-4 md:space-y-6">
+      {/* Page Header - Responsive */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
         <div>
-          <h1 className="text-3xl font-bold text-white">Prediction Events</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-white">
+            Prediction Events
+          </h1>
           {!shouldSearch && !shouldFilterBySeries && (
-            <p className="text-muted-foreground mt-1 text-sm">
+            <p className="text-muted-foreground mt-1 text-xs md:text-sm">
               Active events sorted by 24h volume
             </p>
           )}
           {shouldFilterBySeries && (
-            <p className="text-muted-foreground mt-1 text-sm">
+            <p className="text-muted-foreground mt-1 text-xs md:text-sm">
               Filtered by {appliedSeriesTickers.length} series
             </p>
           )}
         </div>
       </div>
 
-      {/* Category Navigation */}
-      <div className="flex flex-col space-y-4">
-        {/* Top Tab Bar */}
-        <div className="flex items-center gap-6 overflow-x-auto no-scrollbar border-b border-border/40 pb-2">
+      {/* Category Navigation - Mobile-first horizontal scroll */}
+      <div className="flex flex-col space-y-3 md:space-y-4">
+        {/* Top Tab Bar - Touch-friendly with horizontal scroll */}
+        <div className="flex items-center gap-3 md:gap-6 overflow-x-auto scrollbar-hide scroll-x -mx-4 px-4 md:mx-0 md:px-0 border-b border-border/40 pb-2">
           {[
             { id: 'Trending', icon: TrendingUp },
             { id: 'Breaking', icon: Zap },
@@ -816,18 +827,26 @@ export function Events() {
           )}
       </div>
 
-      {/* Search */}
-      <div className="flex gap-4 items-center">
-        <div className="flex-1">
+      {/* Search - Mobile optimized with sticky behavior on scroll */}
+      <div className="flex gap-2 md:gap-4 items-center sticky top-0 z-10 bg-slate-900/95 backdrop-blur-sm py-2 -mx-4 px-4 md:mx-0 md:px-0 md:static md:bg-transparent md:backdrop-blur-none">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           <Input
-            placeholder="Search events and markets..."
+            placeholder="Search events..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
+            className="pl-9 h-11 md:h-10"
           />
         </div>
         {searchTerm && (
-          <Button variant="outline" onClick={() => setSearchTerm('')}>
-            Clear
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setSearchTerm('')}
+            className="h-11 w-11 md:h-10 md:w-auto md:px-4 flex-shrink-0"
+          >
+            <X className="h-4 w-4 md:hidden" />
+            <span className="hidden md:inline">Clear</span>
           </Button>
         )}
       </div>
@@ -856,18 +875,18 @@ export function Events() {
         </div>
       )}
 
-      {/* Events grid */}
+      {/* Events grid - Mobile-first single column */}
       {currentLoading ? (
-        <div className="flex items-center justify-center py-12">
+        <div className="flex items-center justify-center py-8 md:py-12">
           <div className="flex items-center gap-3">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            <span className="text-lg text-muted-foreground">
+            <div className="animate-spin rounded-full h-6 w-6 md:h-8 md:w-8 border-b-2 border-primary"></div>
+            <span className="text-base md:text-lg text-muted-foreground">
               Loading events...
             </span>
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {currentEvents.map(renderEventCard)}
         </div>
       )}

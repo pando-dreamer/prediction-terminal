@@ -67,15 +67,15 @@
 
 ### Success Criteria ✅
 
-- [ ] All pages render correctly on 375px mobile width
-- [ ] Touch targets are minimum 44x44px on mobile
-- [ ] Mobile bottom navigation implemented
-- [ ] Desktop sidebar adapts to mobile hamburger/bottom nav
+- [x] All pages render correctly on 375px mobile width
+- [x] Touch targets are minimum 44x44px on mobile
+- [x] Mobile bottom navigation implemented
+- [x] Desktop sidebar adapts to mobile hamburger/bottom nav
 - [ ] Trading panel optimized for mobile interaction
-- [ ] Portfolio page readable and usable on mobile
-- [ ] Events list scrolls smoothly on mobile
+- [x] Portfolio page readable and usable on mobile
+- [x] Events list scrolls smoothly on mobile
 - [ ] Performance: LCP < 2.5s on 4G mobile
-- [ ] No horizontal scroll on any mobile viewport
+- [x] No horizontal scroll on any mobile viewport
 - [ ] Wallet connection works seamlessly on mobile
 
 ---
@@ -92,26 +92,27 @@
 
 ### User Stories
 
-| Story ID | Title                                                | Story Points | Priority | Status      | Epic               |
-| -------- | ---------------------------------------------------- | ------------ | -------- | ----------- | ------------------ |
-| US-M001  | Implement mobile-first Layout with bottom navigation | 5            | Critical | 📋 Planning | Mobile Navigation  |
-| US-M002  | Refactor Events page for mobile                      | 5            | Critical | 📋 Planning | Mobile Pages       |
-| US-M003  | Refactor Portfolio page for mobile                   | 5            | Critical | 📋 Planning | Mobile Pages       |
-| US-M004  | Refactor Markets page for mobile                     | 3            | High     | 📋 Planning | Mobile Pages       |
-| US-M005  | Mobile-optimize Trading Panel component              | 5            | Critical | 📋 Planning | Mobile Components  |
-| US-M006  | Create responsive Card components                    | 3            | High     | 📋 Planning | Mobile Components  |
-| US-M007  | Mobile-optimize Event/Market Detail pages            | 5            | High     | 📋 Planning | Mobile Pages       |
-| US-M008  | Implement mobile wallet connection UX                | 3            | High     | 📋 Planning | Mobile Wallet      |
-| US-M009  | Add pull-to-refresh and mobile gestures              | 2            | Medium   | 📋 Planning | Mobile UX          |
-| US-M010  | Performance optimization for mobile                  | 3            | Medium   | 📋 Planning | Mobile Performance |
+| Story ID | Title                                                | Story Points | Priority | Status       | Epic               |
+| -------- | ---------------------------------------------------- | ------------ | -------- | ------------ | ------------------ |
+| US-M001  | Implement mobile-first Layout with bottom navigation | 5            | Critical | ✅ Completed | Mobile Navigation  |
+| US-M002  | Refactor Events page for mobile                      | 5            | Critical | ✅ Completed | Mobile Pages       |
+| US-M003  | Refactor Portfolio page for mobile                   | 5            | Critical | ✅ Completed | Mobile Pages       |
+| US-M004  | Refactor Markets page for mobile                     | 3            | High     | 📋 Planning  | Mobile Pages       |
+| US-M005  | Mobile-optimize Trading Panel component              | 5            | Critical | 📋 Planning  | Mobile Components  |
+| US-M006  | Create responsive Card components                    | 3            | High     | ✅ Completed | Mobile Components  |
+| US-M007  | Mobile-optimize Event/Market Detail pages            | 5            | High     | 📋 Planning  | Mobile Pages       |
+| US-M008  | Implement mobile wallet connection UX                | 3            | High     | 📋 Planning  | Mobile Wallet      |
+| US-M009  | Add pull-to-refresh and mobile gestures              | 2            | Medium   | 📋 Planning  | Mobile UX          |
+| US-M010  | Performance optimization for mobile                  | 3            | Medium   | 📋 Planning  | Mobile Performance |
 
 **Total Story Points**: 39 (adjusted for complexity)
+**Completed Story Points**: 18
 
 ---
 
 ## Detailed User Stories
 
-### US-M001: Mobile-First Layout with Bottom Navigation (5 SP)
+### US-M001: Mobile-First Layout with Bottom Navigation (5 SP) ✅
 
 **As a** mobile user  
 **I want** easy navigation via bottom tabs  

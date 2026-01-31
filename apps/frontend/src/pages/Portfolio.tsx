@@ -155,14 +155,16 @@ export function Portfolio() {
 
   if (!walletAddress) {
     return (
-      <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-white">Portfolio</h1>
+      <div className="space-y-4 md:space-y-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-white">Portfolio</h1>
 
-        <Card className="text-center py-12">
+        <Card className="text-center py-8 md:py-12">
           <CardContent>
-            <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Wallet Not Connected</h3>
-            <p className="text-gray-600 mb-4">
+            <AlertTriangle className="h-10 w-10 md:h-12 md:w-12 text-yellow-500 mx-auto mb-4" />
+            <h3 className="text-base md:text-lg font-semibold mb-2">
+              Wallet Not Connected
+            </h3>
+            <p className="text-sm md:text-base text-gray-600 mb-4 px-4">
               Please connect your wallet to view your portfolio and positions.
             </p>
           </CardContent>
@@ -176,10 +178,10 @@ export function Portfolio() {
   const redeemablePositions = redeemableData?.redeemablePositions || [];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-white">Portfolio</h1>
+    <div className="space-y-4 md:space-y-6">
+      {/* Header - Stack on mobile, row on desktop */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <h1 className="text-2xl md:text-3xl font-bold text-white">Portfolio</h1>
 
         <div className="flex items-center gap-2">
           <Button
@@ -187,7 +189,7 @@ export function Portfolio() {
             size="sm"
             onClick={handleRefresh}
             disabled={refreshing}
-            className="text-gray-900 border-gray-300 hover:bg-gray-100 bg-white"
+            className="flex-1 sm:flex-initial h-10 text-gray-900 border-gray-300 hover:bg-gray-100 bg-white touch-target"
           >
             <RefreshCw
               className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`}
@@ -199,7 +201,7 @@ export function Portfolio() {
             variant="outline"
             size="sm"
             disabled
-            className="text-gray-900 border-gray-300 bg-white"
+            className="flex-1 sm:flex-initial h-10 text-gray-900 border-gray-300 bg-white touch-target"
           >
             <Download className="h-4 w-4 mr-2" />
             Export
@@ -211,22 +213,25 @@ export function Portfolio() {
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
-        className="space-y-6"
+        className="space-y-4 md:space-y-6"
       >
-        <TabsList className="grid grid-cols-3 w-full max-w-md">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="positions">
+        <TabsList className="grid grid-cols-3 w-full h-11 md:h-10 md:max-w-md">
+          <TabsTrigger value="overview" className="text-xs sm:text-sm">
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="positions" className="text-xs sm:text-sm">
             Positions
             {positions.length > 0 && (
-              <Badge variant="secondary" className="ml-2">
+              <Badge variant="secondary" className="ml-1 sm:ml-2 text-xs">
                 {positions.length}
               </Badge>
             )}
           </TabsTrigger>
-          <TabsTrigger value="redeemable">
-            Redeemable
+          <TabsTrigger value="redeemable" className="text-xs sm:text-sm">
+            <span className="hidden xs:inline">Redeemable</span>
+            <span className="xs:hidden">Redeem</span>
             {redeemablePositions.length > 0 && (
-              <Badge variant="secondary" className="ml-2">
+              <Badge variant="secondary" className="ml-1 sm:ml-2 text-xs">
                 {redeemablePositions.length}
               </Badge>
             )}
@@ -234,17 +239,17 @@ export function Portfolio() {
         </TabsList>
 
         {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-6">
+        <TabsContent value="overview" className="space-y-4 md:space-y-6">
           {summary ? (
             <PortfolioOverview summary={summary} loading={summaryLoading} />
           ) : (
-            <Card className="text-center py-12">
+            <Card className="text-center py-8 md:py-12">
               <CardContent>
-                <TrendingUp className="h-12 w-12 text-blue-500 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">
+                <TrendingUp className="h-10 w-10 md:h-12 md:w-12 text-blue-500 mx-auto mb-4" />
+                <h3 className="text-base md:text-lg font-semibold mb-2">
                   No Portfolio Data
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-sm md:text-base text-gray-600 mb-4 px-4">
                   Start trading to see your portfolio overview here.
                 </p>
               </CardContent>
@@ -253,10 +258,10 @@ export function Portfolio() {
         </TabsContent>
 
         {/* Positions Tab */}
-        <TabsContent value="positions" className="space-y-6">
-          {/* Position Filters */}
-          <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-gray-500" />
+        <TabsContent value="positions" className="space-y-4 md:space-y-6">
+          {/* Position Filters - Horizontal scroll on mobile */}
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide scroll-x -mx-4 px-4 md:mx-0 md:px-0 pb-2 md:pb-0">
+            <Filter className="h-4 w-4 text-gray-500 flex-shrink-0" />
             <div className="flex gap-2">
               {['all', 'active', 'resolved', 'settled'].map(status => (
                 <Button
@@ -264,7 +269,7 @@ export function Portfolio() {
                   variant={filterStatus === status ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setFilterStatus(status)}
-                  className="capitalize"
+                  className="capitalize whitespace-nowrap h-9 touch-target"
                 >
                   {status}
                 </Button>
@@ -281,16 +286,16 @@ export function Portfolio() {
         </TabsContent>
 
         {/* Redeemable Tab */}
-        <TabsContent value="redeemable" className="space-y-6">
+        <TabsContent value="redeemable" className="space-y-4 md:space-y-6">
           {redeemablePositions.length > 0 ? (
             <>
               <Card className="bg-green-50 border-green-200">
                 <CardHeader>
-                  <CardTitle className="text-green-800 flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5" />
+                  <CardTitle className="text-green-800 flex items-center gap-2 text-base md:text-lg">
+                    <TrendingUp className="h-4 w-4 md:h-5 md:w-5" />
                     Redeemable Positions Available
                   </CardTitle>
-                  <CardDescription className="text-green-700">
+                  <CardDescription className="text-green-700 text-sm">
                     You have {redeemablePositions.length} positions ready for
                     redemption. Total redeemable value:{' '}
                     {summary &&
@@ -310,13 +315,13 @@ export function Portfolio() {
               />
             </>
           ) : (
-            <Card className="text-center py-12">
+            <Card className="text-center py-8 md:py-12">
               <CardContent>
-                <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">
+                <TrendingUp className="h-10 w-10 md:h-12 md:w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-base md:text-lg font-semibold mb-2">
                   No Redeemable Positions
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-sm md:text-base text-gray-600 px-4">
                   Positions that can be redeemed will appear here when markets
                   resolve.
                 </p>

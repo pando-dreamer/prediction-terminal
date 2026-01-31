@@ -9,6 +9,14 @@ export default {
   ],
   prefix: '',
   theme: {
+    screens: {
+      xs: '375px', // iPhone SE, small phones
+      sm: '640px', // Large phones, phablets
+      md: '768px', // Tablets portrait
+      lg: '1024px', // Tablets landscape, small laptops
+      xl: '1280px', // Desktop
+      '2xl': '1536px', // Large desktop
+    },
     container: {
       center: true,
       padding: '2rem',
