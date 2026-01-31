@@ -36,7 +36,6 @@ export const PositionCard: React.FC<PositionCardProps> = ({
   onViewDetails,
 }) => {
   const isProfitable = (position.unrealizedPnL ?? 0) >= 0;
-  const isActive = position.marketStatus === 'ACTIVE';
 
   const formatCurrency = (amount?: number) => {
     if (amount === undefined || amount === null) return '-';
@@ -74,27 +73,30 @@ export const PositionCard: React.FC<PositionCardProps> = ({
   return (
     <Card
       className={cn(
-        'hover:shadow-lg transition-all duration-200 cursor-pointer',
+        'hover:shadow-lg active:scale-[0.99] transition-all duration-200 cursor-pointer tap-highlight-none',
         isProfitable
           ? 'border-green-200 bg-green-50/30'
           : 'border-red-200 bg-red-50/30'
       )}
     >
       <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg font-semibold truncate">
+            <CardTitle className="text-base md:text-lg font-semibold line-clamp-2">
               {position.marketTitle}
             </CardTitle>
-            <div className="flex items-center gap-2 mt-1">
+            <div className="flex flex-wrap items-center gap-1.5 mt-2">
               <Badge
-                className={getOutcomeBadgeColor(position.outcome)}
+                className={cn(
+                  getOutcomeBadgeColor(position.outcome),
+                  'text-xs'
+                )}
                 variant="outline"
               >
                 {position.outcome}
               </Badge>
               <Badge
-                className={getRiskBadgeColor(position.riskLevel)}
+                className={cn(getRiskBadgeColor(position.riskLevel), 'text-xs')}
                 variant="outline"
               >
                 {position.riskLevel}
@@ -114,7 +116,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({
             <Button
               size="sm"
               variant="outline"
-              className="ml-2 text-green-600 border-green-300 hover:bg-green-50"
+              className="flex-shrink-0 h-9 text-green-600 border-green-300 hover:bg-green-50 touch-target"
               onClick={e => {
                 e.stopPropagation();
                 onRedeem?.(position);
@@ -130,32 +132,38 @@ export const PositionCard: React.FC<PositionCardProps> = ({
         className="pt-0 cursor-pointer"
         onClick={() => onViewDetails?.(position)}
       >
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-2 gap-3 md:gap-4 mb-4">
           {/* Position Details */}
           <div>
-            <div className="text-sm text-gray-600 mb-1">Balance</div>
-            <div className="font-medium">
+            <div className="text-xs md:text-sm text-gray-600 mb-1">Balance</div>
+            <div className="text-sm md:text-base font-medium">
               {position.balance.toFixed(4)} tokens
             </div>
           </div>
 
           <div>
-            <div className="text-sm text-gray-600 mb-1">Current Value</div>
-            <div className="font-medium">
+            <div className="text-xs md:text-sm text-gray-600 mb-1">
+              Current Value
+            </div>
+            <div className="text-sm md:text-base font-medium">
               {formatCurrency(position.estimatedValue)}
             </div>
           </div>
 
           <div>
-            <div className="text-sm text-gray-600 mb-1">Entry Price</div>
-            <div className="font-medium">
+            <div className="text-xs md:text-sm text-gray-600 mb-1">
+              Entry Price
+            </div>
+            <div className="text-sm md:text-base font-medium">
               {formatCurrency(position.entryPrice)}
             </div>
           </div>
 
           <div>
-            <div className="text-sm text-gray-600 mb-1">Current Price</div>
-            <div className="font-medium">
+            <div className="text-xs md:text-sm text-gray-600 mb-1">
+              Current Price
+            </div>
+            <div className="text-sm md:text-base font-medium">
               {formatCurrency(position.currentPrice)}
             </div>
           </div>
@@ -165,10 +173,12 @@ export const PositionCard: React.FC<PositionCardProps> = ({
         <div className="border-t pt-3">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-gray-600 mb-1">Unrealized P&L</div>
+              <div className="text-xs md:text-sm text-gray-600 mb-1">
+                Unrealized P&L
+              </div>
               <div
                 className={cn(
-                  'font-semibold text-lg',
+                  'font-semibold text-base md:text-lg',
                   isProfitable ? 'text-green-600' : 'text-red-600'
                 )}
               >
@@ -177,10 +187,12 @@ export const PositionCard: React.FC<PositionCardProps> = ({
             </div>
 
             <div className="text-right">
-              <div className="text-sm text-gray-600 mb-1">Return</div>
+              <div className="text-xs md:text-sm text-gray-600 mb-1">
+                Return
+              </div>
               <div
                 className={cn(
-                  'font-semibold text-lg',
+                  'font-semibold text-base md:text-lg',
                   isProfitable ? 'text-green-600' : 'text-red-600'
                 )}
               >
@@ -191,9 +203,9 @@ export const PositionCard: React.FC<PositionCardProps> = ({
         </div>
 
         {/* Additional Info */}
-        <div className="flex items-center justify-between mt-3 pt-3 border-t text-sm text-gray-500">
+        <div className="flex items-center justify-between mt-3 pt-3 border-t text-xs md:text-sm text-gray-500">
           <span>Held for {position.daysHeld} days</span>
-          <span>Market: {position.marketId}</span>
+          <span className="truncate ml-2">Market: {position.marketId}</span>
         </div>
       </CardContent>
     </Card>
@@ -215,18 +227,18 @@ export const PositionList: React.FC<PositionListProps> = ({
 }) => {
   if (loading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
           <Card key={i} className="animate-pulse">
             <CardHeader>
-              <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div className="h-5 md:h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
               <div className="h-4 bg-gray-200 rounded w-1/2"></div>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 <div className="h-4 bg-gray-200 rounded"></div>
                 <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                <div className="h-8 bg-gray-200 rounded"></div>
+                <div className="h-6 md:h-8 bg-gray-200 rounded"></div>
               </div>
             </CardContent>
           </Card>
@@ -237,9 +249,11 @@ export const PositionList: React.FC<PositionListProps> = ({
 
   if (positions.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="text-gray-500 text-lg mb-2">No positions found</div>
-        <div className="text-gray-400">
+      <div className="text-center py-8 md:py-12">
+        <div className="text-gray-500 text-base md:text-lg mb-2">
+          No positions found
+        </div>
+        <div className="text-gray-400 text-sm md:text-base px-4">
           Your prediction market positions will appear here once you place
           trades.
         </div>
@@ -248,7 +262,7 @@ export const PositionList: React.FC<PositionListProps> = ({
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
       {positions.map(position => (
         <PositionCard
           key={position.id}

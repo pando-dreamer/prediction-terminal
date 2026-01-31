@@ -46,6 +46,7 @@ This plan outlines a comprehensive approach to implement automated testing acros
 ### Risk Assessment
 
 **Current Risk Level**: 🟡 **MEDIUM**
+
 - Code quality is high, reducing immediate risk
 - Manual testing catches issues before deployment
 - **Future Risk**: As codebase grows, manual testing becomes unsustainable
@@ -68,11 +69,11 @@ This plan outlines a comprehensive approach to implement automated testing acros
 
 ### Coverage Targets
 
-| Layer | Target Coverage | Priority | Timeline |
-|-------|----------------|----------|----------|
-| Unit Tests | 80%+ | High | Sprint 5 Week 1 |
-| Integration Tests | 70%+ | High | Sprint 5 Week 2 |
-| E2E Tests | Critical flows | Medium | Sprint 6 |
+| Layer             | Target Coverage | Priority | Timeline        |
+| ----------------- | --------------- | -------- | --------------- |
+| Unit Tests        | 80%+            | High     | Sprint 5 Week 1 |
+| Integration Tests | 70%+            | High     | Sprint 5 Week 2 |
+| E2E Tests         | Critical flows  | Medium   | Sprint 6        |
 
 ### Test Distribution Goals
 
@@ -100,6 +101,7 @@ This plan outlines a comprehensive approach to implement automated testing acros
 ```
 
 **Rationale**:
+
 - **Jest**: Industry standard, excellent TypeScript support
 - **ts-jest**: Native TypeScript compilation for tests
 - **supertest**: HTTP integration testing for NestJS
@@ -108,6 +110,7 @@ This plan outlines a comprehensive approach to implement automated testing acros
 #### Configuration Files
 
 **jest.config.js** (Backend):
+
 ```javascript
 module.exports = {
   preset: 'ts-jest',
@@ -151,6 +154,7 @@ module.exports = {
 ```
 
 **Rationale**:
+
 - **Testing Library**: Best practices for React component testing
 - **jest-dom**: Custom matchers for DOM testing
 - **user-event**: Realistic user interaction simulation
@@ -158,6 +162,7 @@ module.exports = {
 #### Configuration Files
 
 **jest.config.js** (Frontend):
+
 ```javascript
 module.exports = {
   preset: 'ts-jest',
@@ -198,6 +203,7 @@ module.exports = {
 ```
 
 **Rationale**:
+
 - **Playwright**: Modern, fast, reliable E2E testing
 - Multi-browser support (Chromium, Firefox, WebKit)
 - Built-in test runner and assertions
@@ -210,6 +216,7 @@ module.exports = {
 ### Backend Unit Tests
 
 #### 1. Position Tracking Service
+
 **File**: `apps/backend/src/positions/__tests__/position-tracking.service.spec.ts`
 
 **Test Coverage** (~150 tests):
@@ -260,6 +267,7 @@ describe('PositionTrackingService', () => {
 ```
 
 **Key Testing Patterns**:
+
 - Mock DFlow API responses
 - Test edge cases (empty, zero, negative)
 - Validate calculation accuracy (decimal precision)
@@ -267,6 +275,7 @@ describe('PositionTrackingService', () => {
 - Performance testing for large portfolios
 
 #### 2. Redemption Service
+
 **File**: `apps/backend/src/positions/__tests__/redemption.service.spec.ts`
 
 **Test Coverage** (~80 tests):
@@ -296,6 +305,7 @@ describe('RedemptionService', () => {
 ```
 
 #### 3. DFlow Service
+
 **File**: `apps/backend/src/dflow/__tests__/dflow.service.spec.ts`
 
 **Test Coverage** (~120 tests):
@@ -333,6 +343,7 @@ describe('DFlowService', () => {
 ```
 
 #### 4. GraphQL Resolvers
+
 **File**: `apps/backend/src/positions/__tests__/positions.resolver.spec.ts`
 
 **Test Coverage** (~60 tests):
@@ -361,6 +372,7 @@ describe('PositionsResolver', () => {
 ### Frontend Unit Tests
 
 #### 1. Portfolio Components
+
 **File**: `apps/frontend/src/components/positions/__tests__/PortfolioOverview.spec.tsx`
 
 **Test Coverage** (~50 tests):
@@ -379,6 +391,7 @@ describe('PortfolioOverview', () => {
 ```
 
 #### 2. Position Cards
+
 **File**: `apps/frontend/src/components/positions/__tests__/PositionCard.spec.tsx`
 
 **Test Coverage** (~60 tests):
@@ -396,6 +409,7 @@ describe('PositionCard', () => {
 ```
 
 #### 3. GraphQL Hooks
+
 **File**: `apps/frontend/src/lib/graphql/__tests__/positions.spec.ts`
 
 **Test Coverage** (~40 tests):
@@ -417,6 +431,7 @@ describe('Position GraphQL Queries', () => {
 ### Backend Integration Tests
 
 #### 1. Position Tracking Flow
+
 **File**: `apps/backend/src/positions/__tests__/position-tracking.integration.spec.ts`
 
 **Test Coverage** (~40 tests):
@@ -434,11 +449,13 @@ describe('Position Tracking Integration', () => {
 ```
 
 **Setup Requirements**:
+
 - Test database with migrations
 - Mock DFlow API server
 - Sample wallet with test positions
 
 #### 2. GraphQL API Integration
+
 **File**: `apps/backend/src/__tests__/graphql.integration.spec.ts`
 
 **Test Coverage** (~60 tests):
@@ -470,6 +487,7 @@ describe('GraphQL API Integration', () => {
 ```
 
 **Tools**:
+
 - `supertest` for HTTP requests
 - Test GraphQL client
 - Database seeding utilities
@@ -477,6 +495,7 @@ describe('GraphQL API Integration', () => {
 ### Frontend Integration Tests
 
 #### 1. Apollo Client Integration
+
 **File**: `apps/frontend/src/__tests__/apollo.integration.spec.tsx`
 
 **Test Coverage** (~30 tests):
@@ -492,6 +511,7 @@ describe('Apollo Client Integration', () => {
 ```
 
 #### 2. Component Integration
+
 **File**: `apps/frontend/src/pages/__tests__/Portfolio.integration.spec.tsx`
 
 **Test Coverage** (~40 tests):
@@ -513,6 +533,7 @@ describe('Portfolio Page Integration', () => {
 ### Critical User Journeys
 
 #### 1. Position Discovery & Viewing
+
 **File**: `e2e/position-discovery.spec.ts`
 
 ```typescript
@@ -536,6 +557,7 @@ test.describe('Position Discovery', () => {
 ```
 
 #### 2. Position Redemption Flow
+
 **File**: `e2e/position-redemption.spec.ts`
 
 ```typescript
@@ -552,6 +574,7 @@ test.describe('Position Redemption', () => {
 ```
 
 #### 3. Events Discovery
+
 **File**: `e2e/events-discovery.spec.ts`
 
 ```typescript
@@ -760,13 +783,13 @@ jobs:
 
 **Goal**: Testing infrastructure + critical unit tests
 
-| Day | Focus | Deliverables |
-|-----|-------|--------------|
-| Mon | Setup infrastructure | Jest config, test database, CI/CD |
-| Tue | Backend unit tests | Position tracking service (50% coverage) |
-| Wed | Backend unit tests | Redemption service + DFlow service |
-| Thu | Frontend unit tests | Portfolio components |
-| Fri | Review & refine | Coverage report, fix gaps |
+| Day | Focus                | Deliverables                             |
+| --- | -------------------- | ---------------------------------------- |
+| Mon | Setup infrastructure | Jest config, test database, CI/CD        |
+| Tue | Backend unit tests   | Position tracking service (50% coverage) |
+| Wed | Backend unit tests   | Redemption service + DFlow service       |
+| Thu | Frontend unit tests  | Portfolio components                     |
+| Fri | Review & refine      | Coverage report, fix gaps                |
 
 **Target**: 60% unit test coverage
 
@@ -774,13 +797,13 @@ jobs:
 
 **Goal**: Integration tests + E2E foundation
 
-| Day | Focus | Deliverables |
-|-----|-------|--------------|
-| Mon | Backend integration | Position tracking flow |
-| Tue | Backend integration | GraphQL API tests |
-| Wed | Frontend integration | Apollo client + components |
-| Thu | E2E setup | Playwright config, critical flows |
-| Fri | Documentation | Testing guide, best practices |
+| Day | Focus                | Deliverables                      |
+| --- | -------------------- | --------------------------------- |
+| Mon | Backend integration  | Position tracking flow            |
+| Tue | Backend integration  | GraphQL API tests                 |
+| Wed | Frontend integration | Apollo client + components        |
+| Thu | E2E setup            | Playwright config, critical flows |
+| Fri | Documentation        | Testing guide, best practices     |
 
 **Target**: 70% integration coverage, 5+ E2E tests
 
@@ -788,13 +811,13 @@ jobs:
 
 **Goal**: Complete coverage + automation
 
-| Day | Focus | Deliverables |
-|-----|-------|--------------|
-| Mon | Fill unit test gaps | 80% unit coverage |
-| Tue | E2E tests | 15+ E2E scenarios |
-| Wed | Performance tests | Load testing, benchmarks |
-| Thu | CI/CD refinement | Optimize pipeline, parallel tests |
-| Fri | Final review | Coverage report, documentation |
+| Day | Focus               | Deliverables                      |
+| --- | ------------------- | --------------------------------- |
+| Mon | Fill unit test gaps | 80% unit coverage                 |
+| Tue | E2E tests           | 15+ E2E scenarios                 |
+| Wed | Performance tests   | Load testing, benchmarks          |
+| Thu | CI/CD refinement    | Optimize pipeline, parallel tests |
+| Fri | Final review        | Coverage report, documentation    |
 
 **Target**: 80% unit, 70% integration, 20 E2E tests
 
@@ -804,13 +827,13 @@ jobs:
 
 ### Coverage Targets
 
-| Metric | Current | Target (Sprint 4) | Target (Sprint 5) |
-|--------|---------|-------------------|-------------------|
-| Unit Test Coverage | 0% | 60% | 80%+ |
-| Integration Coverage | 0% | 50% | 70%+ |
-| E2E Tests | 0 | 5 | 20+ |
-| Test Execution Time | N/A | <5 min | <3 min |
-| CI/CD Pass Rate | N/A | 95%+ | 98%+ |
+| Metric               | Current | Target (Sprint 4) | Target (Sprint 5) |
+| -------------------- | ------- | ----------------- | ----------------- |
+| Unit Test Coverage   | 0%      | 60%               | 80%+              |
+| Integration Coverage | 0%      | 50%               | 70%+              |
+| E2E Tests            | 0       | 5                 | 20+               |
+| Test Execution Time  | N/A     | <5 min            | <3 min            |
+| CI/CD Pass Rate      | N/A     | 95%+              | 98%+              |
 
 ### Quality Metrics
 
@@ -826,15 +849,16 @@ jobs:
 ### Test Structure
 
 **Follow AAA Pattern**:
+
 ```typescript
 describe('Feature', () => {
   it('should do something when condition', () => {
     // Arrange
     const input = createTestData();
-    
+
     // Act
     const result = serviceMethod(input);
-    
+
     // Assert
     expect(result).toEqual(expectedOutput);
   });
@@ -875,7 +899,6 @@ const createTestPosition = (overrides?: Partial<UserPosition>) => ({
   - Financial calculations (P&L, prices)
   - Redemption logic
   - Order creation
-  
 - **Business logic**: 80%+ coverage required
   - Service methods
   - Resolvers
@@ -978,14 +1001,14 @@ pnpm add -D codecov
 
 ### Test Ownership
 
-| Area | Owner | Reviewer |
-|------|-------|----------|
-| Backend Unit Tests | Backend Dev | Tech Lead |
-| Backend Integration | Backend Dev | Tech Lead |
-| Frontend Unit Tests | Frontend Dev | Tech Lead |
-| Frontend Integration | Frontend Dev | Tech Lead |
-| E2E Tests | QA/Full Stack | Team |
-| CI/CD Pipeline | DevOps/Lead | Team |
+| Area                 | Owner         | Reviewer  |
+| -------------------- | ------------- | --------- |
+| Backend Unit Tests   | Backend Dev   | Tech Lead |
+| Backend Integration  | Backend Dev   | Tech Lead |
+| Frontend Unit Tests  | Frontend Dev  | Tech Lead |
+| Frontend Integration | Frontend Dev  | Tech Lead |
+| E2E Tests            | QA/Full Stack | Team      |
+| CI/CD Pipeline       | DevOps/Lead   | Team      |
 
 ### Development Workflow
 
@@ -1033,6 +1056,7 @@ pnpm add -D codecov
 ### A. Example Test Files
 
 **Position Tracking Service Test**:
+
 ```typescript
 // apps/backend/src/positions/__tests__/position-tracking.service.spec.ts
 import { Test, TestingModule } from '@nestjs/testing';
@@ -1067,7 +1091,7 @@ describe('PositionTrackingService', () => {
       // Arrange
       const position = createTestPosition({
         balance: 100,
-        entryPrice: 0.50,
+        entryPrice: 0.5,
         currentPrice: 0.65,
       });
 
@@ -1082,7 +1106,7 @@ describe('PositionTrackingService', () => {
       // Arrange
       const position = createTestPosition({
         balance: 100,
-        entryPrice: 0.70,
+        entryPrice: 0.7,
         currentPrice: 0.45,
       });
 
@@ -1116,9 +1140,9 @@ export const createTestPosition = (
   marketTitle: 'Test Market',
   outcome: 'YES',
   baseMint: 'USDC',
-  entryPrice: 0.50,
-  currentPrice: 0.60,
-  marketPrice: 0.60,
+  entryPrice: 0.5,
+  currentPrice: 0.6,
+  marketPrice: 0.6,
   estimatedValue: 60,
   unrealizedPnL: 10,
   unrealizedPnLPercent: 20,
@@ -1168,6 +1192,7 @@ This automation testing plan provides a comprehensive roadmap to address the cri
 5. **Maintain long-term code quality** as the project scales
 
 **Next Steps**:
+
 1. Review and approve this plan with the team
 2. Begin Sprint 4 with infrastructure setup
 3. Implement tests incrementally alongside new features

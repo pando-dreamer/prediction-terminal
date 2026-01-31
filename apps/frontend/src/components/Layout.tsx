@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { TrendingUp, BarChart3, Calendar } from 'lucide-react';
+import { BarChart3, Calendar, Settings } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { MobileBottomNav } from './layout/MobileBottomNav';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -41,60 +42,88 @@ function WalletConnectionSection() {
   );
 }
 
-export function Layout({ children }: LayoutProps) {
+function DesktopSidebar() {
   const location = useLocation();
 
   const navigation = [
     { name: 'Events', href: '/', icon: Calendar },
-    { name: 'Markets', href: '/markets', icon: TrendingUp },
     { name: 'Portfolio', href: '/portfolio', icon: BarChart3 },
+    { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
   return (
-    <div className="flex h-screen bg-slate-900">
-      {/* Sidebar */}
-      <div className="w-64 bg-slate-800 border-r border-slate-700">
-        <div className="p-6">
-          <h1 className="text-2xl font-bold text-blue-400">
+    <div className="flex flex-col h-full bg-slate-800 border-r border-slate-700">
+      <div className="p-6">
+        <h1 className="text-2xl font-bold text-blue-400">
+          Prediction Terminal
+        </h1>
+      </div>
+
+      <nav className="flex-1 px-4 space-y-2">
+        {navigation.map(item => {
+          const isActive =
+            item.href === '/'
+              ? location.pathname === '/'
+              : location.pathname.startsWith(item.href);
+          return (
+            <Link
+              key={item.name}
+              to={item.href}
+              className={cn(
+                'flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors',
+                isActive
+                  ? 'bg-blue-600 text-white'
+                  : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+              )}
+            >
+              <item.icon className="mr-3 h-5 w-5" />
+              {item.name}
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="p-4 border-t border-slate-700">
+        <WalletConnectionSection />
+      </div>
+    </div>
+  );
+}
+
+export function Layout({ children }: LayoutProps) {
+  return (
+    <div className="min-h-screen bg-slate-900">
+      {/* Desktop sidebar - hidden on mobile */}
+      <aside className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
+        <DesktopSidebar />
+      </aside>
+
+      {/* Mobile header with logo - visible only on mobile */}
+      <header className="lg:hidden bg-slate-800/95 backdrop-blur-lg border-b border-slate-700/50 sticky top-0 z-30">
+        <div className="flex items-center justify-center h-14 px-4">
+          <h1 className="text-xl font-bold text-blue-400">
             Prediction Terminal
           </h1>
         </div>
+      </header>
 
-        <nav className="px-4 space-y-2">
-          {navigation.map(item => {
-            const isActive =
-              item.href === '/'
-                ? location.pathname === '/'
-                : location.pathname.startsWith(item.href);
-            return (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={cn(
-                  'flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors',
-                  isActive
-                    ? 'bg-blue-600 text-white'
-                    : 'text-slate-300 hover:bg-slate-700 hover:text-white'
-                )}
-              >
-                <item.icon className="mr-3 h-5 w-5" />
-                {item.name}
-              </Link>
-            );
-          })}
-        </nav>
+      {/* Main content area */}
+      <main
+        className={cn(
+          'min-h-screen',
+          // Mobile: add bottom padding for nav, no left padding
+          'pb-20 lg:pb-0',
+          // Desktop: add left padding for sidebar
+          'lg:pl-64'
+        )}
+      >
+        <div className="h-full p-4 lg:p-6">{children}</div>
+      </main>
 
-        <div className="absolute bottom-4 left-4 right-4 px-4">
-          <WalletConnectionSection />
-        </div>
-      </div>
-
-      {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <main className="flex-1 overflow-auto p-6 bg-slate-900">
-          {children}
-        </main>
-      </div>
+      {/* Mobile bottom navigation - visible only on mobile */}
+      <nav className="fixed bottom-0 inset-x-0 z-40 lg:hidden">
+        <MobileBottomNav />
+      </nav>
     </div>
   );
 }

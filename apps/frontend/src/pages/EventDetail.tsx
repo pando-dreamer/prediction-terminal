@@ -5,8 +5,6 @@ import { useWallet, useConnection } from '../contexts/WalletContext';
 import { VersionedTransaction, PublicKey } from '@solana/web3.js';
 import {
   getAssociatedTokenAddress,
-  getAccount,
-  getMint,
   TOKEN_2022_PROGRAM_ID,
 } from '@solana/spl-token';
 import {
@@ -18,7 +16,7 @@ import {
 } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
-import { ArrowLeft, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronUp, X } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -164,6 +162,7 @@ export function EventDetail() {
 
   // Trading component state - must be at top level before any early returns
   const [selectedMarket, setSelectedMarket] = useState<any>(null);
+  const [hasOpenedPanel, setHasOpenedPanel] = useState(false);
   const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
   const [side, setSide] = useState<'yes' | 'no'>('yes');
   const [amount, setAmount] = useState<number>(0);
@@ -184,9 +183,23 @@ export function EventDetail() {
     yesMint: string;
     noMint: string;
   } | null>(null);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [touchStartY, setTouchStartY] = useState<number>(0);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
 
   // USDC mint address
   const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+
+  // Detect mobile
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
 
   // Derived data
   const event = data?.dflowEvent;
@@ -282,10 +295,13 @@ export function EventDetail() {
 
   // Set initial selected market when activeMarkets are available
   useEffect(() => {
-    if (activeMarkets.length > 0 && !selectedMarket) {
-      setSelectedMarket(activeMarkets[0]);
+    if (activeMarkets.length > 0 && !selectedMarket && !hasOpenedPanel) {
+      // On mobile, don't auto-select a market initially
+      if (!isMobile) {
+        setSelectedMarket(activeMarkets[0]);
+      }
     }
-  }, [activeMarkets, selectedMarket]);
+  }, [activeMarkets, selectedMarket, hasOpenedPanel, isMobile]);
 
   // Fetch market mints when selectedMarket changes
   useEffect(() => {
@@ -518,24 +534,24 @@ export function EventDetail() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div>Loading event details...</div>
+        <div className="text-sm md:text-base">Loading event details...</div>
       </div>
     );
   }
 
   if (error || !data?.dflowEvent) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6 px-4 md:px-0">
         <div className="flex items-center gap-4">
           <Link to="/">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" className="touch-target">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Events
+              Back
             </Button>
           </Link>
         </div>
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">
+        <div className="text-center py-8 md:py-12">
+          <p className="text-sm md:text-base text-muted-foreground px-4">
             {error
               ? `Error loading event: ${error.message}`
               : 'Event not found'}
@@ -546,50 +562,57 @@ export function EventDetail() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
+    <div className="space-y-4 md:space-y-6 pb-24 lg:pb-0">
+      {/* Header - Mobile optimized */}
+      <div className="flex items-center gap-3 md:gap-4">
         <Link to="/">
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors border border-slate-700">
+          <button className="flex items-center gap-2 px-3 py-2 md:px-4 text-sm font-medium text-slate-300 hover:text-white active:bg-slate-800 hover:bg-slate-800 rounded-lg transition-colors border border-slate-700 touch-target tap-highlight-none">
             <ArrowLeft className="w-4 h-4" />
-            Back to Events
+            <span className="hidden xs:inline">Back to Events</span>
+            <span className="xs:hidden">Back</span>
           </button>
         </Link>
       </div>
 
       {/* Top Section: Event Details + Trading Component */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Left: Event Details Card */}
         <div className="lg:col-span-2">
           <Card>
-            <CardHeader>
-              <div className="flex justify-between items-start">
+            <CardHeader className="p-4 md:p-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <CardTitle className="text-2xl">{event.title}</CardTitle>
+                  <div className="flex items-start gap-3 mb-2">
                     {event.imageUrl && (
                       <img
                         src={event.imageUrl}
                         alt={event.title}
-                        className="w-16 h-16 object-cover rounded-md"
+                        loading="lazy"
+                        decoding="async"
+                        className="w-12 h-12 md:w-16 md:h-16 object-cover rounded-md flex-shrink-0"
                       />
                     )}
+                    <CardTitle className="text-lg md:text-2xl leading-tight">
+                      {event.title}
+                    </CardTitle>
                   </div>
-                  <CardDescription className="text-base">
+                  <CardDescription className="text-sm md:text-base">
                     {event.subtitle}
                   </CardDescription>
-                  <div className="flex gap-2 mt-3">
-                    <Badge variant="secondary">
+                  <div className="flex flex-wrap gap-1.5 md:gap-2 mt-3">
+                    <Badge variant="secondary" className="text-xs">
                       {event.competition || 'General'}
                     </Badge>
                     {event.competitionScope && (
-                      <Badge variant="outline">{event.competitionScope}</Badge>
+                      <Badge variant="outline" className="text-xs">
+                        {event.competitionScope}
+                      </Badge>
                     )}
-                    <Badge variant="outline">
+                    <Badge variant="outline" className="text-xs">
                       {event.markets?.length || 0} markets
                     </Badge>
                     {activeMarkets.length > 0 && (
-                      <Badge variant="default" className="bg-green-500">
+                      <Badge variant="default" className="bg-green-500 text-xs">
                         {activeMarkets.length} active
                       </Badge>
                     )}
@@ -597,29 +620,37 @@ export function EventDetail() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <CardContent className="p-4 md:p-6 pt-0">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Total Volume</p>
-                  <p className="text-xl font-bold">
+                  <p className="text-xs md:text-sm text-muted-foreground">
+                    Total Volume
+                  </p>
+                  <p className="text-base md:text-xl font-bold">
                     {formatVolume(event.volume)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">24h Volume</p>
-                  <p className="text-xl font-bold">
+                  <p className="text-xs md:text-sm text-muted-foreground">
+                    24h Volume
+                  </p>
+                  <p className="text-base md:text-xl font-bold">
                     {formatVolume(event.volume24h)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Liquidity</p>
-                  <p className="text-xl font-bold">
+                  <p className="text-xs md:text-sm text-muted-foreground">
+                    Liquidity
+                  </p>
+                  <p className="text-base md:text-xl font-bold">
                     {formatVolume(event.liquidity)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Open Interest</p>
-                  <p className="text-xl font-bold">
+                  <p className="text-xs md:text-sm text-muted-foreground">
+                    Open Interest
+                  </p>
+                  <p className="text-base md:text-xl font-bold">
                     {formatVolume(event.openInterest)}
                   </p>
                 </div>
@@ -628,14 +659,18 @@ export function EventDetail() {
               {/* Settlement Sources */}
               {event.settlementSources &&
                 event.settlementSources.length > 0 && (
-                  <div className="mt-6">
-                    <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                  <div className="mt-4 md:mt-6">
+                    <h3 className="text-xs md:text-sm font-medium text-muted-foreground mb-2">
                       Settlement Sources
                     </h3>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1.5 md:gap-2">
                       {event.settlementSources.map(
                         (source: any, index: number) => (
-                          <Badge key={index} variant="outline">
+                          <Badge
+                            key={index}
+                            variant="outline"
+                            className="text-xs"
+                          >
                             <a
                               href={source.url}
                               target="_blank"
@@ -653,21 +688,20 @@ export function EventDetail() {
             </CardContent>
           </Card>
 
-          {/* Active Markets Section - Same width as Event Details */}
-          <div className="lg:max-w-[100%]">
-            {/* 2/3 width to match event details */}
+          {/* Active Markets Section */}
+          <div className="mt-4 md:mt-6">
             {/* Active Markets */}
             {activeMarkets.length > 0 && (
               <div>
-                <div className="flex items-center justify-between px-4 py-3 bg-slate-800 rounded-lg border border-slate-700 mb-4 mt-4">
-                  <h2 className="text-xl font-bold text-white">
+                <div className="flex items-center justify-between px-3 md:px-4 py-2.5 md:py-3 bg-slate-800 rounded-lg border border-slate-700 mb-3 md:mb-4">
+                  <h2 className="text-lg md:text-xl font-bold text-white">
                     Active Markets
                   </h2>
-                  <span className="px-3 py-1 bg-blue-600 text-white text-sm font-semibold rounded-full">
+                  <span className="px-2.5 md:px-3 py-1 bg-blue-600 text-white text-xs md:text-sm font-semibold rounded-full">
                     {activeMarkets.length}
                   </span>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2 md:space-y-3">
                   {activeMarkets.map((market: any) => {
                     // Calculate probability from YES price (assuming 0-1 range maps to 0-100%)
                     const probability = market.yesPrice
@@ -679,35 +713,40 @@ export function EventDetail() {
                     return (
                       <div
                         key={market.ticker}
-                        className={`flex items-center justify-between p-4 border rounded-lg transition-all cursor-pointer ${
+                        className={`flex flex-col sm:flex-row sm:items-center justify-between p-3 md:p-4 border rounded-lg transition-all cursor-pointer tap-highlight-none ${
                           selectedMarket?.ticker === market.ticker
                             ? 'bg-blue-600/20 border-blue-500 shadow-lg shadow-blue-500/20'
-                            : 'bg-slate-800/50 border-slate-700 hover:bg-slate-800 hover:border-slate-600'
+                            : 'bg-slate-800/50 border-slate-700 hover:bg-slate-800 active:bg-slate-700 hover:border-slate-600'
                         }`}
+                        onClick={() => setSelectedMarket(market)}
                       >
-                        {/* Left: Market Title & Volume - Clickable area */}
-                        <div
-                          className="flex-1 min-w-0 cursor-pointer"
-                          onClick={() => {
-                            setSelectedMarket(market);
-                          }}
-                        >
-                          <h3 className="font-semibold text-base truncate text-white">
-                            {market.title}
-                          </h3>
-                          <p className="text-sm text-slate-400">
-                            {formatVolume(market.volume)} Vol.
-                          </p>
+                        {/* Top row on mobile: Title & Probability */}
+                        <div className="flex items-center justify-between sm:flex-1 sm:min-w-0 mb-2 sm:mb-0">
+                          <div className="flex-1 min-w-0 mr-3">
+                            <h3 className="font-semibold text-sm md:text-base line-clamp-2 text-white">
+                              {market.title}
+                            </h3>
+                            <p className="text-xs md:text-sm text-slate-400">
+                              {formatVolume(market.volume)} Vol.
+                            </p>
+                          </div>
+
+                          {/* Probability - visible on mobile next to title */}
+                          <div className="flex items-center sm:hidden">
+                            <span className="text-xl font-bold text-white">
+                              {probabilityDisplay}
+                            </span>
+                          </div>
                         </div>
 
-                        {/* Center: Probability */}
-                        <div className="flex items-center justify-center min-w-[80px] mx-6">
-                          <span className="text-2xl font-bold text-white">
+                        {/* Center: Probability - hidden on mobile, visible on sm+ */}
+                        <div className="hidden sm:flex items-center justify-center min-w-[80px] mx-4 md:mx-6">
+                          <span className="text-xl md:text-2xl font-bold text-white">
                             {probabilityDisplay}
                           </span>
                           {probability > 1 && probability < 99 && (
                             <span
-                              className={`text-sm ml-2 ${
+                              className={`text-xs md:text-sm ml-2 ${
                                 probability > 50
                                   ? 'text-green-600'
                                   : 'text-red-600'
@@ -719,37 +758,39 @@ export function EventDetail() {
                           )}
                         </div>
 
-                        {/* Right: Buy Buttons */}
-                        <div className="flex gap-2 min-w-0">
+                        {/* Bottom row on mobile: Buy Buttons */}
+                        <div className="flex gap-2 w-full sm:w-auto sm:min-w-0">
                           <Button
                             size="sm"
-                            className="bg-green-600 hover:bg-green-700 min-w-[100px]"
+                            className="flex-1 sm:flex-initial bg-green-600 hover:bg-green-700 active:bg-green-800 h-10 sm:h-9 text-xs sm:text-sm sm:min-w-[100px] touch-target"
                             onClick={e => {
                               e.stopPropagation();
                               e.preventDefault();
                               setSelectedMarket(market);
                               setSide('yes');
+                              setHasOpenedPanel(true);
                             }}
                           >
-                            Buy Yes{' '}
+                            Yes{' '}
                             {market.yesPrice
-                              ? `${(market.yesPrice * 100).toFixed(1)}¢`
+                              ? `${(market.yesPrice * 100).toFixed(0)}¢`
                               : 'N/A'}
                           </Button>
                           <Button
                             size="sm"
                             variant="destructive"
-                            className="min-w-[100px]"
+                            className="flex-1 sm:flex-initial h-10 sm:h-9 text-xs sm:text-sm sm:min-w-[100px] touch-target"
                             onClick={e => {
                               e.stopPropagation();
                               e.preventDefault();
                               setSelectedMarket(market);
                               setSide('no');
+                              setHasOpenedPanel(true);
                             }}
                           >
-                            Buy No{' '}
+                            No{' '}
                             {market.noPrice
-                              ? `${(market.noPrice * 100).toFixed(1)}¢`
+                              ? `${(market.noPrice * 100).toFixed(0)}¢`
                               : 'N/A'}
                           </Button>
                         </div>
@@ -762,16 +803,16 @@ export function EventDetail() {
 
             {/* Completed Markets */}
             {completedMarkets.length > 0 && (
-              <div className="mt-6">
+              <div className="mt-4 md:mt-6">
                 <button
                   onClick={() => setShowCompletedMarkets(!showCompletedMarkets)}
-                  className="w-full flex items-center justify-between px-4 py-3 bg-slate-800 rounded-lg border border-slate-700 mb-4 hover:bg-slate-700 transition-colors"
+                  className="w-full flex items-center justify-between px-3 md:px-4 py-2.5 md:py-3 bg-slate-800 rounded-lg border border-slate-700 mb-3 md:mb-4 hover:bg-slate-700 active:bg-slate-600 transition-colors touch-target tap-highlight-none"
                 >
-                  <div className="flex items-center gap-3">
-                    <h2 className="text-xl font-bold text-white">
+                  <div className="flex items-center gap-2 md:gap-3">
+                    <h2 className="text-lg md:text-xl font-bold text-white">
                       Completed Markets
                     </h2>
-                    <span className="px-3 py-1 bg-slate-600 text-white text-sm font-semibold rounded-full">
+                    <span className="px-2.5 md:px-3 py-1 bg-slate-600 text-white text-xs md:text-sm font-semibold rounded-full">
                       {completedMarkets.length}
                     </span>
                   </div>
@@ -823,8 +864,8 @@ export function EventDetail() {
           </div>
         </div>
 
-        {/* Right: Trading Component */}
-        <div className="lg:col-span-1">
+        {/* Right: Trading Component - Hidden on mobile, shown on lg+ */}
+        <div className="hidden lg:block lg:col-span-1">
           <div className="sticky top-6">
             {selectedMarket && (
               <Card className="bg-slate-800 text-white">
@@ -834,6 +875,8 @@ export function EventDetail() {
                       <img
                         src={event.imageUrl}
                         alt={selectedMarket.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-12 h-12 object-cover rounded-lg"
                       />
                     )}
@@ -848,7 +891,7 @@ export function EventDetail() {
                   {/* Buy/Sell Toggle */}
                   <div className="flex border-b border-slate-600">
                     <button
-                      className={`flex-1 py-2 text-center font-medium ${
+                      className={`flex-1 py-2 text-center font-medium touch-target ${
                         tradeType === 'buy'
                           ? 'text-white border-b-2 border-white'
                           : 'text-slate-400'
@@ -858,7 +901,7 @@ export function EventDetail() {
                       Buy
                     </button>
                     <button
-                      className={`flex-1 py-2 text-center font-medium ${
+                      className={`flex-1 py-2 text-center font-medium touch-target ${
                         tradeType === 'sell'
                           ? 'text-white border-b-2 border-white'
                           : 'text-slate-400'
@@ -1141,6 +1184,227 @@ export function EventDetail() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Fixed Bottom Trade CTA */}
+      {selectedMarket && (
+        <div className="fixed bottom-16 left-0 right-0 lg:hidden z-30 safe-bottom">
+          {/* Trade Sheet */}
+          <div
+            className="bg-slate-800 rounded-t-2xl border-t border-slate-700 shadow-2xl relative"
+            onTouchStart={e => {
+              setTouchStartY(e.touches[0].clientY);
+              setIsDragging(true);
+            }}
+            onTouchMove={e => {
+              if (!isDragging) return;
+              const currentY = e.touches[0].clientY;
+              const deltaY = currentY - touchStartY;
+
+              // If scrolled down more than 100px, close the panel
+              if (deltaY > 100) {
+                setSelectedMarket(null);
+                setHasOpenedPanel(true);
+                setIsDragging(false);
+              }
+            }}
+            onTouchEnd={() => {
+              setIsDragging(false);
+            }}
+          >
+            {/* Close button - top right */}
+            <button
+              onClick={e => {
+                e.stopPropagation();
+                e.preventDefault();
+                setSelectedMarket(null);
+                setHasOpenedPanel(true);
+              }}
+              className="absolute right-3 top-1 z-10 p-2 text-slate-400 hover:text-white active:bg-slate-700 rounded-full"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Handle indicator */}
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 rounded-full bg-slate-500" />
+            </div>
+
+            {/* Buy/Sell Dropdown */}
+            <div className="flex items-center justify-between px-4 pb-3">
+              <Select
+                value={tradeType}
+                onValueChange={(value: 'buy' | 'sell') => setTradeType(value)}
+              >
+                <SelectTrigger className="w-24 bg-transparent border-none text-white font-semibold p-0 h-auto focus:ring-0 focus:ring-offset-0">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-700 border-slate-600">
+                  <SelectItem
+                    value="buy"
+                    className="text-white hover:bg-slate-600"
+                  >
+                    Buy
+                  </SelectItem>
+                  <SelectItem
+                    value="sell"
+                    className="text-white hover:bg-slate-600"
+                  >
+                    Sell
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Market Info */}
+            <div className="flex items-center gap-3 px-4 pb-3 border-b border-slate-700">
+              {event?.imageUrl && (
+                <img
+                  src={event.imageUrl}
+                  alt={selectedMarket.title}
+                  className="w-10 h-10 rounded-lg object-cover"
+                />
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-white truncate">{event?.title}</p>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-300 truncate">
+                    {selectedMarket.yesSubTitle || 'Yes'}
+                  </span>
+                  <Badge
+                    className={`text-[10px] px-1.5 py-0.5 ${
+                      side === 'yes'
+                        ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                        : 'bg-red-500/20 text-red-400 border-red-500/30'
+                    }`}
+                  >
+                    {side === 'yes' ? 'Yes' : 'No'} 💬
+                  </Badge>
+                </div>
+              </div>
+            </div>
+
+            {/* Amount Input */}
+            <div className="p-4 space-y-3">
+              {/* Amount with +/- buttons */}
+              <div className="flex items-center justify-center gap-4">
+                <button
+                  onClick={() => setAmount(Math.max(0, amount - 1))}
+                  className="w-11 h-11 rounded-full bg-slate-700 text-white text-xl font-medium flex items-center justify-center active:bg-slate-600"
+                >
+                  −
+                </button>
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-white">
+                    ${amount || 0}
+                  </div>
+                </div>
+                <button
+                  onClick={() => setAmount(amount + 1)}
+                  className="w-11 h-11 rounded-full bg-slate-700 text-white text-xl font-medium flex items-center justify-center active:bg-slate-600"
+                >
+                  +
+                </button>
+              </div>
+
+              {/* Quick Amount Buttons */}
+              <div className="flex justify-center gap-2">
+                {[1, 20, 100].map(value => (
+                  <button
+                    key={value}
+                    onClick={() => setAmount(amount + value)}
+                    className="px-4 py-2 rounded-full bg-slate-700 text-slate-300 text-sm font-medium active:bg-slate-600"
+                  >
+                    +${value}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setAmount(balances.usdc)}
+                  className="px-4 py-2 rounded-full bg-slate-700 text-slate-300 text-sm font-medium active:bg-slate-600"
+                >
+                  Max
+                </button>
+              </div>
+
+              {/* Summary */}
+              <div className="space-y-1 pt-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-400">Total</span>
+                  <span className="text-white font-medium">
+                    ${amount.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-400">To win</span>
+                  <span className="text-green-400 font-medium">
+                    🍀 $
+                    {(
+                      amount /
+                      (side === 'yes'
+                        ? selectedMarket.yesPrice || 0.5
+                        : selectedMarket.noPrice || 0.5)
+                    ).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Yes/No Toggle */}
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <button
+                  onClick={() => setSide('yes')}
+                  className={`h-12 rounded-xl font-semibold text-base transition-all ${
+                    side === 'yes'
+                      ? 'bg-green-600 text-white'
+                      : 'bg-slate-700 text-slate-300'
+                  }`}
+                >
+                  Yes{' '}
+                  {selectedMarket.yesPrice
+                    ? `${(selectedMarket.yesPrice * 100).toFixed(0)}¢`
+                    : '-'}
+                </button>
+                <button
+                  onClick={() => setSide('no')}
+                  className={`h-12 rounded-xl font-semibold text-base transition-all ${
+                    side === 'no'
+                      ? 'bg-red-600 text-white'
+                      : 'bg-slate-700 text-slate-300'
+                  }`}
+                >
+                  No{' '}
+                  {selectedMarket.noPrice
+                    ? `${(selectedMarket.noPrice * 100).toFixed(0)}¢`
+                    : '-'}
+                </button>
+              </div>
+
+              {/* Trade Button */}
+              <Button
+                className={`w-full h-14 text-lg font-bold rounded-xl ${
+                  side === 'yes'
+                    ? 'bg-green-600 hover:bg-green-700 active:bg-green-800'
+                    : 'bg-red-600 hover:bg-red-700 active:bg-red-800'
+                }`}
+                onClick={handleExecuteTrade}
+                disabled={isTrading || !connected || amount <= 0}
+              >
+                {!connected
+                  ? 'Connect Wallet'
+                  : isTrading
+                    ? 'Processing...'
+                    : amount <= 0
+                      ? 'Enter Amount'
+                      : `${tradeType === 'buy' ? 'Buy' : 'Sell'} ${side === 'yes' ? 'Yes' : 'No'}`}
+              </Button>
+
+              {/* Terms */}
+              <p className="text-center text-[10px] text-slate-500">
+                By trading, you agree to the{' '}
+                <span className="text-blue-400 underline">Terms of Use</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

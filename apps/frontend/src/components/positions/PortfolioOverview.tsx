@@ -72,12 +72,12 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
 
   if (loading) {
     return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:gap-6 grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (
           <Card key={i} className="animate-pulse">
-            <CardContent className="p-6">
-              <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-              <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+            <CardContent className="p-4 md:p-6">
+              <div className="h-3 md:h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+              <div className="h-6 md:h-8 bg-gray-200 rounded w-3/4"></div>
             </CardContent>
           </Card>
         ))}
@@ -88,22 +88,22 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
   const isProfitable = summary.netPnL >= 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Main Portfolio Metrics */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:gap-6 grid-cols-2 lg:grid-cols-4">
         {/* Total Portfolio Value */}
         <Card className="bg-gradient-to-br from-blue-50 to-indigo-100 border-blue-200">
-          <CardContent className="p-6">
+          <CardContent className="p-4 md:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-700 mb-1">
+                <p className="text-xs md:text-sm font-medium text-blue-700 mb-1">
                   Total Value
                 </p>
-                <p className="text-2xl font-bold text-blue-900">
+                <p className="text-lg md:text-2xl font-bold text-blue-900">
                   {formatCurrency(summary.totalValue)}
                 </p>
               </div>
-              <DollarSign className="h-8 w-8 text-blue-600" />
+              <DollarSign className="h-6 w-6 md:h-8 md:w-8 text-blue-600 flex-shrink-0" />
             </div>
           </CardContent>
         </Card>
@@ -117,12 +117,12 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
               : 'bg-gradient-to-br from-red-50 to-rose-100 border-red-200'
           )}
         >
-          <CardContent className="p-6">
+          <CardContent className="p-4 md:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p
                   className={cn(
-                    'text-sm font-medium mb-1',
+                    'text-xs md:text-sm font-medium mb-1',
                     isProfitable ? 'text-green-700' : 'text-red-700'
                   )}
                 >
@@ -130,7 +130,7 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
                 </p>
                 <p
                   className={cn(
-                    'text-2xl font-bold',
+                    'text-lg md:text-2xl font-bold',
                     isProfitable ? 'text-green-900' : 'text-red-900'
                   )}
                 >
@@ -138,7 +138,7 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
                 </p>
                 <p
                   className={cn(
-                    'text-sm font-medium',
+                    'text-xs md:text-sm font-medium',
                     isProfitable ? 'text-green-600' : 'text-red-600'
                   )}
                 >
@@ -146,9 +146,9 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
                 </p>
               </div>
               {isProfitable ? (
-                <TrendingUp className="h-8 w-8 text-green-600" />
+                <TrendingUp className="h-6 w-6 md:h-8 md:w-8 text-green-600 flex-shrink-0" />
               ) : (
-                <TrendingDown className="h-8 w-8 text-red-600" />
+                <TrendingDown className="h-6 w-6 md:h-8 md:w-8 text-red-600 flex-shrink-0" />
               )}
             </div>
           </CardContent>
@@ -156,33 +156,33 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
 
         {/* Active Positions */}
         <Card className="bg-gradient-to-br from-purple-50 to-violet-100 border-purple-200">
-          <CardContent className="p-6">
+          <CardContent className="p-4 md:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-purple-700 mb-1">
+                <p className="text-xs md:text-sm font-medium text-purple-700 mb-1">
                   Active Positions
                 </p>
-                <p className="text-2xl font-bold text-purple-900">
+                <p className="text-lg md:text-2xl font-bold text-purple-900">
                   {summary.activePositions}
                 </p>
-                <p className="text-sm text-purple-600">
+                <p className="text-xs md:text-sm text-purple-600">
                   of {summary.totalPositions} total
                 </p>
               </div>
-              <Target className="h-8 w-8 text-purple-600" />
+              <Target className="h-6 w-6 md:h-8 md:w-8 text-purple-600 flex-shrink-0" />
             </div>
           </CardContent>
         </Card>
 
         {/* Win Rate */}
         <Card className="bg-gradient-to-br from-amber-50 to-yellow-100 border-amber-200">
-          <CardContent className="p-6">
+          <CardContent className="p-4 md:p-6">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-amber-700 mb-1">
+              <div className="flex-1">
+                <p className="text-xs md:text-sm font-medium text-amber-700 mb-1">
                   Win Rate
                 </p>
-                <p className="text-2xl font-bold text-amber-900">
+                <p className="text-lg md:text-2xl font-bold text-amber-900">
                   {summary.winRate.toFixed(1)}%
                 </p>
                 <Progress
@@ -191,7 +191,7 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
                   // className="bg-amber-200"
                 />
               </div>
-              <PieChart className="h-8 w-8 text-amber-600" />
+              <PieChart className="h-6 w-6 md:h-8 md:w-8 text-amber-600 flex-shrink-0 ml-2" />
             </div>
           </CardContent>
         </Card>

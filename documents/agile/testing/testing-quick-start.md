@@ -123,10 +123,10 @@ describe('MyService', () => {
     it('should return expected result', () => {
       // Arrange
       const input = 'test';
-      
+
       // Act
       const result = service.myMethod(input);
-      
+
       // Assert
       expect(result).toBe('expected');
     });
@@ -151,11 +151,11 @@ describe('MyComponent', () => {
   it('should handle click events', async () => {
     const user = userEvent.setup();
     const handleClick = jest.fn();
-    
+
     render(<MyComponent onClick={handleClick} />);
-    
+
     await user.click(screen.getByRole('button'));
-    
+
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 });
@@ -171,10 +171,10 @@ test.describe('Feature Name', () => {
   test('should complete user flow', async ({ page }) => {
     // Navigate to page
     await page.goto('http://localhost:3000');
-    
+
     // Perform actions
     await page.click('button[data-testid="connect-wallet"]');
-    
+
     // Assert results
     await expect(page.locator('.portfolio-value')).toBeVisible();
   });
@@ -232,7 +232,7 @@ it('should fetch positions asynchronously', async () => {
 ```typescript
 it('should handle API errors gracefully', async () => {
   mockDFlowService.getDFlowEvents.mockRejectedValue(new Error('API Error'));
-  
+
   await expect(service.getEvents()).rejects.toThrow('API Error');
 });
 ```
@@ -245,11 +245,11 @@ import { useQuery } from '@apollo/client';
 
 it('should fetch data with hook', async () => {
   const { result } = renderHook(() => useQuery(GET_POSITIONS));
-  
+
   await waitFor(() => {
     expect(result.current.loading).toBe(false);
   });
-  
+
   expect(result.current.data).toBeDefined();
 });
 ```
@@ -289,6 +289,7 @@ git commit --no-verify
 ### Pull Request Checks
 
 All PRs must pass:
+
 - ✅ Unit tests
 - ✅ Integration tests
 - ✅ Coverage thresholds
@@ -367,6 +368,7 @@ pnpm test -- --listTests
 ---
 
 **Quick Links**:
+
 - [Full Testing Plan](./automation-testing-plan.md)
 - [Jest Configuration](../../apps/backend/jest.config.js)
 - [Playwright Configuration](../../playwright.config.ts)
