@@ -1169,20 +1169,26 @@ export function EventDetail() {
       {selectedMarket && (
         <div className="fixed bottom-16 left-0 right-0 lg:hidden z-30 safe-bottom">
           {/* Trade Sheet */}
-          <div className="bg-slate-800 rounded-t-2xl border-t border-slate-700 shadow-2xl">
-            {/* Header with close button */}
-            <div className="flex items-center justify-between px-4 pt-3 pb-2">
-              <div className="w-10 h-1 rounded-full bg-slate-500 mx-auto" />
-              <button
-                onClick={() => setSelectedMarket(null)}
-                className="absolute right-3 top-2 p-2 text-slate-400 hover:text-white active:bg-slate-700 rounded-full"
-              >
-                <X className="w-5 h-5" />
-              </button>
+          <div className="bg-slate-800 rounded-t-2xl border-t border-slate-700 shadow-2xl relative">
+            {/* Close button - top right */}
+            <button
+              onClick={e => {
+                e.stopPropagation();
+                e.preventDefault();
+                setSelectedMarket(null);
+              }}
+              className="absolute right-3 top-3 z-10 p-2 text-slate-400 hover:text-white active:bg-slate-700 rounded-full"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Handle indicator */}
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 rounded-full bg-slate-500" />
             </div>
 
             {/* Buy/Sell Dropdown */}
-            <div className="flex items-center justify-between px-4 pb-3">
+            <div className="flex items-center justify-between px-4 pb-3 pr-14">
               <Select
                 value={tradeType}
                 onValueChange={(value: 'buy' | 'sell') => setTradeType(value)}
