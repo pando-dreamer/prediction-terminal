@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BarChart3, Calendar } from 'lucide-react';
+import { BarChart3, Calendar, Settings } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
@@ -48,6 +48,7 @@ function DesktopSidebar() {
   const navigation = [
     { name: 'Events', href: '/', icon: Calendar },
     { name: 'Portfolio', href: '/portfolio', icon: BarChart3 },
+    { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
   return (

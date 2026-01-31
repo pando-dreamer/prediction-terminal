@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Calendar, BarChart3, Settings, type LucideIcon } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 interface NavItem {
   name: string;
@@ -17,6 +18,7 @@ const navItems: NavItem[] = [
 
 export function MobileBottomNav() {
   const location = useLocation();
+  const { connected, publicKey } = useWallet();
 
   const isActive = (href: string) => {
     if (href === '/') {
@@ -27,6 +29,19 @@ export function MobileBottomNav() {
 
   return (
     <nav className="bg-slate-800/95 backdrop-blur-lg border-t border-slate-700 safe-bottom">
+      {/* Connected wallet indicator */}
+      {connected && publicKey && (
+        <div className="flex items-center justify-center py-1.5 border-b border-slate-700/50 bg-slate-800/50">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-[10px] text-slate-400 font-mono">
+              {publicKey.toBase58().slice(0, 4)}...
+              {publicKey.toBase58().slice(-4)}
+            </span>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-around h-16">
         {navItems.map(item => {
           const active = isActive(item.href);

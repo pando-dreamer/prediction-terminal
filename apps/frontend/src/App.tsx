@@ -15,6 +15,9 @@ const EventDetail = lazy(() =>
 const Portfolio = lazy(() =>
   import('./pages/Portfolio').then(module => ({ default: module.Portfolio }))
 );
+const Settings = lazy(() =>
+  import('./pages/Settings').then(module => ({ default: module.Settings }))
+);
 
 // Loading fallback component
 const PageLoader = () => (
@@ -37,6 +40,7 @@ function App() {
               <Route path="/events" element={<Events />} />
               <Route path="/events/:ticker" element={<EventDetail />} />
               <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/settings" element={<Settings />} />
             </Routes>
           </Suspense>
         </Layout>
