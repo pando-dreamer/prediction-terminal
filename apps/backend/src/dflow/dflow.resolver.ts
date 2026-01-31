@@ -9,6 +9,10 @@ import {
   DFlowEventSortGraphQL,
 } from './entities/dflow-event.entity';
 import { DFlowOrderbookGraphQL } from './entities/orderbook.entity';
+import {
+  TagsByCategoriesResponse,
+  SeriesTemplate,
+} from './entities/dflow-tags.entity';
 import { DFlowMarket } from './interfaces/dflow-market.interface';
 import {
   DFlowEvent as IDFlowEvent,
@@ -122,6 +126,51 @@ export class DFlowResolver {
       offset || 0
     );
     return response.events.map(event => this.transformEventToGraphQL(event));
+  }
+
+  @Query(() => TagsByCategoriesResponse, { name: 'tagsByCategories' })
+  async getTagsByCategories(): Promise<TagsByCategoriesResponse> {
+    const tagsByCategories = await this.dflowService.getTagsByCategories();
+    return { tagsByCategories: JSON.stringify(tagsByCategories) };
+  }
+
+  @Query(() => [SeriesTemplate], { name: 'seriesByTags' })
+  async getSeriesByTags(
+    @Args('tags', { type: () => [String], nullable: true }) tags?: string[],
+    @Args('categories', { type: () => [String], nullable: true })
+    categories?: string[],
+    @Args('limit', { type: () => Number, nullable: true }) limit?: number,
+    @Args('offset', { type: () => Number, nullable: true }) offset?: number
+  ): Promise<SeriesTemplate[]> {
+    return this.dflowService.getSeriesByTags({
+      tags,
+      categories,
+      limit: limit || 20,
+      offset: offset || 0,
+    });
+  }
+
+  @Query(() => [DFlowEvent], { name: 'dflowEventsBySeries' })
+  async getEventsBySeries(
+    @Args('seriesTickers', { type: () => [String] }) seriesTickers: string[],
+    @Args('limit', { type: () => Number, nullable: true }) limit?: number,
+    @Args('offset', { type: () => Number, nullable: true }) offset?: number,
+    @Args('sort', { type: () => DFlowEventSortGraphQL, nullable: true })
+    sort?: DFlowEventSortGraphQL,
+    @Args('status', { type: () => DFlowMarketStatus, nullable: true })
+    status?: DFlowMarketStatus,
+    @Args('withNestedMarkets', { type: () => Boolean, nullable: true })
+    withNestedMarkets?: boolean
+  ): Promise<DFlowEvent[]> {
+    const events = await this.dflowService.getEventsBySeries(seriesTickers, {
+      limit: limit || 20,
+      offset: offset || 0,
+      sort: (sort as unknown as DFlowEventSort) || DFlowEventSort.VOLUME_24H,
+      status: status ? [status] : undefined,
+      withNestedMarkets: withNestedMarkets ?? true,
+    });
+
+    return events.map(event => this.transformEventToGraphQL(event));
   }
 
   @Query(() => DFlowOrderbookGraphQL, {

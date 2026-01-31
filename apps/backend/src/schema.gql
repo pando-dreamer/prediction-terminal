@@ -173,6 +173,11 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+enum ExecutionMode {
+  ASYNC
+  SYNC
+}
+
 input LoginInput {
   email: String!
   password: String!
@@ -227,10 +232,17 @@ enum MarketStatus {
 type Mutation {
   cancelDFlowOrder(signature: String!): Boolean!
   createMarket(createMarketInput: CreateMarketInput!): Market!
+  createRedemptionOrder(request: RedemptionRequestInput!): RedemptionResult!
   executeDFlowTrade(request: DFlowTradeRequestInput!): TradeResponse!
   login(loginInput: LoginInput!): User!
+  redeemPosition(amount: Float, positionId: String!): RedemptionResult!
+  refreshUserPositions(walletAddress: String!): RefreshResult!
   register(registerInput: RegisterInput!): User!
   resolveMarket(id: ID!, outcome: Boolean!): Market!
+  triggerFullRefresh(walletAddress: String!): RefreshResult!
+  triggerFullRefreshAll: [RefreshResult!]!
+  updatePortfolioSettings(settings: PortfolioSettingsInput!): Boolean!
+  updatePositionPrices(positionIds: [String!]!): Boolean!
 }
 
 type OrderbookLevel {
@@ -239,12 +251,111 @@ type OrderbookLevel {
   total: Float!
 }
 
+enum OutcomeType {
+  NO
+  YES
+}
+
+type PortfolioHistory {
+  createdAt: DateTime!
+  cumulativePnL: Float!
+  dailyPnL: Float!
+  id: ID!
+  netDeposits: Float!
+  portfolioReturn: Float
+  positionCount: Int!
+  snapshotDate: DateTime!
+  totalValue: Float!
+  userId: String!
+  walletAddress: String!
+  winRate: Float
+}
+
+input PortfolioSettingsInput {
+  autoRefreshInterval: Int
+  emailNotifications: Boolean
+  priceAlerts: Boolean
+  walletAddress: String!
+}
+
+type PortfolioSummary {
+  activePositions: Int!
+  availableBalance: Float!
+  averageHoldingPeriod: Float!
+  averagePositionSize: Float!
+  dailyPnL: Float!
+  diversificationScore: Float!
+  largestPosition: Float!
+  monthlyPnL: Float!
+  netPnL: Float!
+  portfolioReturn: Float!
+  portfolioRisk: RiskLevel!
+  redeemablePositions: Int!
+  redeemableValue: Float!
+  resolvedPositions: Int!
+  totalCostBasis: Float!
+  totalPositions: Int!
+  totalRealizedPnL: Float!
+  totalUnrealizedPnL: Float!
+  totalValue: Float!
+  weeklyPnL: Float!
+  winRate: Float!
+}
+
+input PositionFiltersInput {
+  marketStatus: String
+  minValue: Float
+  outcome: String
+  redeemableOnly: Boolean
+}
+
+enum PositionMarketStatus {
+  ACTIVE
+  CANCELLED
+  RESOLVED
+  SETTLED
+}
+
+type PositionTrade {
+  amount: Float!
+  createdAt: DateTime!
+  executionMode: ExecutionMode!
+  fee: Float!
+  id: ID!
+  orderId: String
+  positionId: String!
+  price: Float!
+  priceImpact: Float
+  slippageBps: Int!
+  timestamp: DateTime!
+  tradeType: TradeType!
+  transactionSignature: String!
+}
+
+enum PositionType {
+  BINARY
+  CATEGORICAL
+  PREDICTION
+}
+
+type PriceData {
+  currentPrice: Float!
+  lastUpdated: DateTime!
+  marketId: String!
+  outcome: String!
+  priceChange24h: Float!
+  priceChangePercent24h: Float!
+  source: String!
+  volume24h: Float!
+}
+
 type Query {
   activeDFlowEvents(limit: Float): [DFlowEvent!]!
   activeDFlowMarkets(limit: Float): [DFlowMarketGraphQL!]!
   activeMarkets: [Market!]!
   dflowEvent(ticker: ID!): DFlowEvent
   dflowEvents(limit: Float, offset: Float, search: String, sort: DFlowEventSort, status: DFlowMarketStatus, withNestedMarkets: Boolean): [DFlowEvent!]!
+  dflowEventsBySeries(limit: Float, offset: Float, seriesTickers: [String!]!, sort: DFlowEventSort, status: DFlowMarketStatus, withNestedMarkets: Boolean): [DFlowEvent!]!
   dflowMarket(ticker: ID!): DFlowMarketGraphQL
   dflowMarketMints(marketId: String!): MarketMints!
   dflowMarketQuote(marketId: String!): MarketQuote!
@@ -253,10 +364,56 @@ type Query {
   dflowOrderbook(ticker: ID!): DFlowOrderbookGraphQL
   getDFlowQuote(request: DFlowQuoteRequestInput!): DFlowQuoteResponse!
   market(id: ID!): Market!
+  marketPriceHistory(days: Float! = 7, marketId: String!): [PriceData!]!
   markets: [Market!]!
+  portfolioHistory(days: Float! = 30, walletAddress: String!): [PortfolioHistory!]!
+  portfolioSummary(walletAddress: String!): PortfolioSummary!
+  positionHistory(limit: Float! = 50, offset: Float! = 0, positionId: String!): [PositionTrade!]!
+  positionPrices(mints: [String!]!): [PriceData!]!
+  redeemablePositions(walletAddress: String!): [UserPosition!]!
+  redemptionHistory(walletAddress: String!): [RedemptionHistory!]!
   searchDFlow(limit: Float, offset: Float, query: String!, withNestedAccounts: Boolean, withNestedMarkets: Boolean): [DFlowEvent!]!
   searchDFlowMarkets(limit: Float, query: String!): [DFlowMarketGraphQL!]!
+  seriesByTags(categories: [String!], limit: Float, offset: Float, tags: [String!]): [SeriesTemplate!]!
+  tagsByCategories: TagsByCategoriesResponse!
   user(id: ID!): User!
+  userPositions(filters: PositionFiltersInput, walletAddress: String!): [UserPosition!]!
+}
+
+type RedemptionHistory {
+  amountReceived: Float!
+  amountRedeemed: Float!
+  createdAt: DateTime!
+  id: ID!
+  marketResolutionDate: DateTime
+  positionId: String!
+  profitLoss: Float
+  redemptionDate: DateTime!
+  transactionSignature: String!
+}
+
+input RedemptionRequestInput {
+  amount: Float
+  positionId: String!
+  slippageBps: Int
+  userPublicKey: String!
+}
+
+type RedemptionResult {
+  amountReceived: Float
+  amountRedeemed: Float
+  error: String
+  orderId: String
+  success: Boolean!
+  transactionSignature: String
+}
+
+type RefreshResult {
+  errors: [String!]!
+  lastRefresh: DateTime!
+  positionsFound: Int!
+  positionsUpdated: Int!
+  success: Boolean!
 }
 
 input RegisterInput {
@@ -265,12 +422,44 @@ input RegisterInput {
   username: String!
 }
 
+enum RiskLevel {
+  HIGH
+  LOW
+  MEDIUM
+}
+
+type SeriesTemplate {
+  category: String!
+  description: String
+  frequency: String!
+  tags: [String!]!
+  ticker: String!
+  title: String!
+}
+
+type Subscription {
+  portfolioUpdates(walletAddress: String!): PortfolioSummary!
+  positionUpdates(walletAddress: String!): UserPosition!
+  priceUpdates(mints: [String!]!): PriceData!
+  redemptionUpdates(walletAddress: String!): RedemptionResult!
+}
+
+type TagsByCategoriesResponse {
+  tagsByCategories: String!
+}
+
 type TradeResponse {
   error: TradingError
   estimatedGas: Int
   quote: DFlowQuoteResponse
   signature: String
   success: Boolean!
+}
+
+enum TradeType {
+  BUY
+  REDEMPTION
+  SELL
 }
 
 type TradingError {
@@ -287,4 +476,33 @@ type User {
   id: ID!
   updatedAt: DateTime!
   username: String!
+}
+
+type UserPosition {
+  balance: Float!
+  balanceRaw: String!
+  baseMint: String!
+  costBasis: Float
+  createdAt: DateTime!
+  currentPrice: Float
+  daysHeld: Int!
+  decimals: Int!
+  entryPrice: Float
+  estimatedValue: Float
+  id: ID!
+  isRedeemable: Boolean!
+  lastPriceUpdate: DateTime
+  marketId: String!
+  marketPrice: Float
+  marketStatus: PositionMarketStatus!
+  marketTitle: String!
+  mint: String!
+  outcome: OutcomeType!
+  positionType: PositionType!
+  riskLevel: RiskLevel!
+  unrealizedPnL: Float
+  unrealizedPnLPercent: Float
+  updatedAt: DateTime!
+  userId: String!
+  walletAddress: String!
 }

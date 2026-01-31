@@ -455,4 +455,188 @@ export class DFlowService {
       return false;
     }
   }
+
+  /**
+   * Filter outcome mints from a list of token mints
+   */
+  async filterOutcomeMints(mints: string[]): Promise<string[]> {
+    try {
+      // Use the filter-outcome-mints endpoint
+      const endpoint = '/api/v1/filter_outcome_mints';
+      const response = await this.makeApiCall<{
+        outcome_mints: Array<{
+          mint: string;
+          market_ticker: string;
+          outcome_name: string;
+        }>;
+      }>(endpoint, {
+        method: 'POST',
+        body: JSON.stringify({ mints }),
+      });
+
+      return response.outcome_mints?.map(om => om.mint) || [];
+    } catch (error) {
+      this.logger.error('Failed to filter outcome mints', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get market data by mint address
+   */
+  async getMarketByMint(mint: string): Promise<any> {
+    try {
+      const endpoint = `/api/v1/market/by-mint/${encodeURIComponent(mint)}`;
+      return await this.makeApiCall(endpoint);
+    } catch (error) {
+      this.logger.error(`Failed to fetch market by mint ${mint}`, error);
+      // Return mock data for development
+      return {};
+    }
+  }
+
+  /**
+   * Get tags organized by categories
+   */
+  async getTagsByCategories(): Promise<Record<string, string[]>> {
+    try {
+      const endpoint = '/api/v1/tags_by_categories';
+      const response = await this.makeApiCall<{
+        tagsByCategories: Record<string, string[]>;
+      }>(endpoint);
+      return response.tagsByCategories || {};
+    } catch (error) {
+      this.logger.error('Failed to fetch tags by categories from DFlow', error);
+      return {};
+    }
+  }
+
+  /**
+   * Get series filtered by tags and categories
+   */
+  async getSeriesByTags(
+    filter: {
+      tags?: string[];
+      categories?: string[];
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<any[]> {
+    try {
+      const params = new URLSearchParams();
+
+      if (filter.tags && filter.tags.length > 0) {
+        params.append('tags', filter.tags.join(','));
+      }
+      if (filter.categories && filter.categories.length > 0) {
+        params.append('categories', filter.categories.join(','));
+      }
+      if (filter.limit) params.append('limit', filter.limit.toString());
+      if (filter.offset) params.append('offset', filter.offset.toString());
+
+      const endpoint = `/api/v1/series${params.toString() ? `?${params.toString()}` : ''}`;
+      const response = await this.makeApiCall<{ series: any[] }>(endpoint);
+      return response.series || [];
+    } catch (error) {
+      this.logger.error('Failed to fetch series by tags from DFlow', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get events filtered by series tickers
+   */
+  async getEventsBySeries(
+    seriesTickers: string[],
+    filter: {
+      limit?: number;
+      offset?: number;
+      sort?: DFlowEventSort;
+      status?: DFlowMarketStatus[];
+      withNestedMarkets?: boolean;
+    } = {}
+  ): Promise<DFlowEvent[]> {
+    try {
+      const params = new URLSearchParams();
+
+      if (seriesTickers.length > 0) {
+        params.append('series', seriesTickers.join(','));
+      }
+      if (filter.limit) params.append('limit', filter.limit.toString());
+      if (filter.offset) params.append('offset', filter.offset.toString());
+      if (filter.sort) params.append('sort', filter.sort);
+      if (filter.status && filter.status.length > 0) {
+        filter.status.forEach(status => params.append('status', status));
+      }
+      if (filter.withNestedMarkets) {
+        params.append('withNestedMarkets', filter.withNestedMarkets.toString());
+      }
+
+      const endpoint = `/api/v1/events${params.toString() ? `?${params.toString()}` : ''}`;
+      const response = await this.makeApiCall<DFlowEventsResponse>(endpoint);
+      return response.events || [];
+    } catch (error) {
+      this.logger.error('Failed to fetch events by series from DFlow', error);
+      return [];
+    }
+  }
+  async createRedemptionOrder(request: {
+    mint: string;
+    amount: number;
+    userPublicKey: string;
+    slippageBps: number;
+  }): Promise<{
+    success: boolean;
+    orderId?: string;
+    expectedReceived?: number;
+    error?: string;
+  }> {
+    try {
+      this.logger.log(`Creating redemption order for mint: ${request.mint}`);
+
+      // For development, simulate redemption order creation
+      const mockOrderId = `redeem_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      return {
+        success: true,
+        orderId: mockOrderId,
+        expectedReceived: request.amount * 0.98, // Simulate 2% fee
+      };
+    } catch (error) {
+      this.logger.error('Failed to create redemption order', error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  /**
+   * Execute redemption
+   */
+  async executeRedemption(request: { mint: string; amount: number }): Promise<{
+    success: boolean;
+    transactionSignature?: string;
+    amountReceived?: number;
+    error?: string;
+  }> {
+    try {
+      this.logger.log(`Executing redemption for mint: ${request.mint}`);
+
+      // For development, simulate redemption execution
+      const mockTxSignature = `${Math.random().toString(36).substr(2, 9)}${Math.random().toString(36).substr(2, 9)}${Math.random().toString(36).substr(2, 9)}`;
+
+      return {
+        success: true,
+        transactionSignature: mockTxSignature,
+        amountReceived: request.amount * 0.98, // Simulate 2% fee
+      };
+    } catch (error) {
+      this.logger.error('Failed to execute redemption', error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
 }

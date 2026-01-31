@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useQuery, useMutation } from '@apollo/client';
+import { useWallet } from '@solana/wallet-adapter-react';
 import {
   Card,
   CardContent,
@@ -6,55 +8,323 @@ import {
   CardHeader,
   CardTitle,
 } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '../components/ui/tabs';
+import { Badge } from '../components/ui/badge';
+import {
+  RefreshCw,
+  Filter,
+  Download,
+  TrendingUp,
+  AlertTriangle,
+} from 'lucide-react';
+
+import { PortfolioOverview } from '../components/positions/PortfolioOverview';
+import { PositionList } from '../components/positions/PositionCard';
+import {
+  GET_USER_POSITIONS,
+  GET_PORTFOLIO_SUMMARY,
+  GET_REDEEMABLE_POSITIONS,
+  REFRESH_USER_POSITIONS,
+  REDEEM_POSITION,
+} from '../lib/graphql/positions';
 
 export function Portfolio() {
-  return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-white">Portfolio</h1>
+  const { publicKey } = useWallet();
+  const [activeTab, setActiveTab] = useState('overview');
+  const [filterStatus, setFilterStatus] = useState<string>('all');
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Balance</CardTitle>
-            <CardDescription>Your current balance</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">$1,000.00</div>
-          </CardContent>
-        </Card>
+  const walletAddress = publicKey?.toBase58() || '';
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Total P&L</CardTitle>
-            <CardDescription>Profit and loss</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">+$0.00</div>
-          </CardContent>
-        </Card>
+  // GraphQL queries
+  const {
+    data: positionsData,
+    loading: positionsLoading,
+    refetch: refetchPositions,
+  } = useQuery(GET_USER_POSITIONS, {
+    variables: {
+      walletAddress,
+      filters:
+        filterStatus !== 'all'
+          ? { marketStatus: filterStatus.toUpperCase() }
+          : undefined,
+    },
+    skip: !walletAddress,
+    errorPolicy: 'all',
+  });
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Active Positions</CardTitle>
-            <CardDescription>Number of open positions</CardDescription>
-          </CardHeader>
+  const {
+    data: summaryData,
+    loading: summaryLoading,
+    refetch: refetchSummary,
+  } = useQuery(GET_PORTFOLIO_SUMMARY, {
+    variables: { walletAddress },
+    skip: !walletAddress,
+    errorPolicy: 'all',
+  });
+
+  const { data: redeemableData, loading: redeemableLoading } = useQuery(
+    GET_REDEEMABLE_POSITIONS,
+    {
+      variables: { walletAddress },
+      skip: !walletAddress,
+      errorPolicy: 'all',
+    }
+  );
+
+  // Mutations
+  const [refreshPositions, { loading: refreshing }] = useMutation(
+    REFRESH_USER_POSITIONS,
+    {
+      onCompleted: data => {
+        if (data.refreshUserPositions.success) {
+          console.log(
+            `Refreshed ${data.refreshUserPositions.positionsUpdated} positions`
+          );
+          refetchPositions();
+          refetchSummary();
+        } else {
+          console.error('Failed to refresh positions');
+        }
+      },
+      onError: error => {
+        console.error(`Refresh failed: ${error.message}`);
+      },
+    }
+  );
+
+  const [redeemPosition, { loading: redeeming }] = useMutation(
+    REDEEM_POSITION,
+    {
+      onCompleted: data => {
+        if (data.redeemPosition.success) {
+          console.log(
+            `Successfully redeemed position for ${data.redeemPosition.amountReceived} USDC`
+          );
+          refetchPositions();
+          refetchSummary();
+        } else {
+          console.error(`Redemption failed: ${data.redeemPosition.error}`);
+        }
+      },
+      onError: error => {
+        console.error(`Redemption error: ${error.message}`);
+      },
+    }
+  );
+
+  const handleRefresh = async () => {
+    if (!walletAddress) {
+      console.error('Please connect your wallet first');
+      return;
+    }
+
+    await refreshPositions({ variables: { walletAddress } });
+  };
+
+  const handleRedeem = async (position: any) => {
+    if (!walletAddress) {
+      console.error('Please connect your wallet first');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Are you sure you want to redeem your position in ${position.marketTitle}?`
+    );
+
+    if (confirmed) {
+      await redeemPosition({
+        variables: {
+          positionId: position.id,
+          amount: position.balance, // Redeem full position
+        },
+      });
+    }
+  };
+
+  const handleViewDetails = (position: any) => {
+    // TODO: Navigate to position detail page
+    console.log('View position details:', position);
+    console.log('Position details view coming soon!');
+  };
+
+  if (!walletAddress) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold text-white">Portfolio</h1>
+
+        <Card className="text-center py-12">
           <CardContent>
-            <div className="text-2xl font-bold">0</div>
+            <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Wallet Not Connected</h3>
+            <p className="text-gray-600 mb-4">
+              Please connect your wallet to view your portfolio and positions.
+            </p>
           </CardContent>
         </Card>
       </div>
+    );
+  }
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Positions</CardTitle>
-          <CardDescription>All your market positions</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-12 text-muted-foreground">
-            No positions yet. Start trading to see your positions here.
+  const positions = positionsData?.userPositions || [];
+  const summary = summaryData?.portfolioSummary;
+  const redeemablePositions = redeemableData?.redeemablePositions || [];
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold text-white">Portfolio</h1>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="text-gray-900 border-gray-300 hover:bg-gray-100 bg-white"
+          >
+            <RefreshCw
+              className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`}
+            />
+            Refresh
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            disabled
+            className="text-gray-900 border-gray-300 bg-white"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </Button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
+        <TabsList className="grid grid-cols-3 w-full max-w-md">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="positions">
+            Positions
+            {positions.length > 0 && (
+              <Badge variant="secondary" className="ml-2">
+                {positions.length}
+              </Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="redeemable">
+            Redeemable
+            {redeemablePositions.length > 0 && (
+              <Badge variant="secondary" className="ml-2">
+                {redeemablePositions.length}
+              </Badge>
+            )}
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Overview Tab */}
+        <TabsContent value="overview" className="space-y-6">
+          {summary ? (
+            <PortfolioOverview summary={summary} loading={summaryLoading} />
+          ) : (
+            <Card className="text-center py-12">
+              <CardContent>
+                <TrendingUp className="h-12 w-12 text-blue-500 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">
+                  No Portfolio Data
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Start trading to see your portfolio overview here.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        {/* Positions Tab */}
+        <TabsContent value="positions" className="space-y-6">
+          {/* Position Filters */}
+          <div className="flex items-center gap-2">
+            <Filter className="h-4 w-4 text-gray-500" />
+            <div className="flex gap-2">
+              {['all', 'active', 'resolved', 'settled'].map(status => (
+                <Button
+                  key={status}
+                  variant={filterStatus === status ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setFilterStatus(status)}
+                  className="capitalize"
+                >
+                  {status}
+                </Button>
+              ))}
+            </div>
           </div>
-        </CardContent>
-      </Card>
+
+          <PositionList
+            positions={positions}
+            loading={positionsLoading}
+            onRedeem={handleRedeem}
+            onViewDetails={handleViewDetails}
+          />
+        </TabsContent>
+
+        {/* Redeemable Tab */}
+        <TabsContent value="redeemable" className="space-y-6">
+          {redeemablePositions.length > 0 ? (
+            <>
+              <Card className="bg-green-50 border-green-200">
+                <CardHeader>
+                  <CardTitle className="text-green-800 flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5" />
+                    Redeemable Positions Available
+                  </CardTitle>
+                  <CardDescription className="text-green-700">
+                    You have {redeemablePositions.length} positions ready for
+                    redemption. Total redeemable value:{' '}
+                    {summary &&
+                      new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                      }).format(summary.redeemableValue)}
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+
+              <PositionList
+                positions={redeemablePositions}
+                loading={redeemableLoading}
+                onRedeem={handleRedeem}
+                onViewDetails={handleViewDetails}
+              />
+            </>
+          ) : (
+            <Card className="text-center py-12">
+              <CardContent>
+                <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">
+                  No Redeemable Positions
+                </h3>
+                <p className="text-gray-600">
+                  Positions that can be redeemed will appear here when markets
+                  resolve.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
