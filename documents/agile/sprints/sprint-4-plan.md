@@ -5,7 +5,7 @@
 **Sprint Number**: Sprint 4  
 **Duration**: February 24, 2026 to March 9, 2026 (2 weeks)  
 **Sprint Goal**: Refactor frontend codebase to mobile-first responsive design for optimal dApp experience on all devices  
-**Status**: **PLANNING** 📋
+**Status**: **IN PROGRESS** 🚀
 
 ---
 
