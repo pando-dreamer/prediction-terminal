@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { act } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TradingPanel } from '../TradingPanel';
 
@@ -40,8 +41,10 @@ describe('TradingPanel', () => {
     mockUseWallet.signTransaction = undefined;
   });
 
-  it('renders with default market and prompts to connect wallet', () => {
-    render(<TradingPanel markets={[market]} defaultMarket={market} />);
+  it('renders with default market and prompts to connect wallet', async () => {
+    await act(async () => {
+      render(<TradingPanel markets={[market]} defaultMarket={market} />);
+    });
 
     expect(screen.getByText(/Test Market/)).toBeInTheDocument();
     // When not connected, user should see connect prompt
@@ -52,7 +55,9 @@ describe('TradingPanel', () => {
     mockUseWallet.connected = true;
     mockUseWallet.publicKey = { toBase58: () => 'abcdef' } as any;
 
-    render(<TradingPanel markets={[market]} defaultMarket={market} />);
+    await act(async () => {
+      render(<TradingPanel markets={[market]} defaultMarket={market} />);
+    });
 
     const tradeBtn = await screen.findByRole('button', { name: /Buy Yes/i });
     expect(tradeBtn).toBeDisabled();
@@ -66,7 +71,9 @@ describe('TradingPanel', () => {
     mockUseWallet.connected = true;
     mockUseWallet.publicKey = { toBase58: () => 'abcdef' } as any;
 
-    render(<TradingPanel markets={[market]} defaultMarket={market} />);
+    await act(async () => {
+      render(<TradingPanel markets={[market]} defaultMarket={market} />);
+    });
 
     const noBtn = await screen.findByRole('button', { name: /No/i });
     fireEvent.click(noBtn);
