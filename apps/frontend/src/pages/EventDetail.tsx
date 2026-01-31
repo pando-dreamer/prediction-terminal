@@ -1170,19 +1170,38 @@ export function EventDetail() {
         <div className="fixed bottom-16 left-0 right-0 lg:hidden z-30 safe-bottom">
           {/* Trade Sheet */}
           <div className="bg-slate-800 rounded-t-2xl border-t border-slate-700 shadow-2xl">
-            {/* Handle indicator */}
-            <div className="flex justify-center py-2">
-              <div className="w-10 h-1 rounded-full bg-slate-600" />
-            </div>
+            {/* Handle indicator - tap to close */}
+            <button
+              onClick={() => setSelectedMarket(null)}
+              className="w-full flex justify-center py-3 active:bg-slate-700/50"
+            >
+              <div className="w-10 h-1 rounded-full bg-slate-500" />
+            </button>
 
-            {/* Buy/Sell Toggle */}
+            {/* Buy/Sell Dropdown */}
             <div className="flex items-center justify-between px-4 pb-3">
-              <div className="flex items-center gap-2">
-                <span className="text-white font-semibold">
-                  {tradeType === 'buy' ? 'Buy' : 'Sell'}
-                </span>
-                <ChevronDown className="w-4 h-4 text-slate-400" />
-              </div>
+              <Select
+                value={tradeType}
+                onValueChange={(value: 'buy' | 'sell') => setTradeType(value)}
+              >
+                <SelectTrigger className="w-24 bg-transparent border-none text-white font-semibold p-0 h-auto focus:ring-0 focus:ring-offset-0">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-700 border-slate-600">
+                  <SelectItem
+                    value="buy"
+                    className="text-white hover:bg-slate-600"
+                  >
+                    Buy
+                  </SelectItem>
+                  <SelectItem
+                    value="sell"
+                    className="text-white hover:bg-slate-600"
+                  >
+                    Sell
+                  </SelectItem>
+                </SelectContent>
+              </Select>
               <div className="text-xs text-slate-400">Market</div>
             </div>
 
