@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { TrendingUp, BarChart3, Calendar } from 'lucide-react';
+import { BarChart3, Calendar } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
@@ -46,7 +46,6 @@ export function Layout({ children }: LayoutProps) {
 
   const navigation = [
     { name: 'Events', href: '/', icon: Calendar },
-    { name: 'Markets', href: '/markets', icon: TrendingUp },
     { name: 'Portfolio', href: '/portfolio', icon: BarChart3 },
   ];
 
