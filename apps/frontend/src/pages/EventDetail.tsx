@@ -16,7 +16,7 @@ import {
 } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
-import { ArrowLeft, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronUp, X } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -1170,13 +1170,16 @@ export function EventDetail() {
         <div className="fixed bottom-16 left-0 right-0 lg:hidden z-30 safe-bottom">
           {/* Trade Sheet */}
           <div className="bg-slate-800 rounded-t-2xl border-t border-slate-700 shadow-2xl">
-            {/* Handle indicator - tap to close */}
-            <button
-              onClick={() => setSelectedMarket(null)}
-              className="w-full flex justify-center py-3 active:bg-slate-700/50"
-            >
-              <div className="w-10 h-1 rounded-full bg-slate-500" />
-            </button>
+            {/* Header with close button */}
+            <div className="flex items-center justify-between px-4 pt-3 pb-2">
+              <div className="w-10 h-1 rounded-full bg-slate-500 mx-auto" />
+              <button
+                onClick={() => setSelectedMarket(null)}
+                className="absolute right-3 top-2 p-2 text-slate-400 hover:text-white active:bg-slate-700 rounded-full"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
             {/* Buy/Sell Dropdown */}
             <div className="flex items-center justify-between px-4 pb-3">
