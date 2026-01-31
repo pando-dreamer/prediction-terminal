@@ -747,8 +747,8 @@ export function Events() {
   return (
     <div className="space-y-4 md:space-y-6">
       {/* Page Header - Responsive with refresh button */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-        <div>
+      <div className="flex flex-row justify-between items-start gap-2">
+        <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold text-white">
             Prediction Events
           </h1>
@@ -769,7 +769,7 @@ export function Events() {
           size="icon"
           onClick={handleRefresh}
           disabled={isRefreshing || currentLoading}
-          className="h-10 w-10 md:h-9 md:w-9 self-end sm:self-auto"
+          className="h-10 w-10 md:h-9 md:w-9 flex-shrink-0"
         >
           <RefreshCw
             className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`}
