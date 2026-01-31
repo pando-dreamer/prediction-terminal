@@ -98,6 +98,15 @@ export function Layout({ children }: LayoutProps) {
         <DesktopSidebar />
       </aside>
 
+      {/* Mobile header with logo - visible only on mobile */}
+      <header className="lg:hidden bg-slate-800/95 backdrop-blur-lg border-b border-slate-700/50 sticky top-0 z-30">
+        <div className="flex items-center justify-center h-14 px-4">
+          <h1 className="text-xl font-bold text-blue-400">
+            Prediction Terminal
+          </h1>
+        </div>
+      </header>
+
       {/* Main content area */}
       <main
         className={cn(
