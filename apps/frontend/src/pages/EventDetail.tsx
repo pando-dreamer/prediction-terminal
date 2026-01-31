@@ -162,6 +162,7 @@ export function EventDetail() {
 
   // Trading component state - must be at top level before any early returns
   const [selectedMarket, setSelectedMarket] = useState<any>(null);
+  const [hasOpenedPanel, setHasOpenedPanel] = useState(false);
   const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
   const [side, setSide] = useState<'yes' | 'no'>('yes');
   const [amount, setAmount] = useState<number>(0);
@@ -280,10 +281,10 @@ export function EventDetail() {
 
   // Set initial selected market when activeMarkets are available
   useEffect(() => {
-    if (activeMarkets.length > 0 && !selectedMarket) {
+    if (activeMarkets.length > 0 && !selectedMarket && !hasOpenedPanel) {
       setSelectedMarket(activeMarkets[0]);
     }
-  }, [activeMarkets, selectedMarket]);
+  }, [activeMarkets, selectedMarket, hasOpenedPanel]);
 
   // Fetch market mints when selectedMarket changes
   useEffect(() => {
@@ -750,6 +751,7 @@ export function EventDetail() {
                               e.preventDefault();
                               setSelectedMarket(market);
                               setSide('yes');
+                              setHasOpenedPanel(true);
                             }}
                           >
                             Yes{' '}
@@ -766,6 +768,7 @@ export function EventDetail() {
                               e.preventDefault();
                               setSelectedMarket(market);
                               setSide('no');
+                              setHasOpenedPanel(true);
                             }}
                           >
                             No{' '}
@@ -1176,6 +1179,7 @@ export function EventDetail() {
                 e.stopPropagation();
                 e.preventDefault();
                 setSelectedMarket(null);
+                setHasOpenedPanel(true);
               }}
               className="absolute right-3 top-3 z-10 p-2 text-slate-400 hover:text-white active:bg-slate-700 rounded-full"
             >
