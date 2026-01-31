@@ -13,14 +13,13 @@ import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
 import { DFlowEventSort, DFlowMarketStatus } from '../lib/dflow-types';
 import {
-  SlidersHorizontal,
   Search,
-  ChevronRight,
   TrendingUp,
   Clock,
   Zap,
   Filter,
   X,
+  RefreshCw,
 } from 'lucide-react';
 
 // Events query with pagination and filtering support
@@ -204,6 +203,7 @@ export function Events() {
   const [allEvents, setAllEvents] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms debounce
   const loadingRef = useRef<HTMLDivElement>(null);
 
@@ -448,6 +448,79 @@ export function Events() {
     hasMore,
   ]);
 
+  // Handle refresh (pull-to-refresh or manual)
+  const handleRefresh = useCallback(async () => {
+    if (isRefreshing) return;
+
+    setIsRefreshing(true);
+    setAllEvents([]);
+    setHasMore(true);
+
+    try {
+      if (shouldSearch) {
+        const { data } = await fetchMoreSearch({
+          variables: {
+            query: effectiveSearchQuery,
+            limit: EVENTS_PER_PAGE,
+            offset: 0,
+            withNestedMarkets: true,
+            withNestedAccounts: true,
+          },
+          updateQuery: (_, { fetchMoreResult }) => fetchMoreResult,
+        });
+        if (data?.searchDFlow) {
+          setAllEvents(data.searchDFlow);
+          setHasMore(data.searchDFlow.length === EVENTS_PER_PAGE);
+        }
+      } else if (shouldFilterBySeries) {
+        const { data } = await fetchMoreSeriesEvents({
+          variables: {
+            seriesTickers: appliedSeriesTickers,
+            limit: EVENTS_PER_PAGE,
+            offset: 0,
+            sort: currentSort,
+            status: DFlowMarketStatus.ACTIVE,
+            withNestedMarkets: true,
+          },
+          updateQuery: (_, { fetchMoreResult }) => fetchMoreResult,
+        });
+        if (data?.dflowEventsBySeries) {
+          setAllEvents(data.dflowEventsBySeries);
+          setHasMore(data.dflowEventsBySeries.length === EVENTS_PER_PAGE);
+        }
+      } else {
+        const { data } = await fetchMoreEvents({
+          variables: {
+            limit: EVENTS_PER_PAGE,
+            offset: 0,
+            sort: currentSort,
+            status: DFlowMarketStatus.ACTIVE,
+            withNestedMarkets: true,
+          },
+          updateQuery: (_, { fetchMoreResult }) => fetchMoreResult,
+        });
+        if (data?.dflowEvents) {
+          setAllEvents(data.dflowEvents);
+          setHasMore(data.dflowEvents.length === EVENTS_PER_PAGE);
+        }
+      }
+    } catch (error) {
+      console.error('Error refreshing events:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [
+    isRefreshing,
+    shouldSearch,
+    shouldFilterBySeries,
+    effectiveSearchQuery,
+    appliedSeriesTickers,
+    currentSort,
+    fetchMoreEvents,
+    fetchMoreSearch,
+    fetchMoreSeriesEvents,
+  ]);
+
   // Intersection Observer for infinite scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -534,6 +607,8 @@ export function Events() {
                 <img
                   src={event.imageUrl}
                   alt={event.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-12 h-12 md:w-16 md:h-16 object-cover rounded-md flex-shrink-0"
                 />
               )}
@@ -671,7 +746,7 @@ export function Events() {
 
   return (
     <div className="space-y-4 md:space-y-6">
-      {/* Page Header - Responsive */}
+      {/* Page Header - Responsive with refresh button */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-white">
@@ -688,7 +763,27 @@ export function Events() {
             </p>
           )}
         </div>
+        {/* Mobile refresh button */}
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleRefresh}
+          disabled={isRefreshing || currentLoading}
+          className="h-10 w-10 md:h-9 md:w-9 self-end sm:self-auto"
+        >
+          <RefreshCw
+            className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`}
+          />
+        </Button>
       </div>
+
+      {/* Refresh indicator */}
+      {isRefreshing && (
+        <div className="flex items-center justify-center py-2 text-sm text-muted-foreground animate-in fade-in">
+          <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+          Refreshing...
+        </div>
+      )}
 
       {/* Category Navigation - Mobile-first horizontal scroll */}
       <div className="flex flex-col space-y-3 md:space-y-4">

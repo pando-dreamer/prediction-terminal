@@ -432,7 +432,7 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
   if (!selectedMarket) {
     return (
       <Card className="bg-slate-800 border-slate-700">
-        <CardContent className="p-6">
+        <CardContent className="p-4 md:p-6">
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>No market selected</AlertDescription>
@@ -443,24 +443,26 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
   }
 
   return (
-    <Card className="bg-slate-800 border-slate-700">
-      <CardHeader>
+    <Card className="bg-slate-800 border-slate-700 lg:rounded-xl rounded-t-2xl lg:rounded-t-xl">
+      <CardHeader className="p-4 md:p-6">
         <div className="flex items-center gap-3">
           {imageUrl && (
             <img
               src={imageUrl}
               alt={selectedMarket.title}
-              className="w-12 h-12 object-cover rounded-lg"
+              loading="lazy"
+              decoding="async"
+              className="w-10 h-10 md:w-12 md:h-12 object-cover rounded-lg flex-shrink-0"
             />
           )}
-          <div>
-            <CardTitle className="text-lg text-white">
+          <div className="min-w-0 flex-1">
+            <CardTitle className="text-base md:text-lg text-white truncate">
               {title || selectedMarket.title}
             </CardTitle>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 md:space-y-4 p-4 md:p-6 pt-0 md:pt-0">
         {!connected ? (
           <Alert>
             <AlertCircle className="h-4 w-4" />
@@ -470,10 +472,10 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
           </Alert>
         ) : (
           <>
-            {/* Buy/Sell Toggle */}
+            {/* Buy/Sell Toggle - Touch-friendly tabs */}
             <div className="flex border-b border-slate-600">
               <button
-                className={`flex-1 py-2 text-center font-medium ${
+                className={`flex-1 py-3 md:py-2 text-center font-medium touch-target ${
                   tradeType === 'buy'
                     ? 'text-white border-b-2 border-white'
                     : 'text-slate-400'
@@ -483,7 +485,7 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
                 Buy
               </button>
               <button
-                className={`flex-1 py-2 text-center font-medium ${
+                className={`flex-1 py-3 md:py-2 text-center font-medium touch-target ${
                   tradeType === 'sell'
                     ? 'text-white border-b-2 border-white'
                     : 'text-slate-400'
@@ -523,33 +525,33 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
               </div>
             )}
 
-            {/* Yes/No Buttons */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* Yes/No Buttons - Touch-friendly with larger targets */}
+            <div className="grid grid-cols-2 gap-2 md:gap-3">
               <button
-                className={`p-4 rounded-lg font-bold transition-colors ${
+                className={`p-3 md:p-4 rounded-lg font-bold transition-colors min-h-[64px] md:min-h-[72px] ${
                   side === 'yes'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-slate-600 text-slate-300 hover:bg-slate-500'
+                    ? 'bg-green-600 text-white ring-2 ring-green-400'
+                    : 'bg-slate-600 text-slate-300 hover:bg-slate-500 active:bg-slate-400'
                 }`}
                 onClick={() => setSide('yes')}
               >
-                <div>Yes</div>
-                <div className="text-lg">
+                <div className="text-base md:text-lg">Yes</div>
+                <div className="text-lg md:text-xl">
                   {selectedMarket.yesPrice
                     ? `${(selectedMarket.yesPrice * 100).toFixed(1)}¢`
                     : 'N/A'}
                 </div>
               </button>
               <button
-                className={`p-4 rounded-lg font-bold transition-colors ${
+                className={`p-3 md:p-4 rounded-lg font-bold transition-colors min-h-[64px] md:min-h-[72px] ${
                   side === 'no'
-                    ? 'bg-red-600 text-white'
-                    : 'bg-slate-600 text-slate-300 hover:bg-slate-500'
+                    ? 'bg-red-600 text-white ring-2 ring-red-400'
+                    : 'bg-slate-600 text-slate-300 hover:bg-slate-500 active:bg-slate-400'
                 }`}
                 onClick={() => setSide('no')}
               >
-                <div>No</div>
-                <div className="text-lg">
+                <div className="text-base md:text-lg">No</div>
+                <div className="text-lg md:text-xl">
                   {selectedMarket.noPrice
                     ? `${(selectedMarket.noPrice * 100).toFixed(1)}¢`
                     : 'N/A'}
@@ -557,17 +559,17 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
               </button>
             </div>
 
-            {/* Orderbook Display */}
+            {/* Orderbook Display - Compact on mobile */}
             {showOrderbook && orderbook && !loadingOrderbook && (
-              <div className="space-y-2">
-                <div className="flex justify-between items-center text-xs text-slate-400 border-b border-slate-600 pb-1">
+              <div className="space-y-1 md:space-y-2 text-xs">
+                <div className="flex justify-between items-center text-slate-400 border-b border-slate-600 pb-1">
                   <span>PRICE</span>
                   <span>SHARES</span>
                   <span>TOTAL</span>
                 </div>
 
                 {/* Asks (NO bids - people selling YES) */}
-                <div className="space-y-1">
+                <div className="space-y-0.5 md:space-y-1">
                   {orderbook.noBids.slice(0, 4).map((level: any, i: number) => {
                     const maxTotal = Math.max(
                       ...orderbook.noBids.map((l: any) => l.total),
@@ -608,7 +610,7 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
                 </div>
 
                 {/* Bids (YES bids - people buying YES) */}
-                <div className="space-y-1">
+                <div className="space-y-0.5 md:space-y-1">
                   {orderbook.yesBids
                     .slice(0, 4)
                     .map((level: any, i: number) => {
@@ -649,57 +651,72 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
             )}
 
             {/* Amount Input */}
-            <div className="space-y-3">
+            <div className="space-y-2 md:space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-white font-medium">Amount</span>
+                <span className="text-white font-medium text-sm md:text-base">
+                  Amount
+                </span>
                 {isLoadingBalances ? (
-                  <span className="text-slate-400 text-sm">Loading...</span>
+                  <span className="text-slate-400 text-xs md:text-sm">
+                    Loading...
+                  </span>
                 ) : (
-                  <div className="flex items-center gap-1 text-slate-400 text-sm">
+                  <div className="flex items-center gap-1 text-slate-400 text-xs md:text-sm">
                     <Wallet className="h-3 w-3" />
                     <span>
                       {tradeType === 'buy'
-                        ? `${balances.usdc.toFixed(6)} USDC`
+                        ? `${balances.usdc.toFixed(2)} USDC`
                         : marketMints
                           ? side === 'yes'
-                            ? `${balances.yes.toFixed(6)} YES`
-                            : `${balances.no.toFixed(6)} NO`
-                          : `${balances.usdc.toFixed(6)} USDC`}
+                            ? `${balances.yes.toFixed(2)} YES`
+                            : `${balances.no.toFixed(2)} NO`
+                          : `${balances.usdc.toFixed(2)} USDC`}
                     </span>
                   </div>
                 )}
               </div>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-3xl font-bold text-slate-300">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-2xl md:text-3xl font-bold text-slate-300">
                   $
                 </span>
                 <Input
                   type="number"
+                  inputMode="decimal"
                   value={amount || ''}
                   onChange={e => setAmount(Number(e.target.value))}
-                  className="bg-slate-700 border-slate-600 text-white text-3xl font-bold pl-8 pr-4 py-6"
+                  className="bg-slate-700 border-slate-600 text-white text-2xl md:text-3xl font-bold pl-8 pr-4 py-4 md:py-6 h-14 md:h-16"
                   placeholder="0"
                 />
               </div>
             </div>
 
-            {/* Quick Amount Buttons */}
-            <div className="grid grid-cols-4 gap-2">
-              {[1, 20, 100].map(value => (
+            {/* Quick Amount Buttons - Better mobile presets */}
+            <div className="grid grid-cols-4 gap-1.5 md:gap-2">
+              {[5, 10, 25, 50].map(value => (
                 <Button
                   key={value}
                   variant="secondary"
                   size="sm"
-                  className="bg-slate-600 hover:bg-slate-500 text-white"
-                  onClick={() => setAmount(amount + value)}
+                  className="bg-slate-600 hover:bg-slate-500 active:bg-slate-400 text-white h-10 md:h-9 text-sm font-medium"
+                  onClick={() => setAmount(value)}
                 >
-                  +${value}
+                  ${value}
                 </Button>
               ))}
+            </div>
+            <div className="grid grid-cols-2 gap-1.5 md:gap-2">
               <Button
                 variant="secondary"
                 size="sm"
-                className="bg-slate-600 hover:bg-slate-500 text-white"
+                className="bg-slate-600 hover:bg-slate-500 active:bg-slate-400 text-white h-10 md:h-9 text-sm"
+                onClick={() => setAmount(100)}
+              >
+                $100
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                className="bg-slate-600 hover:bg-slate-500 active:bg-slate-400 text-white h-10 md:h-9 text-sm"
                 onClick={() =>
                   setAmount(
                     tradeType === 'buy' ? balances.usdc : balances[side]
@@ -740,12 +757,12 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({
               </Alert>
             )}
 
-            {/* Trade Button */}
+            {/* Trade Button - Touch-friendly */}
             <Button
-              className={`w-full py-3 font-bold text-lg ${
+              className={`w-full py-4 md:py-3 font-bold text-base md:text-lg min-h-[52px] md:min-h-[48px] ${
                 side === 'yes'
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-600 hover:bg-red-700'
+                  ? 'bg-green-600 hover:bg-green-700 active:bg-green-800'
+                  : 'bg-red-600 hover:bg-red-700 active:bg-red-800'
               }`}
               onClick={handleTrade}
               disabled={
