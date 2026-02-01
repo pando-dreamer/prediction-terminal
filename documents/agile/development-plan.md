@@ -16,14 +16,14 @@
 
 ## Sprint Roadmap
 
-| Sprint       | Duration                 | Focus                                     | Status      |
-| ------------ | ------------------------ | ----------------------------------------- | ----------- |
-| Sprint 1     | Jan 13-26, 2026          | Market Discovery & DFlow Integration      | ✅ Complete |
-| Sprint 2     | Jan 27 - Feb 9, 2026     | Events Discovery & Trading Infrastructure | ✅ Complete |
-| Sprint 3     | Feb 10-23, 2026          | Position Tracking & Portfolio Management  | ✅ Complete |
-| **Sprint 4** | **Feb 24 - Mar 9, 2026** | **Mobile-First UI Refactoring**           | 📋 Planning |
-| Sprint 5     | Mar 10-21, 2026          | Automated Testing Infrastructure          | 📋 Planned  |
-| Sprint 6     | Mar 24 - Apr 3, 2026     | Performance & Polish                      | 📋 Planned  |
+| Sprint       | Duration                 | Focus                                     | Status           |
+| ------------ | ------------------------ | ----------------------------------------- | ---------------- |
+| Sprint 1     | Jan 13-26, 2026          | Market Discovery & DFlow Integration      | ✅ Complete      |
+| Sprint 2     | Jan 27 - Feb 9, 2026     | Events Discovery & Trading Infrastructure | ✅ Complete      |
+| Sprint 3     | Feb 10-23, 2026          | Position Tracking & Portfolio Management  | ✅ Complete      |
+| Sprint 4     | Feb 24 - Mar 9, 2026     | Mobile-First UI Refactoring               | ✅ Complete      |
+| Sprint 5     | Mar 10-23, 2026          | Automated Testing Infrastructure          | ⚠️ Partial (29%) |
+| **Sprint 6** | **Mar 24 - Apr 6, 2026** | **MVP Testing Completion**                | 📋 Planning      |
 
 ---
 
